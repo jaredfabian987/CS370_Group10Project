@@ -2,7 +2,9 @@ public class User {
     private int userID;
     // log in info
     private String username;
-    private String passwordHash;
+    private String password;
+    // we are going to edit this later so that fitness profile is a seperate class from User 
+    // and so that fitnessProfile inherits user
     // profile
     private String firstName;
     private String LastName;
