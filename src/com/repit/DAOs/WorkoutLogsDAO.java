@@ -11,14 +11,15 @@ public class WorkoutLogsDAO {
     private static final String TABLE_SQL =
             "CREATE TABLE IF NOT EXISTS workout_logs (" +
             "logId INTEGER PRIMARY KEY," +
-            "userId TEXT NOT NULL," +
-            "desc TEXT NOT NULL," +
-            "isCompleted INTEGER NOT NULL"+
+            "userId INTEGER NOT NULL," +
+            "exerciseId INTEGER NOT NULL," +
+            "isCompleted INTEGER NOT NULL,"+
+            "date TEXT NOT NULL"+
             ")";
 
     private static final String INSERT_SQL =
-            "INSERT INTO workout_logs (userId, desc, isCompleted) " +
-                    "VALUES (?,?,?)";
+            "INSERT INTO workout_logs (userId, exerciseId, isCompleted, date) " +
+                    "VALUES (?,?,?,?)";
 
     private static final String SELECT_SQL =
             "SELECT * FROM workout_logs WHERE userId = ?";
@@ -43,8 +44,9 @@ public class WorkoutLogsDAO {
                 WorkoutLog newLog = new WorkoutLog(
                         rs.getInt("logId"),
                         rs.getInt("userId"),
-                        rs.getString("desc"),
-                        rs.getInt("isCompleted") == 1
+                        rs.getInt("exerciseId"),
+                        rs.getInt("isCompleted") == 1,
+                        rs.getString("date")
                 );
                 listLogs.add(newLog);
             }
@@ -63,8 +65,9 @@ public class WorkoutLogsDAO {
 
             PreparedStatement pstmt = conn.prepareStatement(INSERT_SQL);
             pstmt.setInt(1, logTosave.getUserId());
-            pstmt.setString(2, logTosave.getDesc());
+            pstmt.setInt(2, logTosave.getExerciseId());
             pstmt.setInt(3, logTosave.getCompletion());
+            pstmt.setString(4, logTosave.getDate());
             pstmt.executeUpdate();
             return true;
 
