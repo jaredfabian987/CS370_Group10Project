@@ -74,7 +74,7 @@ public class DayWorkoutPlan {
         isRestDay = restDay;
     }
 
-    public List<PlannedExercise> getExercises() {
+    public List<PlannedExercise> getExercises(){
         return exercises;
     }
 
