@@ -11,14 +11,42 @@ import java.util.List;
  * contains a list of exercises for that dayh
  */
 
+
+// represents the workout for one specific day, contains a list of the
+    // exercise to perform on that day
 public class DayWorkoutPlan {
 
+    // unique id for this day's workout plan
     private String dayPlanId;
-    private String planId;              // which workout the given exercise belongs to
-    private DayOfWeek dayOfWeek;        // Monday, Tuesday ,....
-    private String workoutName;         // push, pull, upper, etc...
-    private boolean isRestDay;          // is it a rest day?
+
+    // unique id for which workout plan this day belongs to
+    // relationship to parent plan
+    private String planId;
+
+    //which day of the week this workout is for
+    // use java util
+    private DayOfWeek dayOfWeek;
+
+    // nae fo the workout for this day
+    // user friendly label that describes the focus
+    // for example like: push day , pull day, legs
+    private String workoutName;
+
+    // is the current day a rest day meaning no workout
+    // rest days are intentional and are reccommended but are also
+    // catered to user availability
+    private boolean isRestDay;
+
+    // order list of exercises for this day
+    // each planned exercise contains: exercise, sets, reps, weight, rest time
     private List<PlannedExercise> exercises;
+
+    // estimated total during of this workout in minutes
+    // calculated from exercises, sets, rest time
+
+    /**
+     * come back to this to create a formulate to calculate this
+     */
     private int estimatedDurationMinutes;
 
     // constructor
