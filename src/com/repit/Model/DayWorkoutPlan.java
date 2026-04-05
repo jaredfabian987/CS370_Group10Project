@@ -67,55 +67,27 @@ public class DayWorkoutPlan {
     }
 
     // getters and setters
-    public String getDayPlanId() {
-        return dayPlanId;
-    }
-    public void setDayPLanId(String id){
-        this.dayPlanId = id;
-    }
+    public String getDayPlanId() {return dayPlanId;}
+    public void setDayPLanId(String id){this.dayPlanId = id;}
 
-    public String getPlanId() {
-        return planId;
-    }
-    public void setPlanId(String id){
-        this.planId = id;
-    }
+    public String getPlanId() {return planId;}
+    public void setPlanId(String id){this.planId = id;}
 
-    public DayOfWeek getDayOfWeek() {
-        return dayOfWeek;
-    }
-    public void setDayOfWeek(DayOfWeek dayOfWeek){
-        this.dayOfWeek = dayOfWeek;
-    }
+    public DayOfWeek getDayOfWeek() {return dayOfWeek;}
+    public void setDayOfWeek(DayOfWeek dayOfWeek){this.dayOfWeek = dayOfWeek;}
 
-    public String getWorkoutName() {
-        return workoutName;
-    }
-    public void setWorkoutName(String name){
-        this.workoutName = name;
-    }
+    public String getWorkoutName() {return workoutName;}
+    public void setWorkoutName(String name){this.workoutName = name;}
 
-    public boolean isRestDay() {
-        return isRestDay;
+    public boolean isRestDay() {return isRestDay;}
+    public void setRestDay(boolean restDay) {isRestDay = restDay;
     }
-    public void setRestDay(boolean restDay) {
-        isRestDay = restDay;
-    }
+    public List<PlannedExercise> getExercises(){return exercises;}
 
-    public List<PlannedExercise> getExercises(){
-        return exercises;
-    }
+    public void setExercises(List<PlannedExercise> exercises) {this.exercises = exercises;}
 
-    public void setExercises(List<PlannedExercise> exercises) {
-        this.exercises = exercises;
-    }
-
-    public int getEstimatedDurationMinutes() {
-        return estimatedDurationMinutes;
-    }
-    public void setEstimatedDurationMinutes(int estimatedDurationMinutes) {
-        this.estimatedDurationMinutes = estimatedDurationMinutes;
-    }
+    public int getEstimatedDurationMinutes() {return estimatedDurationMinutes;}
+    public void setEstimatedDurationMinutes(int estimatedDurationMinutes) {this.estimatedDurationMinutes = estimatedDurationMinutes;}
     /*
     @Override
     public String toString(){
