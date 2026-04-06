@@ -22,3 +22,4 @@ public class WorkoutLog {
         isCompleted = pIsCompleted;
     }
 }
+`
