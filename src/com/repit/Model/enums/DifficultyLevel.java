@@ -1,4 +1,7 @@
 package com.repit.model.enums;
 
-public class DifficultyLevel {
+public enum DifficultyLevel {
+    BEGINNER,
+    INTERMEDIATE,
+    ADVANCED
 }

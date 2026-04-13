@@ -1,4 +1,8 @@
 package com.repit.model.enums;
 
-public class EquipmentType {
+public enum EquipmentType {
+    FREE_WEIGHT,
+    MACHINE,
+    CARDIO,
+    BODYWEIGHT
 }

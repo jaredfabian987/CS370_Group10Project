@@ -8,7 +8,7 @@ import java.util.List;
 /**
  *
  * Represent the workout for one day
- * contains a list of exercises for that dayh
+ * contains a list of exercises for that day
  */
 
 
@@ -33,7 +33,7 @@ public class DayWorkoutPlan {
     private String workoutName;
 
     // is the current day a rest day meaning no workout
-    // rest days are intentional and are reccommended but are also
+    // rest days are intentional and are recommended but are also
     // catered to user availability
     private boolean isRestDay;
 

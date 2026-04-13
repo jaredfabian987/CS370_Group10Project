@@ -1,4 +1,7 @@
 package com.repit.model.enums;
 
-public class ExerciseType {
+public enum ExerciseType {
+    STRENGTH,
+    CARDIO,
+    FLEXIBILITY
 }
