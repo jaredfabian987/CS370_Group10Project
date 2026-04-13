@@ -1,98 +1,158 @@
 package com.repit.model;
 
 import com.repit.model.enums.*;
-import com.repit.model.Equipment;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * How does it differ to planned exercise:
- * Exercise is like : What is a bench press? and Planned Exercises is like: do Bench press
- * for 3 sets of 10 for 100lbs on a Monday
+/*
+ * How does it differ from PlannedExercise?
+ * - Exercise: "What is a bench press?" (the definition/template)
+ * - PlannedExercise: "Do bench press for 3 sets of 10 reps at 100lbs on Monday" (the instance)
  */
-
 public class Exercise {
-
-    // exercise identification
-    private String exerciseID;
+    // id's
+    private String exerciseId;
     private String name;
-
-    // exercise classification
+    // enums
     private ExerciseCategory category;
     private DifficultyLevel difficulty;
     private ExerciseType exerciseType;
 
-    // the following variables are used for calculating an exercise's priority score
+    // compounds score for heap
     private int compoundScore;
-    // help identify the muscles used in a workout
+
+    // Help identify the muscles used in a workout
     private List<String> primaryMuscles;
     private List<String> secondaryMuscles;
 
-    // what are some required equipment
-    private List<String> requiredEquipment;
-
-    // the following variables are used for ui variables
-    //private String instructions; // how to do it
-    //private String formTips; // tips for form
-    // private String commonMistakes;
-    //private String videoURL; // url
+    // equipment
+    private List<Equipment> requiredEquipment;
 
     // tracking
-    private TrackingType trackingType;
-    private boolean isCustom; // is the exercise user defined?
-    private String userID;
+    private TrackingType trackingType;  // REPS_AND_WEIGHT, TIME, DISTANCE, etc.
+    private boolean isCustom;           // User-defined exercise?
+    private String userId;              // If custom, who created it?
 
-    // default constructor
-    public Exercise (){
+    // construcots
+    public Exercise() {
         this.primaryMuscles = new ArrayList<>();
         this.secondaryMuscles = new ArrayList<>();
         this.requiredEquipment = new ArrayList<>();
         this.isCustom = false;
     }
 
-    public Exercise (String name, ExerciseCategory category, DifficultyLevel difficulty, int compoundScore){
-        this(); // call default constructor
+    public Exercise(String name, ExerciseCategory category,
+                    DifficultyLevel difficulty, int compoundScore) {
+        this();  // Call default constructor first
         this.name = name;
         this.category = category;
         this.difficulty = difficulty;
         this.compoundScore = compoundScore;
     }
 
-    // class methods
-    public void addRequiredEquipment (String equipment) {
+    // methods
+    public void addRequiredEquipment(Equipment equipment) {
         if (!requiredEquipment.contains(equipment)) {
             requiredEquipment.add(equipment);
         }
     }
-    public void addPrimaryMuscle (String muscle) {
+
+
+    public void addPrimaryMuscle(String muscle) {
         if (!primaryMuscles.contains(muscle)) {
             primaryMuscles.add(muscle);
         }
     }
-    public void addSecondaryMuscle (String muscle) {
+
+
+    public void addSecondaryMuscle(String muscle) {
         if (!secondaryMuscles.contains(muscle)) {
-            primaryMuscles.add(muscle);
+            secondaryMuscles.add(muscle);  // ← Fixed! Was primaryMuscles
         }
     }
 
-    // does an exercise require equipment
-    public boolean requiresEquipment (String equipmentID) {
-        for (String e: requiredEquipment) {
-            if (e.getEquipmentID() == equipmentID){}
-      `       return true;
+    /*
+
+     */
+    public boolean requiresEquipment(String equipmentId) {
+        for (Equipment eq : requiredEquipment) {
+            if (eq.getEquipmentID().equals(equipmentId)) {  // ← Fixed!
+                return true;
+            }
         }
         return false;
     }
-    // is this exercise a bodyweight exercise
 
-    public boolean isBodyWeight() {
-        if (requiredEquipment.isEmpty()){
+    /**
+     * Check if this is a bodyweight exercise (no equipment needed)
+     */
+    public boolean isBodyweight() {
+        if (requiredEquipment.isEmpty()) {
             return true;
         }
-        /*
-        if (requiredEquipment.size() == 1 ){ // idek anymore
-            return requiredEquipment.get(0).equals("none");
+        if (requiredEquipment.size() == 1) {
+            return requiredEquipment.getFirst().getEquipmentID().equals("none");
         }
-        */
         return false;
+    }
+
+
+
+    public String getExerciseId() {return exerciseId;}
+
+    public void setExerciseId(String exerciseId) {this.exerciseId = exerciseId;}
+
+    public String getName() {return name;}
+
+    public void setName(String name) {this.name = name;}
+
+    public ExerciseCategory getCategory() {return category;}
+
+    public void setCategory(ExerciseCategory category) {this.category = category;}
+
+    public DifficultyLevel getDifficulty() {return difficulty;}
+
+    public void setDifficulty(DifficultyLevel difficulty) {this.difficulty = difficulty;}
+
+    public ExerciseType getExerciseType() {return exerciseType;}
+
+    public void setExerciseType(ExerciseType type) {this.exerciseType = type;}
+    public int getCompoundScore() {return compoundScore;}
+
+    public void setCompoundScore(int score) {
+        if (score < 1 || score > 10) {
+            throw new IllegalArgumentException("Compound score must be 1-10, got: " + score);
+        }
+        this.compoundScore = score;
+    }
+
+    public List<String> getPrimaryMuscles() {return primaryMuscles;}
+
+    public void setPrimaryMuscles(List<String> muscles) {this.primaryMuscles = muscles;}
+
+    public List<String> getSecondaryMuscles() {return secondaryMuscles;}
+
+    public void setSecondaryMuscles(List<String> muscles) {this.secondaryMuscles = muscles;}
+
+    public List<Equipment> getRequiredEquipment() {return requiredEquipment;}
+
+    public void setRequiredEquipment(List<Equipment> equipment) {this.requiredEquipment = equipment;}
+
+    public TrackingType getTrackingType() {return trackingType;}
+
+    public void setTrackingType(TrackingType type) {this.trackingType = type;}
+
+    public boolean isCustom() {return isCustom;}
+
+    public void setCustom(boolean custom) {this.isCustom = custom;}
+
+    public String getUserId() {return userId;}
+
+    public void setUserId(String userId) {this.userId = userId;}
+
+    // toString() - For debugging
+    @Override
+    public String toString() {
+        return name + " (" + category + ", " + difficulty + ", compound: " + compoundScore + "/10)";
+    }
 }
