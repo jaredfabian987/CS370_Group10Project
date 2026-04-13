@@ -83,9 +83,7 @@ public class Exercise {
         return false;
     }
 
-    /**
-     * Check if this is a bodyweight exercise (no equipment needed)
-     */
+   // is it a bodyweight movement
     public boolean isBodyweight() {
         if (requiredEquipment.isEmpty()) {
             return true;
