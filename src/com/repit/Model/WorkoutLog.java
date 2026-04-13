@@ -13,10 +13,9 @@ public class WorkoutLog {
     public int getCompletion() { return isCompleted ? 1 : 0; }
     public String getDate() { return date; }
 
-    public WorkoutLog(int pLogId, int pUserId, int pExerciseId, boolean pIsCompleted,
+    public WorkoutLog(int plogId, int pUserId, int pExerciseId, boolean pIsCompleted,
                       String date)
     {
-        logId = pLogId;
         userId = pUserId;
         exerciseId = pExerciseId;
         isCompleted = pIsCompleted;
