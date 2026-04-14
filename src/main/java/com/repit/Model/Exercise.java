@@ -1,4 +1,4 @@
-package com.repit.model;
+package com.repit.Model;
 
 import com.repit.model.enums.*;
 import java.util.ArrayList;

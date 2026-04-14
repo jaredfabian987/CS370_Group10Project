@@ -1,4 +1,4 @@
-package com.repit.model;
+package com.repit.Model;
 
 
 /**

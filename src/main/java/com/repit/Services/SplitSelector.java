@@ -1,4 +1,4 @@
-package com.repit.services;
+package com.repit.Services;
 
 import java.time.DayOfWeek;
 import java.util.*;
@@ -34,7 +34,7 @@ public class SplitSelector {
     }
     // select optial workout based on avaiable days
     /**
-     * @param avaibleDays is the set of days that the user can workout
+     * @param availableDays is the set of days that the user can workout
      * @param goal is the user's fitness goal
      * @return is an order list of the workout type for each day
      *
@@ -60,7 +60,7 @@ public class SplitSelector {
 
 
     public static List <WorkoutType> selectSplit (Set<DayOfWeek> availableDays, String goal){
-
+        return  null;
     }
 
 }

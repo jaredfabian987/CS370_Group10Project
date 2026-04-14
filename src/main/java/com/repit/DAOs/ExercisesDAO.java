@@ -10,10 +10,20 @@ public class ExercisesDAO extends BaseDAO {
 
     private static final String TABLE_SQL =
             "CREATE TABLE IF NOT EXISTS exercises (" +
+                    //id's
                     "exerciseId INTEGER PRIMARY KEY," +
-                    "userId INTEGER NOT NULL," +
                     "name TEXT NOT NULL," +
-                    "sets INTEGER NOT NULL,"+
+                    //enums
+                    "category INTEGER NOT NULL, "+
+                    "difficulty INTEGER NOT NULL, "+
+                    "exerciseType INTEGER NOT NULL, "+
+                    //compounds score for heap
+                    "compoundScore INTEGER NOT NULL, "+
+                    //muscle identification
+                    "primaryMuscles STRING NOT NULL, "+
+                    "secondaryMuscles STRING, "+
+                    //equipment
+                    "requiredEquipmentId NOT NULL,"+
                     "reps INTEGER NOT NULL," +
                     "muscleGroup TEXT NOT NULL,"+
                     "difficulty TEXT NOT NULL"+

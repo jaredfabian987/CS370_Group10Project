@@ -7,13 +7,13 @@ import com.repit.Model.FitnessProfile;
 public class FitnessProfileBuilder {
     FitnessProfileDAO fitnessProfileDAO = new FitnessProfileDAO();
     public FitnessProfile saveProfile(int userId, double weight, double height, int daysPerWeek,
-                                      double minsAvailablePerWorkout, FitnessLevel level, FitnessGoal goal){
+                                      double minsAvailablePerWorkout, FitnessProfile.FitnessLevel level, FitnessProfile.FitnessGoal goal){
         FitnessProfile profile = new FitnessProfile(userId, weight, height, daysPerWeek, minsAvailablePerWorkout, level, goal);
         fitnessProfileDAO.saveProfile(profile);
         return fitnessProfileDAO.getProfile(userId);
     }
 
-    public FitnessProfile getProfile(){
+    public FitnessProfile getProfile(int userId){
         return fitnessProfileDAO.getProfile(userId);
     }
 

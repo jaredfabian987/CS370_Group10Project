@@ -1,4 +1,4 @@
-package com.repit.model.enums;
+package com.repit.Model.enums;
 
 public enum DifficultyLevel {
     BEGINNER,
