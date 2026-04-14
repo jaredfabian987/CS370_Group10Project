@@ -35,7 +35,7 @@ public class WorkoutLogsDAO {
         ArrayList<WorkoutLog> listLogs = new ArrayList<>();
         try {
             Connection conn = DriverManager.getConnection("jdbc:sqlite:repit.db");
-            Statement stmt = conn.createStatement();
+            Statement stmt = connect.createStatement();
             stmt.execute(TABLE_SQL);
 
             PreparedStatement pstmt = conn.prepareStatement(SELECT_SQL);
