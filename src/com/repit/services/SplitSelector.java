@@ -52,10 +52,10 @@ public class SplitSelector {
      *
      * some examples:
      * selectSplit({Mon,WEd, Fri}), "MUSCLE BUILDING")
-     * -> [upper, lower, full body]
+     * result =  [upper, lower, full body]
      *
      * selectSplit({MON, WED, FRI}, "WEIGHT_LOSS")
-     * -> [UPPER, LOWER, CARDIO]
+     * result = [UPPER, LOWER, CARDIO]
      */
 
 
