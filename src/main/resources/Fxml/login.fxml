@@ -1,14 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="src.java.com.repit.Controllers.loginController"
-            prefHeight="400.0" prefWidth="600.0">
-
-</AnchorPane>
+<BorderPane fx:id="loginFrame" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.repit.Controllers.loginController">
+   <right>
+      <VBox fx:id="loginPane" prefHeight="400.0" prefWidth="189.0" BorderPane.alignment="CENTER">
+         <children>
+            <StackPane prefHeight="150.0" prefWidth="200.0">
+               <children>
+                  <Text fx:id="loginPaneTitleText" strokeType="OUTSIDE" strokeWidth="0.0" text="Login">
+                     <font>
+                        <Font name="Segoe UI" size="43.0" />
+                     </font>
+                  </Text>
+               </children>
+            </StackPane>
+            <TextField fx:id="loginField" promptText="Username">
+               <VBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </VBox.margin></TextField>
+            <PasswordField promptText="Password">
+               <VBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </VBox.margin></PasswordField>
+            <StackPane prefHeight="36.0" prefWidth="189.0">
+               <children>
+                  <Button fx:id="loginButton" mnemonicParsing="false" prefHeight="25.0" prefWidth="167.0" text="Login" />
+               </children>
+            </StackPane>
+            <Hyperlink fx:id="loginPaneLinker" text="Hyperlink" />
+         </children>
+      </VBox>
+   </right>
+   <left>
+      <ImageView fitHeight="401.0" fitWidth="411.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+         <image>
+            <Image url="@../Images/repitLogin.jpeg" />
+         </image>
+      </ImageView>
+   </left>
+</BorderPane>
