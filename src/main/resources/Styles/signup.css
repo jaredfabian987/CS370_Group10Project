@@ -1,0 +1,75 @@
+/* Root */
+.root {
+    -fx-background-color: #1e1e1e;
+    -fx-font-family: "Segoe UI";
+}
+
+/* Form panel (right side) */
+.vbox {
+    -fx-background-color: #2a2a2a;
+    -fx-padding: 20;
+    -fx-spacing: 10;
+}
+
+/* Title (Login / Signup) */
+.text {
+    -fx-fill: #e0e0e0;
+    -fx-font-size: 36px;
+}
+
+/* Inputs */
+.text-field,
+.password-field {
+    -fx-background-color: #3a3a3a;
+    -fx-text-fill: #ffffff;
+    -fx-prompt-text-fill: #aaaaaa;
+
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-border-color: transparent;
+
+    -fx-padding: 8 10;
+}
+
+/* Focus */
+.text-field:focused,
+.password-field:focused {
+    -fx-background-color: #404040;
+    -fx-border-color: #5a5a5a;
+}
+
+/* Buttons */
+.button {
+    -fx-background-color: #444444;
+    -fx-text-fill: #ffffff;
+
+    -fx-background-radius: 6;
+    -fx-padding: 8 15;
+
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: #555555;
+}
+
+.button:pressed {
+    -fx-background-color: #666666;
+}
+
+/* Hyperlink (used in login) */
+.hyperlink {
+    -fx-text-fill: #bbbbbb;
+}
+
+.hyperlink:hover {
+    -fx-text-fill: #ffffff;
+}
+
+/* Remove glow */
+.button:focused,
+.text-field:focused,
+.password-field:focused {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}

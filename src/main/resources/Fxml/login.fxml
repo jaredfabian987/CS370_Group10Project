@@ -1,12 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-<BorderPane fx:id="loginFrame" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.repit.Controllers.loginController">
+<BorderPane fx:id="loginFrame" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@../Styles/login.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.repit.Controllers.loginController">
    <right>
       <VBox fx:id="loginPane" prefHeight="400.0" prefWidth="189.0" BorderPane.alignment="CENTER">
          <children>
@@ -29,7 +36,7 @@
                </VBox.margin></PasswordField>
             <StackPane prefHeight="36.0" prefWidth="189.0">
                <children>
-                  <Button fx:id="loginButton" mnemonicParsing="false" prefHeight="25.0" prefWidth="167.0" text="Login" />
+                  <Button id="loginButton" fx:id="loginButton" mnemonicParsing="false" onAction="#checkLogin" prefHeight="25.0" prefWidth="167.0" text="Login" />
                </children>
             </StackPane>
             <Hyperlink fx:id="loginPaneLinker" text="Hyperlink" />
