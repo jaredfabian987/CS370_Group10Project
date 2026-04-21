@@ -5,17 +5,16 @@ import javax.xml.transform.Result;
 import java.sql.*;
 import java.util.ArrayList;
 
-public class WorkoutLogsDAO {
-    private int userId;
+public class WorkoutLogsDAO extends BaseDAO {
 
     private static final String TABLE_SQL =
             "CREATE TABLE IF NOT EXISTS workout_logs (" +
-            "logId INTEGER PRIMARY KEY," +
-            "userId INTEGER NOT NULL," +
-            "exerciseId INTEGER NOT NULL," +
-            "isCompleted INTEGER NOT NULL,"+
-            "date TEXT NOT NULL"+
-            ")";
+                    "logId INTEGER PRIMARY KEY," +
+                    "userId INTEGER NOT NULL," +
+                    "exerciseId INTEGER NOT NULL," +
+                    "isCompleted INTEGER NOT NULL,"+
+                    "date TEXT NOT NULL"+
+                    ")";
 
     private static final String INSERT_SQL =
             "INSERT INTO workout_logs (userId, exerciseId, isCompleted, date) " +
@@ -27,20 +26,18 @@ public class WorkoutLogsDAO {
     private static final String DELETE_SQL =
             "DELETE FROM workout_logs WHERE logId = ? AND userID = ?";
 
-    WorkoutLogsDAO(int newId){
-        userId = newId;
+    public WorkoutLogsDAO(){
+        super();
     }
 
-    public ArrayList<WorkoutLog> getLogs(){
+    public ArrayList<WorkoutLog> getLogs(int userId){
         ArrayList<WorkoutLog> listLogs = new ArrayList<>();
         try {
-            Connection conn = DriverManager.getConnection("jdbc:sqlite:repit.db");
-            Statement stmt = connect.createStatement();
+            Statement stmt = connection.createStatement();
             stmt.execute(TABLE_SQL);
 
-            PreparedStatement pstmt = conn.prepareStatement(SELECT_SQL);
+            PreparedStatement pstmt = connection.prepareStatement(SELECT_SQL);
             pstmt.setInt(1, userId);
-            pstmt.executeUpdate();
 
             ResultSet rs = pstmt.executeQuery();
             while(rs.next()){
@@ -62,11 +59,10 @@ public class WorkoutLogsDAO {
 
     public boolean saveWorkoutLog(WorkoutLog logTosave){
         try {
-            Connection conn = DriverManager.getConnection("jdbc:sqlite:repit.db");
-            Statement stmt = conn.createStatement();
+            Statement stmt = connection.createStatement();
             stmt.execute(TABLE_SQL);
 
-            PreparedStatement pstmt = conn.prepareStatement(INSERT_SQL);
+            PreparedStatement pstmt = connection.prepareStatement(INSERT_SQL);
             pstmt.setInt(1, logTosave.getUserId());
             pstmt.setInt(2, logTosave.getExerciseId());
             pstmt.setInt(3, logTosave.getCompletion());
@@ -80,12 +76,14 @@ public class WorkoutLogsDAO {
         }
     }
 
-    public boolean deleteWorkoutLog(int logId){
+    public boolean deleteWorkoutLog(int logId, int userId){
         try {
-            Connection conn = DriverManager.getConnection("jdbc:sqlite:repit.db");
-            PreparedStatement pstmt = conn.prepareStatement(DELETE_SQL);
-            pstmt.setInt(1, userId);
-            pstmt.setInt(2, logId);
+            Statement stmt = connection.createStatement();
+            stmt.execute(TABLE_SQL);
+
+            PreparedStatement pstmt = connection.prepareStatement(DELETE_SQL);
+            pstmt.setInt(1, logId);
+            pstmt.setInt(2, userId);
             pstmt.executeUpdate();
             return true;
         } catch (Exception e){
@@ -96,6 +94,7 @@ public class WorkoutLogsDAO {
 
     public boolean deleteWorkoutLog(WorkoutLog log){
         int logId = log.getLogId();
-        return deleteWorkoutLog(logId);
+        int userId = log.getUserId();
+        return deleteWorkoutLog(logId, userId);
     }
 }
