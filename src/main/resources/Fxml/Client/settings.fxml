@@ -1,8 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.repit.Controllers.Client.settingsController">
-
+<AnchorPane prefHeight="640.0" prefWidth="960.0" styleClass="screen settings-screen" stylesheets="@../../Styles/settings.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.repit.Controllers.Client.settingsController">
+   <children>
+      <VBox layoutY="-6.0" spacing="18.0" AnchorPane.bottomAnchor="6.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-6.0">
+         <padding>
+            <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+         </padding>
+         <children>
+            <HBox alignment="CENTER_LEFT" spacing="12.0">
+               <children>
+                  <VBox spacing="4.0">
+                     <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="screen-title" text="Settings" />
+                        <Label text="Manage your account, preferences, and coaching defaults." />
+                     </children>
+                  </VBox>
+                  <Region HBox.hgrow="ALWAYS" />
+                  <Button mnemonicParsing="false" text="Save All" />
+               </children>
+            </HBox>
+            <HBox spacing="18.0" VBox.vgrow="ALWAYS">
+               <children>
+                  <VBox spacing="14.0" styleClass="panel-card content-card" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label styleClass="section-title" text="Profile" />
+                        <TextField promptText="Display name" />
+                        <TextField promptText="Email address" />
+                        <ComboBox promptText="Experience level" />
+                        <Separator />
+                        <Label styleClass="section-title" text="Training Preferences" />
+                        <ComboBox promptText="Preferred workout length" />
+                        <ComboBox promptText="Preferred training days" />
+                        <CheckBox mnemonicParsing="false" text="Auto-regenerate plans when schedule changes" />
+                        <CheckBox mnemonicParsing="false" text="Include deload recommendations" />
+                     </children>
+                  </VBox>
+                  <VBox prefWidth="300.0" spacing="14.0" styleClass="panel-card sidebar-card">
+                     <children>
+                        <Label styleClass="section-title" text="Notifications" />
+                        <CheckBox mnemonicParsing="false" selected="true" text="Workout reminders" />
+                        <CheckBox mnemonicParsing="false" selected="true" text="Weekly progress summaries" />
+                        <CheckBox mnemonicParsing="false" text="Recovery alerts" />
+                        <Separator />
+                        <Label styleClass="section-title" text="Privacy" />
+                        <CheckBox mnemonicParsing="false" text="Share progress with coach" />
+                        <CheckBox mnemonicParsing="false" text="Show profile in leaderboard features" />
+                        <Region VBox.vgrow="ALWAYS" />
+                        <Button mnemonicParsing="false" text="Reset Preferences" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
 </AnchorPane>

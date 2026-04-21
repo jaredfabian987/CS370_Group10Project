@@ -1,70 +1,109 @@
-/* Root background */
 .root {
-    -fx-background-color: #1e1e1e;
+    -fx-background-color: #111315;
     -fx-font-family: "Segoe UI";
 }
 
-/* Right login panel */
-#loginPane {
-    -fx-background-color: #2a2a2a;
-    -fx-padding: 20;
-    -fx-spacing: 10;
-}
-
-/* Title text */
 #loginPaneTitleText {
-    -fx-fill: #e0e0e0;
+    -fx-fill: #f3f4f6;
 }
 
-/* Text fields (username & password) */
+.auth-card {
+    -fx-background-color: #181b1f;
+    -fx-background-radius: 16;
+    -fx-border-color: #242a31;
+    -fx-border-radius: 16;
+    -fx-padding: 24;
+    -fx-spacing: 12;
+}
+
+.auth-media-card {
+    -fx-background-color: #181b1f;
+    -fx-background-radius: 16;
+    -fx-border-color: #242a31;
+    -fx-border-radius: 16;
+}
+
+.auth-image {
+    -fx-opacity: 0.42;
+}
+
+.auth-media-copy {
+    -fx-background-color: rgba(17, 19, 21, 0.78);
+    -fx-background-radius: 12;
+    -fx-padding: 14;
+}
+
+.auth-title {
+    -fx-font-size: 32px;
+    -fx-font-weight: 700;
+    -fx-fill: #f3f4f6;
+    -fx-text-fill: #f3f4f6;
+}
+
+.section-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: 700;
+    -fx-fill: #f3f4f6;
+    -fx-text-fill: #f3f4f6;
+}
+
+.field-label {
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #8a919b;
+}
+
+.label {
+    -fx-text-fill: #7f8792;
+}
+
 .text-field,
 .password-field {
-    -fx-background-color: #3a3a3a;
-    -fx-text-fill: #ffffff;
-    -fx-prompt-text-fill: #aaaaaa;
-    -fx-background-radius: 6;
-    -fx-border-radius: 6;
-    -fx-border-color: transparent;
-    -fx-padding: 8 10;
+    -fx-background-color: #14171a;
+    -fx-text-fill: #f3f4f6;
+    -fx-prompt-text-fill: #71717a;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-border-color: #2a2f36;
+    -fx-padding: 10 12;
 }
 
-/* Focus effect */
 .text-field:focused,
 .password-field:focused {
-    -fx-border-color: #5a5a5a;
-    -fx-background-color: #404040;
+    -fx-border-color: #52525b;
+    -fx-background-color: #161a1e;
 }
 
-/* Button styling */
 .button {
-    -fx-background-color: #444444;
-    -fx-text-fill: #ffffff;
-    -fx-background-radius: 6;
-    -fx-padding: 8 15;
+    -fx-background-color: #e5e7eb;
+    -fx-text-fill: #111315;
+    -fx-font-weight: 700;
+    -fx-background-radius: 8;
+    -fx-padding: 10 16;
     -fx-cursor: hand;
 }
 
-/* Button hover */
 .button:hover {
-    -fx-background-color: #555555;
+    -fx-background-color: #d4d4d8;
 }
 
-/* Button pressed */
 .button:pressed {
-    -fx-background-color: #666666;
+    -fx-background-color: #c4c4cb;
 }
 
-/* Hyperlink */
 .hyperlink {
-    -fx-text-fill: #bbbbbb;
+    -fx-text-fill: #d4d4d8;
 }
 
-/* Hyperlink hover */
 .hyperlink:hover {
-    -fx-text-fill: #ffffff;
+    -fx-text-fill: #f3f4f6;
 }
 
-/* Optional: remove bright focus outline */
+.error.label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #8a919b;
+}
+
 .button:focused,
 .text-field:focused,
 .password-field:focused {
