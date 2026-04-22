@@ -1,0 +1,73 @@
+/* Root background */
+.root {
+    -fx-background-color: #1e1e1e;
+    -fx-font-family: "Segoe UI";
+}
+
+/* Right login panel */
+#loginPane {
+    -fx-background-color: #2a2a2a;
+    -fx-padding: 20;
+    -fx-spacing: 10;
+}
+
+/* Title text */
+#loginPaneTitleText {
+    -fx-fill: #e0e0e0;
+}
+
+/* Text fields (username & password) */
+.text-field,
+.password-field {
+    -fx-background-color: #3a3a3a;
+    -fx-text-fill: #ffffff;
+    -fx-prompt-text-fill: #aaaaaa;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-border-color: transparent;
+    -fx-padding: 8 10;
+}
+
+/* Focus effect */
+.text-field:focused,
+.password-field:focused {
+    -fx-border-color: #5a5a5a;
+    -fx-background-color: #404040;
+}
+
+/* Button styling */
+.button {
+    -fx-background-color: #444444;
+    -fx-text-fill: #ffffff;
+    -fx-background-radius: 6;
+    -fx-padding: 8 15;
+    -fx-cursor: hand;
+}
+
+/* Button hover */
+.button:hover {
+    -fx-background-color: #555555;
+}
+
+/* Button pressed */
+.button:pressed {
+    -fx-background-color: #666666;
+}
+
+/* Hyperlink */
+.hyperlink {
+    -fx-text-fill: #bbbbbb;
+}
+
+/* Hyperlink hover */
+.hyperlink:hover {
+    -fx-text-fill: #ffffff;
+}
+
+/* Optional: remove bright focus outline */
+.button:focused,
+.text-field:focused,
+.password-field:focused {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
