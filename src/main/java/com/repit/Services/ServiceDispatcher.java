@@ -160,6 +160,50 @@ public class ServiceDispatcher {
         return updated;
     }
 
+    // calibration handlers
+
+    /*
+     * handleCalibrationLogRequest
+     * Called during calibration week when the user logs the
+     * weight they used for each exercise.
+     * This weight becomes their baseline working weight for
+     * all future warmup and working set calculations.
+
+     */
+
+    // the log is the workoutLog entry containing the baseline weight
+    public boolean handleCalibrationLogRequest(com.repit.Model.WorkoutLog log) {
+        //  true if calibration log was saved successfully
+        return workoutService.saveWorkoutLog(log);
+    }
+
+    /*
+     * handleCompleteCalibrationRequest
+     * Called at the end of calibration week to mark the user
+     * as calibrated so WarmupCalculator starts applying warmup
+     * sets from the next workout onwards.
+     *
+     * this is a separate handler and is not automatic because
+     * the user must complete a full week of calibration before
+     * we flip the flag value, we don't want to mark them calibrated after they do just one session
+     */
+    public boolean handleCompleteCalibrationRequest(int userId) {
+        com.repit.Model.FitnessProfile profile =
+                fitnessProfileService.getProfile(userId);
+        if (profile == null) {
+            throw new IllegalArgumentException(
+                    "No profile found for userId: " + userId
+            );
+        }
+        // flip the calibration flag on the profile
+        // this tells WarmupCalculator to start applying
+        // warmup sets from the next workout onwards
+        profile.setCalibrated(true);
+        // return true if the profile was updated successfully
+        return fitnessProfileService.updateProfile(profile);
+    }
+
+
     /*
      * to-do
      * make some of the planner handlers but after workout dao is ready

@@ -7,6 +7,7 @@ public class FitnessProfile {
     private double height;
     private int daysPerWeek;
     private double minsAvailablePerWorkout;
+    private boolean isCalibrated;
 
     public enum FitnessLevel { BEG, INT, ADV }
     public enum FitnessGoal { MAINTAIN, BUILD, MUSCLE }
@@ -23,6 +24,9 @@ public class FitnessProfile {
         this.minsAvailablePerWorkout = minsAvailablePerWorkout;
         this.level = level;
         this.goal = goal;
+        // WHY default false:
+        // every new user starts in calibration week automatically
+        this.isCalibrated = false;
     }
 
     public FitnessProfile(int profileId, int userId, double weight, double height, int daysPerWeek, double minsAvailablePerWorkout, FitnessLevel level, FitnessGoal goal) {
@@ -34,6 +38,9 @@ public class FitnessProfile {
         this.minsAvailablePerWorkout = minsAvailablePerWorkout;
         this.level = level;
         this.goal = goal;
+        // WHY default false:
+        // every new user starts in calibration week automatically
+        this.isCalibrated = false;
     }
 
     public FitnessProfile(int profileId, int userId, double weight, double height, int daysPerWeek, double minsAvailablePerWorkout, int level, int goal) {
@@ -45,6 +52,24 @@ public class FitnessProfile {
         this.minsAvailablePerWorkout = minsAvailablePerWorkout;
         this.level = FitnessLevel.values()[level];
         this.goal = FitnessGoal.values()[goal];
+        // WHY default false:
+        // every new user starts in calibration week automatically
+        this.isCalibrated = false;
+    }
+
+    // WHY we need a fourth constructor:
+    // when loading an existing profile from the database we need
+    // to restore the actual isCalibrated value, not default to false
+    public FitnessProfile(int profileId, int userId, double weight, double height, int daysPerWeek, double minsAvailablePerWorkout, int level, int goal, boolean isCalibrated) {
+        this.profileId = profileId;
+        this.userId = userId;
+        this.weight = weight;
+        this.height = height;
+        this.daysPerWeek = daysPerWeek;
+        this.minsAvailablePerWorkout = minsAvailablePerWorkout;
+        this.level = FitnessLevel.values()[level];
+        this.goal = FitnessGoal.values()[goal];
+        this.isCalibrated = isCalibrated;
     }
 
     // Getters
@@ -58,6 +83,7 @@ public class FitnessProfile {
     public FitnessGoal getGoal() { return goal;}
     public int getLevelByInt() { return level.ordinal(); }
     public int getGoalByInt() { return goal.ordinal(); }
+    public boolean isCalibrated() { return isCalibrated; }
 
     // Setters
     public  void setUserId(int userId) { this.userId = userId; }
@@ -67,6 +93,7 @@ public class FitnessProfile {
     public void setMinsAvailablePerWorkout(float minsAvailablePerWorkout) { this.minsAvailablePerWorkout = minsAvailablePerWorkout; }
     public void setLevel(FitnessLevel level) { this.level = level; }
     public void setGoal(FitnessGoal goal) { this.goal = goal; }
+    public void setCalibrated(boolean isCalibrated) { this.isCalibrated = isCalibrated; }
 
     // toString
     @Override
@@ -79,6 +106,7 @@ public class FitnessProfile {
                 ", minsAvailablePerWorkout=" + minsAvailablePerWorkout +
                 ", level=" + level +
                 ", goal=" + goal +
+                ", isCalibrated=" + isCalibrated +
                 '}';
     }
 }

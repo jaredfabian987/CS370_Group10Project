@@ -100,12 +100,20 @@ public class WarmupCalculator {
      * If they have not, warm up sets should be entirely and WorkoutGenerator
      * should only assign working sets so the user can establish a baseline weight
      *
-     * @param isCalibration the calibration flag from FitnessProfile
+     * @param isCalibrated the calibration flag from FitnessProfile
      * @return true if the user is still in calibration week, false if they have completed it and warmups only
      *
      * Example:
      * isCalibrationWeek(false) = true (not yet calibrated)
+     * isCalibrationWeek(true) = false (calibrated, use warmups)
      */
+
+    public static boolean isCalibrationWeek(boolean isCalibrated){
+        // we invert is calibrated because true means that they finished calibration
+        // so the calibration week is active when isCalibrated = false
+
+        return !isCalibrated;
+    }
 
     /**
      * calculateWarmupsBodyweight
@@ -169,6 +177,6 @@ public class WarmupCalculator {
      */
 
     private static double roundToNearest (double value, double increment) {
-        return Math.round(value * increment) / increment;
+        return Math.round(value / increment) * increment;
     }
 }
