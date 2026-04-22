@@ -5,7 +5,7 @@ import javax.xml.transform.Result;
 import java.sql.*;
 import java.util.ArrayList;
 
-public class WorkoutLogsDAO {
+public class WorkoutLogsDAO extends BaseDAO {
     private int userId;
 
     private static final String TABLE_SQL =
@@ -34,11 +34,10 @@ public class WorkoutLogsDAO {
     public ArrayList<WorkoutLog> getLogs(){
         ArrayList<WorkoutLog> listLogs = new ArrayList<>();
         try {
-            Connection conn = DriverManager.getConnection("jdbc:sqlite:repit.db");
-            Statement stmt = connect.createStatement();
+            Statement stmt = connection.createStatement();
             stmt.execute(TABLE_SQL);
 
-            PreparedStatement pstmt = conn.prepareStatement(SELECT_SQL);
+            PreparedStatement pstmt = connection.prepareStatement(SELECT_SQL);
             pstmt.setInt(1, userId);
             pstmt.executeUpdate();
 
