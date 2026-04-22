@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Priority?>
@@ -45,8 +46,6 @@
                               <Label text="Show a new demo video here for the active exercise." />
                            </children>
                         </VBox>
-                        <Region HBox.hgrow="ALWAYS" />
-                        <Button mnemonicParsing="false" text="Pause Timer" />
                      </children>
                   </HBox>
                   <HBox spacing="18.0" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
@@ -55,24 +54,31 @@
                            <children>
                               <Label styleClass="section-title" text="Media Player" />
                               <Label text="Current exercise: Romanian Deadlift" />
-                              <StackPane fx:id="exerciseMediaPane" minHeight="420.0" prefHeight="420.0" styleClass="media-player-surface" VBox.vgrow="ALWAYS">
+                              <StackPane styleClass="media-player-frame" VBox.vgrow="ALWAYS">
                                  <children>
-                                    <Label styleClass="media-placeholder-text" text="Video player area" />
+                                    <StackPane fx:id="exerciseMediaPane" maxHeight="360.0" maxWidth="480.0" minHeight="360.0" minWidth="480.0" prefHeight="360.0" prefWidth="480.0" styleClass="media-player-surface">
+                                       <children>
+                                          <Label styleClass="media-placeholder-text" text="4:3 video area" />
+                                       </children>
+                                    </StackPane>
                                  </children>
                               </StackPane>
                            </children>
                         </VBox>
                         <VBox prefWidth="280.0" spacing="12.0" styleClass="panel-card detail-card">
                            <children>
-                              <Label styleClass="section-title" text="Set Log" />
-                              <Label text="Set 1 - 135 lb x 8" />
-                              <Label text="Set 2 - 135 lb x 8" />
-                              <Label text="Set 3 - 145 lb x 6" />
+                              <Label styleClass="section-title" text="Required Equipment" />
+                              <Label text="Barbell" />
+                              <Label text="Weight plates" />
+                              <Label text="Flat lifting area" />
+                              <Separator />
+                              <Label styleClass="section-title" text="Reps Done" />
+                              <TextField fx:id="repsDoneField" promptText="Enter reps completed" />
                               <Separator />
                               <Label styleClass="section-title" text="Coaching Cue" />
                               <Label text="Stay braced through the hinge and keep the bar close to your legs." wrapText="true" />
                               <Region VBox.vgrow="ALWAYS" />
-                              <Button mnemonicParsing="false" text="Log Next Set" />
+                              <Button mnemonicParsing="false" text="Next Exercise" />
                            </children>
                         </VBox>
                      </children>

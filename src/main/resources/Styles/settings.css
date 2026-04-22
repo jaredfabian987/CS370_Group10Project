@@ -26,8 +26,8 @@
 }
 
 .button {
-    -fx-background-color: #e5e7eb;
-    -fx-text-fill: #111315;
+    -fx-background-color: #22c55e;
+    -fx-text-fill: #f8fffb;
     -fx-font-weight: 700;
     -fx-background-radius: 8;
     -fx-padding: 10 18;
@@ -35,11 +35,11 @@
 }
 
 .button:hover {
-    -fx-background-color: #d4d4d8;
+    -fx-background-color: #16a34a;
 }
 
 .button:pressed {
-    -fx-background-color: #c4c4cb;
+    -fx-background-color: #15803d;
 }
 
 .text-field,
@@ -55,7 +55,7 @@
 
 .text-field:focused,
 .combo-box:focused {
-    -fx-border-color: #52525b;
+    -fx-border-color: #22c55e;
 }
 
 .combo-box .list-cell {
@@ -79,7 +79,7 @@
 }
 
 .check-box:selected .mark {
-    -fx-background-color: #e5e7eb;
+    -fx-background-color: #22c55e;
 }
 
 .separator .line {
