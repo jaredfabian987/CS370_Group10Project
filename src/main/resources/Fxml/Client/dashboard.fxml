@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="640.0" prefWidth="960.0" styleClass="screen dashboard-screen" stylesheets="@../../Styles/dashboard.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.repit.Controllers.Client.dashboardController">
+   <children>
+      <VBox fillWidth="true" prefHeight="640.0" prefWidth="960.0" spacing="20.0" styleClass="screen-shell" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <padding>
+            <Insets bottom="26.0" left="26.0" right="26.0" top="26.0" />
+         </padding>
+         <children>
+            <HBox alignment="CENTER_LEFT" spacing="14.0">
+               <children>
+                  <VBox spacing="4.0">
+                     <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="screen-title" text="Dashboard" />
+                        <Label text="Track this week, stay consistent, and keep your plan in motion." wrapText="true" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <HBox spacing="18.0" VBox.vgrow="ALWAYS">
+               <children>
+                  <VBox prefWidth="360.0" spacing="18.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <VBox spacing="14.0" styleClass="panel-card content-card" VBox.vgrow="ALWAYS">
+                           <children>
+                              <VBox spacing="6.0" styleClass="card-header">
+                                 <children>
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="panel-title" text="Today's Workout" />
+                                    <Label text="Lower Body Strength" styleClass="card-highlight" />
+                                    <Label text="Estimated time: 45 minutes" />
+                                 </children>
+                              </VBox>
+                              <Separator />
+                              <VBox spacing="10.0" styleClass="card-body" VBox.vgrow="ALWAYS">
+                                 <children>
+                                    <Label text="Warm-up - 5 min mobility" />
+                                    <Label text="Primary Lift - Barbell squat" />
+                                    <Label text="Accessories - Split squats, calf raises, plank holds" wrapText="true" />
+                                    <Region VBox.vgrow="ALWAYS" />
+                                 </children>
+                              </VBox>
+                              <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Start Workout" />
+                           </children>
+                        </VBox>
+                        <VBox spacing="14.0" styleClass="panel-card content-card" VBox.vgrow="ALWAYS">
+                           <children>
+                              <VBox spacing="6.0" styleClass="card-header">
+                                 <children>
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="panel-title" text="Progress" />
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="stat-value" text="4 / 5 workouts" />
+                                    <Label text="Weekly completion" />
+                                 </children>
+                              </VBox>
+                              <Separator />
+                              <VBox spacing="12.0" styleClass="card-body" VBox.vgrow="ALWAYS">
+                                 <children>
+                                    <ProgressBar prefWidth="260.0" progress="0.8" />
+                                    <Label text="You are on pace to complete this week's plan." wrapText="true" />
+                                    <Region VBox.vgrow="ALWAYS" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </VBox>
+                     </children>
+                  </VBox>
+                  <VBox prefWidth="520.0" spacing="14.0" styleClass="panel-card content-card planner-card" HBox.hgrow="ALWAYS">
+                     <children>
+                        <VBox spacing="6.0" styleClass="card-header">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="panel-title" text="Weekly Planner" />
+                              <Label text="Your current seven-day plan, with active sessions and recovery blocks." wrapText="true" />
+                           </children>
+                        </VBox>
+                        <Separator />
+                        <VBox spacing="12.0" styleClass="card-body" VBox.vgrow="ALWAYS">
+                           <children>
+                              <GridPane hgap="12.0" vgap="12.0" styleClass="planner-grid">
+                                 <children>
+                                    <VBox prefWidth="110.0" spacing="6.0" styleClass="mini-card">
+                                       <children>
+                                          <Label text="Mon" styleClass="planner-day" />
+                                          <Label text="Completed" styleClass="planner-item" />
+                                          <Label text="Upper Body" wrapText="true" />
+                                       </children>
+                                    </VBox>
+                                    <VBox prefWidth="110.0" spacing="6.0" styleClass="mini-card mini-card-active" GridPane.columnIndex="1">
+                                       <children>
+                                          <Label text="Tue" styleClass="planner-day" />
+                                          <Label text="Today" styleClass="planner-item" />
+                                          <Label text="Leg Day - 45 min" wrapText="true" />
+                                       </children>
+                                    </VBox>
+                                    <VBox prefWidth="110.0" spacing="6.0" styleClass="mini-card" GridPane.columnIndex="2">
+                                       <children>
+                                          <Label text="Wed" styleClass="planner-day" />
+                                          <Label text="Recovery" styleClass="planner-item" />
+                                          <Label text="Walk and mobility" wrapText="true" />
+                                       </children>
+                                    </VBox>
+                                    <VBox prefWidth="110.0" spacing="6.0" styleClass="mini-card" GridPane.columnIndex="3">
+                                       <children>
+                                          <Label text="Thu" styleClass="planner-day" />
+                                          <Label text="Scheduled" styleClass="planner-item" />
+                                          <Label text="Push - 60 min" wrapText="true" />
+                                       </children>
+                                    </VBox>
+                                    <VBox prefWidth="110.0" spacing="6.0" styleClass="mini-card" GridPane.rowIndex="1">
+                                       <children>
+                                          <Label text="Fri" styleClass="planner-day" />
+                                          <Label text="Recovery" styleClass="planner-item" />
+                                          <Label text="Stretch and reset" wrapText="true" />
+                                       </children>
+                                    </VBox>
+                                    <VBox prefWidth="110.0" spacing="6.0" styleClass="mini-card" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                       <children>
+                                          <Label text="Sat" styleClass="planner-day" />
+                                          <Label text="Scheduled" styleClass="planner-item" />
+                                          <Label text="Core - 30 min" wrapText="true" />
+                                       </children>
+                                    </VBox>
+                                    <VBox prefWidth="110.0" spacing="6.0" styleClass="mini-card" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                       <children>
+                                          <Label text="Sun" styleClass="planner-day" />
+                                          <Label text="Recovery" styleClass="planner-item" />
+                                          <Label text="Light activity only" wrapText="true" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </GridPane>
+                              <Region VBox.vgrow="ALWAYS" />
+                           </children>
+                        </VBox>
+                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Open Planner" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>
