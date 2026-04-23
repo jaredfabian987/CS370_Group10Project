@@ -82,6 +82,17 @@
     -fx-background-color: #22c55e;
 }
 
+.check-box .box,
+.radio-button .radio {
+    -fx-background-color: #14171a;
+    -fx-border-color: #2a2f36;
+}
+
+.check-box:selected .mark,
+.radio-button:selected .dot {
+    -fx-background-color: #22c55e;
+}
+
 .separator .line {
     -fx-border-color: #2a2f36;
 }

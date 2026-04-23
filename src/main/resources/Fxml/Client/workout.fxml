@@ -5,16 +5,15 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Priority?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="640.0" prefWidth="960.0" styleClass="screen workout-screen" stylesheets="@../../Styles/workout.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.repit.Controllers.Client.workoutController">
+<AnchorPane prefHeight="640.0" prefWidth="960.0" styleClass="screen workout-screen" stylesheets="@../../Styles/workout.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.repit.Controllers.Client.workoutController">
    <children>
       <HBox spacing="18.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <padding>
@@ -24,16 +23,16 @@
             <VBox prefWidth="300.0" spacing="16.0" styleClass="panel-card sidebar-card">
                <children>
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="panel-title" text="Current Workout" />
-                  <Label styleClass="section-title" text="Lower Body Strength" />
-                  <Label text="Estimated duration: 45 minutes" />
-                  <ProgressBar prefWidth="240.0" progress="0.42" />
-                  <Label text="3 of 7 blocks completed" />
+                  <Label fx:id="workoutAreaLabel" styleClass="section-title" text="Lower Body Strength" />
+                  <Label fx:id="workoutDurationLabel" text="Estimated duration: 45 minutes" />
+                  <ProgressBar fx:id="workoutProgressBar" prefWidth="240.0" progress="0.42" />
+                  <Label fx:id="workoutCompletionLabel" text="3 of 7 exercises completed" />
                   <Separator />
                   <Label styleClass="section-title" text="Up Next" />
-                  <Label text="Romanian Deadlift" />
-                  <Label text="3 sets x 8 reps" />
+                  <Label fx:id="nextExerciseLabel" text="Romanian Deadlift" />
+                  <Label fx:id="nextExerciseAmtLabel" text="3 sets x 8 reps" />
                   <Region VBox.vgrow="ALWAYS" />
-                  <Button mnemonicParsing="false" prefWidth="240.0" text="Finish Workout" />
+                  <Button fx:id="finishWorkoutButton" mnemonicParsing="false" onAction="#finishWorkoutClicked" prefWidth="240.0" text="Finish Workout" />
                </children>
             </VBox>
             <VBox spacing="18.0" HBox.hgrow="ALWAYS">
@@ -53,7 +52,7 @@
                         <VBox spacing="12.0" styleClass="panel-card content-card" HBox.hgrow="ALWAYS">
                            <children>
                               <Label styleClass="section-title" text="Media Player" />
-                              <Label text="Current exercise: Romanian Deadlift" />
+                              <Label fx:id="currentExerciseLabel" text="Current exercise: Romanian Deadlift" />
                               <StackPane styleClass="media-player-frame" VBox.vgrow="ALWAYS">
                                  <children>
                                     <StackPane fx:id="exerciseMediaPane" maxHeight="360.0" maxWidth="480.0" minHeight="360.0" minWidth="480.0" prefHeight="360.0" prefWidth="480.0" styleClass="media-player-surface">
@@ -73,12 +72,19 @@
                               <Label text="Flat lifting area" />
                               <Separator />
                               <Label styleClass="section-title" text="Reps Done" />
-                              <TextField fx:id="repsDoneField" promptText="Enter reps completed" />
+                              <Spinner fx:id="repsDoneSpinner" editable="true" VBox.vgrow="ALWAYS">
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin></Spinner>
+                              <Separator />
+                              <Label styleClass="section-title" text="Sets Done" />
+                              <Spinner fx:id="setsDoneSpinner1" VBox.vgrow="ALWAYS" />
+                              <Spinner fx:id="setsDoneSpinner2" VBox.vgrow="ALWAYS" />
                               <Separator />
                               <Label styleClass="section-title" text="Coaching Cue" />
                               <Label text="Stay braced through the hinge and keep the bar close to your legs." wrapText="true" />
                               <Region VBox.vgrow="ALWAYS" />
-                              <Button mnemonicParsing="false" text="Next Exercise" />
+                              <Button fx:id="nextExerciseButton" mnemonicParsing="false" onAction="#nextExerciseClicked" text="Next Exercise" />
                            </children>
                         </VBox>
                      </children>

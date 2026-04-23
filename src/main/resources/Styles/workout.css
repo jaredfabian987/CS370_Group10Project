@@ -49,6 +49,35 @@
     -fx-background-color: #15803d;
 }
 
+.spinner {
+    -fx-background-color: null;
+}
+
+.spinner .increment-arrow-button,
+.spinner .decrement-arrow-button{
+    -fx-background-color: #22c55e;
+    /*-fx-body-color: #f8fffb;*/
+    -fx-background-radius: 5;
+}
+
+.spinner .increment-arrow-button:hover,
+.spinner .decrement-arrow-button:hover{
+    -fx-background-color: #16a34a;
+    -fx-background-radius: 5;
+}
+
+.spinner .increment-arrow-button:pressed,
+.spinner .decrement-arrow-button:pressed{
+    -fx-background-color: #15803d;
+
+    -fx-background-radius: 5;
+}
+
+.spinner .increment-arrow-button .increment-arrow,
+.spinner .decrement-arrow-button .decrement-arrow{
+    -fx-background-color: #f8fffb;
+}
+
 .text-field {
     -fx-background-color: #14171a;
     -fx-text-fill: #f3f4f6;

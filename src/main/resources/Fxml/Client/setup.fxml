@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.collections.FXCollections?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
@@ -7,17 +8,16 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
-<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<?import java.lang.String?>
-<AnchorPane prefHeight="640.0" prefWidth="900.0" styleClass="screen setup-screen" stylesheets="@../../Styles/setup.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.repit.Controllers.Client.setupController">
+<AnchorPane prefHeight="640.0" prefWidth="900.0" styleClass="screen setup-screen" stylesheets="@../../Styles/setup.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.repit.Controllers.Client.setupController">
    <children>
       <VBox spacing="18.0" styleClass="screen-shell" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
          <padding>
@@ -45,9 +45,11 @@
                               <ComboBox fx:id="mondayTimeComboBox" prefWidth="180.0" promptText="Duration" GridPane.columnIndex="1" GridPane.rowIndex="0">
                                  <items>
                                     <FXCollections fx:factory="observableArrayList">
-                                       <String fx:value="15 minutes" />
+                                       <String fx:value="10 minutes" />
+                                       <String fx:value="20 minutes" />
                                        <String fx:value="30 minutes" />
-                                       <String fx:value="45 minutes" />
+                                       <String fx:value="40 minutes" />
+                                       <String fx:value="50 minutes" />
                                        <String fx:value="60 minutes" />
                                     </FXCollections>
                                  </items>
@@ -56,9 +58,11 @@
                               <ComboBox fx:id="tuesdayTimeComboBox" prefWidth="180.0" promptText="Duration" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                  <items>
                                     <FXCollections fx:factory="observableArrayList">
-                                       <String fx:value="15 minutes" />
+                                       <String fx:value="10 minutes" />
+                                       <String fx:value="20 minutes" />
                                        <String fx:value="30 minutes" />
-                                       <String fx:value="45 minutes" />
+                                       <String fx:value="40 minutes" />
+                                       <String fx:value="50 minutes" />
                                        <String fx:value="60 minutes" />
                                     </FXCollections>
                                  </items>
@@ -67,9 +71,11 @@
                               <ComboBox fx:id="wednesdayTimeComboBox" prefWidth="180.0" promptText="Duration" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                  <items>
                                     <FXCollections fx:factory="observableArrayList">
-                                       <String fx:value="15 minutes" />
+                                       <String fx:value="10 minutes" />
+                                       <String fx:value="20 minutes" />
                                        <String fx:value="30 minutes" />
-                                       <String fx:value="45 minutes" />
+                                       <String fx:value="40 minutes" />
+                                       <String fx:value="50 minutes" />
                                        <String fx:value="60 minutes" />
                                     </FXCollections>
                                  </items>
@@ -78,9 +84,11 @@
                               <ComboBox fx:id="thursdayTimeComboBox" prefWidth="180.0" promptText="Duration" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                  <items>
                                     <FXCollections fx:factory="observableArrayList">
-                                       <String fx:value="15 minutes" />
+                                       <String fx:value="10 minutes" />
+                                       <String fx:value="20 minutes" />
                                        <String fx:value="30 minutes" />
-                                       <String fx:value="45 minutes" />
+                                       <String fx:value="40 minutes" />
+                                       <String fx:value="50 minutes" />
                                        <String fx:value="60 minutes" />
                                     </FXCollections>
                                  </items>
@@ -89,9 +97,11 @@
                               <ComboBox fx:id="fridayTimeComboBox" prefWidth="180.0" promptText="Duration" GridPane.columnIndex="1" GridPane.rowIndex="4">
                                  <items>
                                     <FXCollections fx:factory="observableArrayList">
-                                       <String fx:value="15 minutes" />
+                                       <String fx:value="10 minutes" />
+                                       <String fx:value="20 minutes" />
                                        <String fx:value="30 minutes" />
-                                       <String fx:value="45 minutes" />
+                                       <String fx:value="40 minutes" />
+                                       <String fx:value="50 minutes" />
                                        <String fx:value="60 minutes" />
                                     </FXCollections>
                                  </items>
@@ -100,9 +110,11 @@
                               <ComboBox fx:id="saturdayTimeComboBox" prefWidth="180.0" promptText="Duration" GridPane.columnIndex="1" GridPane.rowIndex="5">
                                  <items>
                                     <FXCollections fx:factory="observableArrayList">
-                                       <String fx:value="15 minutes" />
+                                       <String fx:value="10 minutes" />
+                                       <String fx:value="20 minutes" />
                                        <String fx:value="30 minutes" />
-                                       <String fx:value="45 minutes" />
+                                       <String fx:value="40 minutes" />
+                                       <String fx:value="50 minutes" />
                                        <String fx:value="60 minutes" />
                                     </FXCollections>
                                  </items>
@@ -111,18 +123,29 @@
                               <ComboBox fx:id="sundayTimeComboBox" prefWidth="180.0" promptText="Duration" GridPane.columnIndex="1" GridPane.rowIndex="6">
                                  <items>
                                     <FXCollections fx:factory="observableArrayList">
-                                       <String fx:value="15 minutes" />
+                                       <String fx:value="10 minutes" />
+                                       <String fx:value="20 minutes" />
                                        <String fx:value="30 minutes" />
-                                       <String fx:value="45 minutes" />
+                                       <String fx:value="40 minutes" />
+                                       <String fx:value="50 minutes" />
                                        <String fx:value="60 minutes" />
                                     </FXCollections>
                                  </items>
                               </ComboBox>
                            </children>
+                           <rowConstraints>
+                              <RowConstraints />
+                              <RowConstraints />
+                              <RowConstraints />
+                              <RowConstraints />
+                              <RowConstraints />
+                              <RowConstraints />
+                              <RowConstraints />
+                           </rowConstraints>
                         </GridPane>
                      </children>
                   </VBox>
-                  <VBox spacing="18.0" prefWidth="250.0">
+                  <VBox prefWidth="250.0" spacing="18.0">
                      <children>
                         <VBox spacing="12.0" styleClass="panel-card" VBox.vgrow="ALWAYS">
                            <children>
@@ -134,6 +157,7 @@
                                           <ToggleGroup fx:id="fitnessLevelToggleGroup" />
                                        </toggleGroup>
                                     </RadioButton>
+                                    <RadioButton fx:id="intermediateLevelRadio" mnemonicParsing="false" text="Intermediate" toggleGroup="$fitnessLevelToggleGroup" />
                                     <RadioButton fx:id="proficientLevelRadio" mnemonicParsing="false" text="Proficient" toggleGroup="$fitnessLevelToggleGroup" />
                                  </children>
                               </VBox>
