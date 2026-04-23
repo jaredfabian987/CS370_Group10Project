@@ -39,12 +39,28 @@ public class loginController {
 
     @FXML
     void createAccountLinkerClicked(ActionEvent event) {
+        loadScene(event, "Fxml/signup.fxml");
+    }
 
+    private void loadScene(ActionEvent event, String s) {
     }
 
     @FXML
     void userLogin(ActionEvent event) {
+        String userName = username.getText();
+        String passWord = password.getText();
 
+        //Prevents reading of empty fields in authentication stage
+        if (userName.isEmpty() || passWord.isEmpty()) {
+            label.setText("Please fill all the fields");
+            return;
+        }
+
+
+
+
+
+        loadScene(event, "Fxml/Client/dashboard.fxml");
     }
 
 }

@@ -1,19 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ProgressBar?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.Spinner?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Text?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="640.0" prefWidth="960.0" styleClass="screen workout-screen" stylesheets="@../../Styles/workout.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.repit.Controllers.Client.workoutController">
+<AnchorPane prefHeight="640.0" prefWidth="960.0" styleClass="screen workout-screen" stylesheets="@../../Styles/workout.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.repit.Controllers.Client.workoutController">
    <children>
       <HBox spacing="18.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <padding>
@@ -78,13 +70,13 @@
                                  </VBox.margin></Spinner>
                               <Separator />
                               <Label styleClass="section-title" text="Sets Done" />
-                              <Spinner fx:id="setsDoneSpinner1" VBox.vgrow="ALWAYS" />
-                              <Spinner fx:id="setsDoneSpinner2" VBox.vgrow="ALWAYS" />
+                              <Spinner fx:id="setsDoneSpinner1" editable="true" VBox.vgrow="ALWAYS" />
+                              <Spinner fx:id="setsDoneSpinner2" editable="true" VBox.vgrow="ALWAYS" />
                               <Separator />
                               <Label styleClass="section-title" text="Coaching Cue" />
                               <Label text="Stay braced through the hinge and keep the bar close to your legs." wrapText="true" />
                               <Region VBox.vgrow="ALWAYS" />
-                              <Button fx:id="nextExerciseButton" mnemonicParsing="false" onAction="#nextExerciseClicked" text="Next Exercise" />
+                              <Button fx:id="nextExerciseButton" disable="true" mnemonicParsing="false" onAction="#nextExerciseClicked" text="Next Exercise" />
                            </children>
                         </VBox>
                      </children>
