@@ -9,24 +9,31 @@ import javafx.scene.text.Text;
 
 public class dashboardController {
 
+    //displays estimated time to complete the workout for the day
     @FXML
     private Label estimatedTimeLabel;
 
+    //logs the user out
     @FXML
     private Button logoutButton;
 
+    //navigates to the planner page
     @FXML
     private Button openPlannerButton;
 
+    //navigates to the workout page
     @FXML
     private Button startWorkoutButton;
 
+    //displays the workout of the day
     @FXML
     private Label todaysWorkoutLabel;
 
+    //displays the fraction of workouts completed during the week
     @FXML
     private Text workoutCompletionLabel;
 
+    //displays the fraction of workout completed in a graphic format
     @FXML
     private ProgressBar workoutCompletionProgressBar;
 
@@ -44,6 +51,5 @@ public class dashboardController {
     void startWorkoutClicked(ActionEvent event) {
 
     }
-
 }
 
