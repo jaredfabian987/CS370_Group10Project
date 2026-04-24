@@ -1,5 +1,6 @@
 package com.repit.Controllers;
 
+import com.repit.main.java.Main;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -37,16 +38,17 @@ public class loginController {
     @FXML
     private TextField username;
 
+
+    //Loads signup page
     @FXML
     void createAccountLinkerClicked(ActionEvent event) {
-        loadScene(event, "Fxml/signup.fxml");
+        Main.getViewFactory().switchScene("Fxml/signup.fxml");
     }
 
-    private void loadScene(ActionEvent event, String s) {
-    }
-
+    //Loads
     @FXML
     void userLogin(ActionEvent event) {
+        //User input from username and password Text fields
         String userName = username.getText();
         String passWord = password.getText();
 
@@ -56,11 +58,8 @@ public class loginController {
             return;
         }
 
-
-
-
-
-        loadScene(event, "Fxml/Client/dashboard.fxml");
+        //If user is authenicated, load dashboard page
+        Main.getViewFactory().switchScene("Fxml/Client/dashboard.fxml");
     }
 
 }

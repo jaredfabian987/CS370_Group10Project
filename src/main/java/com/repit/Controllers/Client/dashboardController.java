@@ -1,6 +1,7 @@
 package com.repit.Controllers.Client;
 
 import com.repit.Model.User;
+import com.repit.main.java.Main;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -66,8 +67,8 @@ public class dashboardController implements Initializable {
         estimatedTimeLabel.setText("Estimated Time: Loading..");
         workoutCompletionLabel.setText("0 / 0 workouts");
         workoutCompletionProgressBar.setProgress(0);
-        startWorkoutButton.setDisable(true);
-        openPlannerButton.setDisable(true);
+        //startWorkoutButton.setDisable(true);
+        //openPlannerButton.setDisable(true);
     }
 
     //Loaded State, inserts the data returned by the service dispatcher
@@ -91,19 +92,23 @@ public class dashboardController implements Initializable {
     //Logs out loads, login fxml fil
     @FXML
     void logoutClicked(ActionEvent event) {
+        //insert user service to clear data
 
+        Main.getViewFactory().switchScene("Fxml/Client/login.fxml");
     }
 
     //opens Planner, loads fxml file
     @FXML
     void openPlannerClicked(ActionEvent event) {
-
+        //insert is rest day logic here
+        Main.getViewFactory().switchScene("Fxml/Client/planner.fxml");
     }
 
     //Starts workout, loads fxml file
     @FXML
     void startWorkoutClicked(ActionEvent event) {
 
+        Main.getViewFactory().switchScene("Fxml/Client/workout.fxml");
     }
 }
 

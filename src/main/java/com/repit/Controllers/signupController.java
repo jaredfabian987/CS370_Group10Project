@@ -1,5 +1,6 @@
 package com.repit.Controllers;
 
+import com.repit.main.java.Main;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -42,12 +43,20 @@ public class signupController {
 
     @FXML
     void createAccountClicked(ActionEvent event) {
+        //User input from text fields
+        String username = createUsernameField.getText();
+        String password = createPasswordField.getText();
+        String confirmPassword = reenterPasswordField.getText();
 
+        //add some user creation service later
+        //add user authentication service later
+
+        Main.getViewFactory().switchScene("Fxml/Client/setup.fxml");
     }
 
     @FXML
     void loginLinkerClicked(ActionEvent event) {
-
+        Main.getViewFactory().switchScene("Fxml/Client/login.fxml");
     }
 
 }
