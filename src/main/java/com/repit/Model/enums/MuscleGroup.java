@@ -1,6 +1,6 @@
 package com.repit.Model.enums;
 
-public enum ExerciseCategory {
+public enum MuscleGroup {
     CHEST,
     BACK,
     SHOULDERS,

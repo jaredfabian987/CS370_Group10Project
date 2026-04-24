@@ -1,4 +1,4 @@
-package com.repit.Services;
+package com.repit.util;
 import com.repit.Model.enums.WorkoutType;
 import java.time.DayOfWeek;
 import java.util.*;

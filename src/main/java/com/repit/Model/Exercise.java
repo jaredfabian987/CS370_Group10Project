@@ -14,12 +14,20 @@ public class Exercise {
     private String exerciseId;
     private String name;
     // enums
-    private ExerciseCategory category;
+    private MuscleGroup muscle;
     private DifficultyLevel difficulty;
     private ExerciseType exerciseType;
 
     // compounds score for heap
     private int compoundScore;
+
+    // WHY isCompound is a separate boolean and not part of ExerciseType:
+    // ExerciseType already has STRENGTH, CARDIO, FLEXIBILITY defined
+    // compound vs isolation cuts across those types — a compound movement
+    // is still STRENGTH type. adding it to ExerciseType would break existing code.
+    // isCompound = true  → compound movement (squat, bench, row) always prioritized
+    // isCompound = false → isolation movement (curl, fly) only added if time allows
+    private boolean isCompound;
 
     // Help identify the muscles used in a workout
     private List<String> primaryMuscles;
@@ -39,13 +47,15 @@ public class Exercise {
         this.secondaryMuscles = new ArrayList<>();
         this.requiredEquipment = new ArrayList<>();
         this.isCustom = false;
+        // default false — safer to assume isolation until explicitly set in seed data
+        this.isCompound = false;
     }
 
-    public Exercise(String name, ExerciseCategory category,
+    public Exercise(String name, MuscleGroup muscle,
                     DifficultyLevel difficulty, int compoundScore) {
         this();  // Call default constructor first
         this.name = name;
-        this.category = category;
+        this.muscle = muscle;
         this.difficulty = difficulty;
         this.compoundScore = compoundScore;
     }
@@ -83,7 +93,7 @@ public class Exercise {
         return false;
     }
 
-   // is it a bodyweight movement
+    // is it a bodyweight movement
     public boolean isBodyweight() {
         if (requiredEquipment.isEmpty()) {
             return true;
@@ -94,8 +104,6 @@ public class Exercise {
         return false;
     }
 
-
-
     public String getExerciseId() {return exerciseId;}
 
     public void setExerciseId(String exerciseId) {this.exerciseId = exerciseId;}
@@ -104,9 +112,9 @@ public class Exercise {
 
     public void setName(String name) {this.name = name;}
 
-    public ExerciseCategory getCategory() {return category;}
+    public MuscleGroup getMuscle() {return muscle;}
 
-    public void setCategory(ExerciseCategory category) {this.category = category;}
+    public void setCategory(MuscleGroup muscle) {this.muscle = muscle;}
 
     public DifficultyLevel getDifficulty() {return difficulty;}
 
@@ -115,6 +123,7 @@ public class Exercise {
     public ExerciseType getExerciseType() {return exerciseType;}
 
     public void setExerciseType(ExerciseType type) {this.exerciseType = type;}
+
     public int getCompoundScore() {return compoundScore;}
 
     public void setCompoundScore(int score) {
@@ -123,6 +132,10 @@ public class Exercise {
         }
         this.compoundScore = score;
     }
+
+    public boolean isCompound() {return isCompound;}
+
+    public void setCompound(boolean isCompound) {this.isCompound = isCompound;}
 
     public List<String> getPrimaryMuscles() {return primaryMuscles;}
 
