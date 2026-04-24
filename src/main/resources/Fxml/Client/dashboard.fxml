@@ -1,20 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ProgressBar?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Text?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="640.0" prefWidth="960.0" styleClass="screen dashboard-screen" stylesheets="@../../Styles/dashboard.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.repit.Controllers.Client.dashboardController">
+<AnchorPane prefHeight="640.0" prefWidth="960.0" styleClass="screen dashboard-screen" stylesheets="@../../Styles/dashboard.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.repit.Controllers.Client.dashboardController">
    <children>
       <VBox fillWidth="true" prefHeight="640.0" prefWidth="960.0" spacing="20.0" styleClass="screen-shell" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <padding>
@@ -90,16 +81,16 @@
                         <Separator />
                         <VBox spacing="12.0" styleClass="card-body" VBox.vgrow="ALWAYS">
                            <children>
-                              <GridPane hgap="12.0" styleClass="planner-grid" vgap="12.0">
+                              <GridPane fx:id="weeklyPlannerGridPane" hgap="12.0" styleClass="planner-grid" vgap="12.0">
                                  <children>
-                                    <VBox prefWidth="110.0" spacing="6.0" styleClass="mini-card">
+                                    <VBox fx:id="monCard" prefWidth="110.0" spacing="6.0" styleClass="mini-card">
                                        <children>
                                           <Label styleClass="planner-day" text="Mon" />
                                           <Label styleClass="planner-item" text="Completed" />
                                           <Label text="Upper Body" wrapText="true" />
                                        </children>
                                     </VBox>
-                                    <VBox prefWidth="110.0" spacing="6.0" styleClass="mini-card mini-card-active" GridPane.columnIndex="1">
+                                    <VBox fx:id="tueCard" prefWidth="110.0" spacing="6.0" styleClass="mini-card mini-card-active" GridPane.columnIndex="1">
                                        <children>
                                           <Label styleClass="planner-day" text="Tue" />
                                           <Label styleClass="planner-item" text="Today" />
