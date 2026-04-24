@@ -10,7 +10,7 @@ import java.net.URL;
 
 public class Main extends Application {
     private static viewFactory viewFactory;
-
+    //hi
     @Override
     public void start(Stage primaryStage) throws Exception {
         viewFactory = new viewFactory(primaryStage);
