@@ -35,7 +35,7 @@ public class FitnessProfileDAO extends BaseDAO{
             "DELETE FROM profiles WHERE exerciseId = ? AND userId = ?";
 
     private static final String UPDATE_SQL =
-            "UPDATE FitnessProfile SET weight=?, height=?, daysPerWeek=?, minsAvailablePerWorkout=?, level=?, goal=? WHERE userId=?";
+            "UPDATE profiles SET weight=?, height=?, daysPerWeek=?, minsAvailablePerWorkout=?, level=?, goal=? WHERE userId=?";
 
     public boolean saveProfile(FitnessProfile profile){
         try{

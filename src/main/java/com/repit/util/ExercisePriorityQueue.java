@@ -1,6 +1,7 @@
 package com.repit.util;
 
 import com.repit.Model.Exercise;
+import com.repit.Model.TargetedMuscle;
 import com.repit.Model.enums.MuscleGroup;
 import com.repit.Model.enums.WorkoutType;
 
@@ -292,7 +293,7 @@ public class ExercisePriorityQueue {
                 } else {
                     // isolation goes into its muscle group specific heap
                     PriorityQueue<Exercise> categoryHeap =
-                            isolationHeaps.get(exercise.getCategory());
+                            isolationHeaps.get(exercise.getMuscle());
                     if (categoryHeap != null) {
                         categoryHeap.offer(exercise);
                     }
@@ -378,7 +379,7 @@ public class ExercisePriorityQueue {
         // score the exercise's primary muscle group
         // the category field represents the main muscle group
         // the exercise is designed to target
-        if (targetMuscles.contains(exercise.getCategory())) {
+        if (targetMuscles.contains(exercise.getMuscle())) {
             score += PRIMARY_SCORE;
         }
 
@@ -386,9 +387,9 @@ public class ExercisePriorityQueue {
         // a barbell row has BACK as its category but also hits BICEPS
         // on a PULL day this makes it even more relevant than a back
         // exercise with no bicep involvement at all
-        for (String muscle : exercise.getSecondaryMuscles()) {
+        for (TargetedMuscle secondary : exercise.getSecondaryMuscles()) {
             for (MuscleGroup targetMuscle : targetMuscles) {
-                if (targetMuscle.name().equalsIgnoreCase(muscle)) {
+                if (targetMuscle.name().equalsIgnoreCase(secondary.getMuscle())) {
                     score += SECONDARY_SCORE;
                 }
             }

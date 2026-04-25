@@ -7,6 +7,8 @@ import java.util.ArrayList;
 
 public class WorkoutLogsDAO extends BaseDAO {
 
+    private int userId;
+
     private static final String TABLE_SQL =
             "CREATE TABLE IF NOT EXISTS workout_logs (" +
                     "logId INTEGER PRIMARY KEY," +

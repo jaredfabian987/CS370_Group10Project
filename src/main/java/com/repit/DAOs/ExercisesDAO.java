@@ -1,8 +1,13 @@
 package com.repit.DAOs;
+import com.repit.Model.Equipment;
 import com.repit.Model.Exercise;
+import com.repit.Model.TargetedMuscle;
+import com.repit.Model.enums.*;
+
 import javax.xml.transform.Result;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ExercisesDAO extends BaseDAO {
     private static final String SELECT_SQL =
@@ -20,22 +25,25 @@ public class ExercisesDAO extends BaseDAO {
                     //compounds score for heap
                     "compoundScore INTEGER NOT NULL, "+
                     //muscle identification
-                    "primaryMuscles STRING NOT NULL, "+
-                    "secondaryMuscles STRING, "+
+                    "primaryMusclesId INTEGER NOT NULL, "+
+                    "secondaryMusclesId INTEGER, "+
                     //equipment
                     "requiredEquipmentId NOT NULL,"+
-                    "reps INTEGER NOT NULL," +
-                    "muscleGroup TEXT NOT NULL,"+
-                    "difficulty TEXT NOT NULL"+
+                    "trackingType INTEGER NOT NULL," +
+                    "isCustom TEXT NOT NULL,"+
+                    "userId INTEGER"+
                     ")";
 
     private static final String INSERT_SQL =
-            "INSERT INTO exercises (exerciseId, userId, name, sets, reps, muscleGroup, difficulty) "+
-                    "VALUES (?,?,?,?,?,?,?)";
+            "INSERT INTO exercises (exerciseId, name, category, difficulty, exerciseType, compoundScore, " +
+                    "trackingType, isCustom, userId) "+
+                    "VALUES (?,?,?,?,?,?,?,?,?)";
 
     private static final String DELETE_SQL =
-            "DELETE FROM exercises WHERE exerciseId = ? AND userId = ?";
+            "DELETE FROM exercises WHERE exerciseId = ?";
 
+    TargetedMusclesDAO targetedMusclesDAO = new TargetedMusclesDAO();
+    EquipmentDAO equipmentDAO = new EquipmentDAO();
 
     public ArrayList<Exercise> getExercises(int userId){
         ArrayList<Exercise> UserExercises = new ArrayList<>();
@@ -51,11 +59,27 @@ public class ExercisesDAO extends BaseDAO {
             ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()){
+                int exerciseId = rs.getInt("exerciseId");
+                List<TargetedMuscle> primaryMuscles = targetedMusclesDAO.getTargetedMusclesFromExerciseId(exerciseId, MuscleRole.PRIMARY);
+                List<TargetedMuscle> secondaryMuscles = targetedMusclesDAO.getTargetedMusclesFromExerciseId(exerciseId, MuscleRole.SECONDARY);
+                List<Equipment> requiredEquipment = equipmentDAO.getEquipmentsFromExercise(exerciseId);
+                MuscleGroup muscle = MuscleGroup.values()[rs.getInt("category")];
+                DifficultyLevel difficultyLevel = DifficultyLevel.values()[rs.getInt("difficulty")];
+                ExerciseType exerciseType = ExerciseType.values()[rs.getInt("exerciseType")];
+                TrackingType trackingType = TrackingType.values()[rs.getInt("trackingType")];
                 Exercise newExercise = new Exercise(
-                        rs.getInt("exerciseId"), rs.getInt("userId"),
-                        rs.getString("name"), rs.getInt("sets"),
-                        rs.getInt("reps"), rs.getString("muscleGroup"),
-                        rs.getString("difficulty")
+                        exerciseId,
+                        rs.getString("name"),
+                        muscle,
+                        difficultyLevel,
+                        exerciseType,
+                        rs.getInt("compoundScore"),
+                        primaryMuscles,
+                        secondaryMuscles,
+                        requiredEquipment,
+                        trackingType,
+                        rs.getInt("isCustom")==1,
+                        rs.getInt("userId")
                 );
                 UserExercises.add(newExercise);
             }
@@ -66,20 +90,31 @@ public class ExercisesDAO extends BaseDAO {
         }
     }
 
-    public boolean saveExercise(Exercise pExercise){
+
+    /*
+    * "INSERT INTO exercises (exerciseId, name, category, difficulty, exerciseType, compoundScore, " +
+                    "primaryMuscles, secondaryMuscles, requiredEquipmentId, trackingType, isCustom, userId) "+
+                    "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+    * */
+    public boolean saveExercise(Exercise exercise){
         try{
             Connection conn = DriverManager.getConnection("jdbc:sqlite:repit.db");
             Statement stmt = conn.createStatement();
             stmt.execute(TABLE_SQL);
 
             PreparedStatement pstmt = conn.prepareStatement(INSERT_SQL);
-            pstmt.setInt(1,pExercise.getUserId());
-            pstmt.setString(2, pExercise.getName());
-            pstmt.setInt(3,pExercise.getSets());
-            pstmt.setInt(4,pExercise.getReps());
-            pstmt.setString(5, pExercise.getMuscleGroup());
-            pstmt.setString(6, pExercise.getDifficulty());
+            pstmt.setInt(1, exercise.getExerciseId());
+            pstmt.setString(2, exercise.getName());
+            pstmt.setInt(3, exercise.getMuscleOrdinal());
+            pstmt.setInt(4, exercise.getDifficultyOrdinal());
+            pstmt.setInt(5, exercise.getCompoundScore());
+            pstmt.setInt(6, exercise.getTrackingTypeOrdinal());
+            pstmt.setInt(7, exercise.isCustomOrdinal());
+            pstmt.setInt(8, exercise.getUserId());
             pstmt.executeUpdate();
+
+            targetedMusclesDAO.saveTargetedMuscles(exercise.getPrimaryMuscles());
+            targetedMusclesDAO.saveTargetedMuscles(exercise.getSecondaryMuscles());
             return true;
 
         } catch(Exception e){
@@ -88,7 +123,7 @@ public class ExercisesDAO extends BaseDAO {
         }
     }
 
-    public boolean deleteExercise(int exerciseId, int userId){
+    public boolean deleteExercise(int exerciseId){
         try{
             Connection conn = DriverManager.getConnection("jdbc:sqlite:repit.db");
             Statement stmt = conn.createStatement();
@@ -96,7 +131,6 @@ public class ExercisesDAO extends BaseDAO {
 
             PreparedStatement pstmt = conn.prepareStatement(DELETE_SQL);
             pstmt.setInt(1, exerciseId);
-            pstmt.setInt(2, userId);
             pstmt.executeUpdate();
             return true;
         } catch(Exception e){
@@ -105,9 +139,9 @@ public class ExercisesDAO extends BaseDAO {
         }
     }
 
-    public boolean deleteExercise(Exercise pExercise){
-        int exerciseId = pExercise.getId();
-        int userId = pExercise.getUserId();
-        return deleteExercise(exerciseId, userId);
+    public boolean deleteExercise(Exercise exercise){
+        int exerciseId = exercise.getExerciseId();
+        //int userId = exercise.getUserId();
+        return deleteExercise(exerciseId);
     }
 }
