@@ -56,7 +56,7 @@ public class signupController {
 
     @FXML
     void loginLinkerClicked(ActionEvent event) {
-        Main.getViewFactory().switchScene("Fxml/Client/login.fxml");
+        Main.getViewFactory().switchScene("Fxml/login.fxml");
     }
 
 }

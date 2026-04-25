@@ -94,7 +94,7 @@ public class dashboardController implements Initializable {
     void logoutClicked(ActionEvent event) {
         //insert user service to clear data
 
-        Main.getViewFactory().switchScene("Fxml/Client/login.fxml");
+        Main.getViewFactory().switchScene("Fxml/login.fxml");
     }
 
     //opens Planner, loads fxml file

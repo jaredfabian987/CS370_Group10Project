@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.net.URL;
 
 public class viewFactory {
-    //Class variables:
+    //Class variable(s):
     //stage is passed in from main
     private final Stage stage;
 
