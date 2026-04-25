@@ -11,5 +11,5 @@ package com.repit.Model.enums;
  * cardio: some form of aerobic exercise day
  */
 public enum WorkoutType {
-    PUSH, PULL, LEGS, UPPER, LOWER, FULL_BODY, CARDIO, REST
+    PUSH, PULL, LEGS, UPPER, LOWER, FULL_BODY, CARDIO, REST, CORE
 }

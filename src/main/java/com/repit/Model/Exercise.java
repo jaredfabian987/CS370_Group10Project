@@ -23,12 +23,19 @@ public class Exercise {
     private boolean isCustom;
     private int userId = -1;
 
+    // short coaching tip shown on the workout screen during the exercise
+    // examples: "Stay braced through the hinge and keep the bar close to your legs" (deadlift)
+    //           "Arch your back and drive through your legs" (bench press)
+    // default is "Target reps: 6-10" for exercises without a specific cue seeded in the DB
+    private String coachingCue;
+
     public Exercise() {
         this.primaryMuscles = new ArrayList<>();
         this.secondaryMuscles = new ArrayList<>();
         this.requiredEquipment = new ArrayList<>();
         this.isCustom = false;
         this.isCompound = false;
+        this.coachingCue = "Target reps: 6-10";
     }
 
     public Exercise(String name, MuscleGroup muscle,
@@ -143,6 +150,9 @@ public class Exercise {
     public void setCustom(boolean custom) {this.isCustom = custom;}
 
     public int getUserId() {return userId;}
+
+    public String getCoachingCue() {return coachingCue;}
+    public void setCoachingCue(String coachingCue) {this.coachingCue = coachingCue;}
 
     @Override
     public String toString() {

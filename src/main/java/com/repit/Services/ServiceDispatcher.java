@@ -50,6 +50,9 @@ public class ServiceDispatcher {
         this.progressService        = new ProgressService(workoutLogsDAO);
         this.dashboardService       = new DashboardService(workoutLogsDAO, fitnessDAO);
         this.fitnessProfileService  = new FitnessProfileService(fitnessDAO);
+
+        // seed coaching cues on startup — safe to call every launch, only updates by name
+        exercisesDAO.seedCoachingCues();
     }
 
     // user handlers
