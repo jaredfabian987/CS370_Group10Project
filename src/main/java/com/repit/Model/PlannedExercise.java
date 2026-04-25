@@ -34,41 +34,41 @@ public class PlannedExercise {
 
 
     /*
-    * This will help us track the order of the exercises within the workout because
-    * exercies in a workout have a specific sequence, for example, on a push day:
-    * 1) Bench Press (compound movements should be done when your most fresh)
-    * 2) Shoulder Press
-    * 3) Tricep Extensions (isolation movement which you usually do last)
-    * This will sequentially order exercies in 1, 2,3,4, etc..
-    * */
-    private int ExerciseOrder;
+     * This will help us track the order of the exercises within the workout because
+     * exercies in a workout have a specific sequence, for example, on a push day:
+     * 1) Bench Press (compound movements should be done when your most fresh)
+     * 2) Shoulder Press
+     * 3) Tricep Extensions (isolation movement which you usually do last)
+     * This will sequentially order exercies in 1, 2,3,4, etc..
+     * */
+    private int exerciseOrder;
 
     /*
-    * Planned sets is the total amount of sets for a given movement which is the sum
-    * warmup sets + working sets
-    * Example: 2 warmup + 3 working = 5 total
-    * */
+     * Planned sets is the total amount of sets for a given movement which is the sum
+     * warmup sets + working sets
+     * Example: 2 warmup + 3 working = 5 total
+     * */
     private int plannedSets;
 
     /*
-    * Target reps for a working set,
-    * Example is: "2 sets of 8 reps" for all sets the target reps is 8
-    * Warmup sets have different rep quantities and are handled seperately
+     * Target reps for a working set,
+     * Example is: "2 sets of 8 reps" for all sets the target reps is 8
+     * Warmup sets have different rep quantities and are handled seperately
      */
 
     private int targetReps;
 
     /*
-    * The suggested weight for a given set of an exercise is a RECOMMENDATION and is not absolute
-    * This is because the user might need to adjust based on: how they feel that day, available equipment
-    * or because of the quality of their form
+     * The suggested weight for a given set of an exercise is a RECOMMENDATION and is not absolute
+     * This is because the user might need to adjust based on: how they feel that day, available equipment
+     * or because of the quality of their form
      */
     private double suggestWeight;
 
     /*
-    * This is prescribed rest not actual rest that is taken, the app can time the rest and notify the user
-    * This value can vary based on the avalible time that the user alloted for a given workout
-    * */
+     * This is prescribed rest not actual rest that is taken, the app can time the rest and notify the user
+     * This value can vary based on the avalible time that the user alloted for a given workout
+     * */
     private int restMinutes;
 
     // Will allow the user to include notes or coaching cues like: "focus on form" or
@@ -79,10 +79,10 @@ public class PlannedExercise {
     // the user different weights like 50%, 75% of their normal working weight
     // or they also might do 10 or 12 reps of a lighter weight to prepare the body but not cause fatigue
     /*
-    *  example would be: if I can bench 200 lbs for 8-10 (to failure)
-    * My first warm up set I might do 100lbs for like 12 reps which is half my load
-    * My second warm up set I might do 150lbs for 6 reps
-    * */
+     *  example would be: if I can bench 200 lbs for 8-10 (to failure)
+     * My first warm up set I might do 100lbs for like 12 reps which is half my load
+     * My second warm up set I might do 150lbs for 6 reps
+     * */
     private int warmupSets;
 
     // working sets are the ones logged for calculating a users progress
@@ -108,6 +108,9 @@ public class PlannedExercise {
 
     public Exercise getExercise() {return exercise;}
     public void setExercise (Exercise exercise) {this.exercise = exercise;}
+
+    public int getExerciseOrder() {return exerciseOrder;}
+    public void setExerciseOrder(int exerciseOrder) {this.exerciseOrder = exerciseOrder;}
 
     public int getPlannedSets() {return plannedSets;}
     public void setPlannedSets(int plannedSets) {this.plannedSets = plannedSets;}

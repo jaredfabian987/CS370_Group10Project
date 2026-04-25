@@ -62,15 +62,15 @@ public class ExercisesDAO extends BaseDAO {
                 int exerciseId = rs.getInt("exerciseId");
                 List<TargetedMuscle> primaryMuscles = targetedMusclesDAO.getTargetedMusclesFromExerciseId(exerciseId, MuscleRole.PRIMARY);
                 List<TargetedMuscle> secondaryMuscles = targetedMusclesDAO.getTargetedMusclesFromExerciseId(exerciseId, MuscleRole.SECONDARY);
-                List<Equipment>requiredEquipment = equipmentDAO.getEquipmentsFromExercise(exerciseId);
-                ExerciseCategory category = ExerciseCategory.values()[rs.getInt("category")];
+                List<Equipment> requiredEquipment = equipmentDAO.getEquipmentsFromExercise(exerciseId);
+                MuscleGroup muscle = MuscleGroup.values()[rs.getInt("category")];
                 DifficultyLevel difficultyLevel = DifficultyLevel.values()[rs.getInt("difficulty")];
                 ExerciseType exerciseType = ExerciseType.values()[rs.getInt("exerciseType")];
                 TrackingType trackingType = TrackingType.values()[rs.getInt("trackingType")];
                 Exercise newExercise = new Exercise(
                         exerciseId,
                         rs.getString("name"),
-                        category,
+                        muscle,
                         difficultyLevel,
                         exerciseType,
                         rs.getInt("compoundScore"),
@@ -105,8 +105,8 @@ public class ExercisesDAO extends BaseDAO {
             PreparedStatement pstmt = conn.prepareStatement(INSERT_SQL);
             pstmt.setInt(1, exercise.getExerciseId());
             pstmt.setString(2, exercise.getName());
-            pstmt.setInt(3,exercise.getCategoryOrdinal());
-            pstmt.setInt(4,exercise.getDifficultyOrdinal());
+            pstmt.setInt(3, exercise.getMuscleOrdinal());
+            pstmt.setInt(4, exercise.getDifficultyOrdinal());
             pstmt.setInt(5, exercise.getCompoundScore());
             pstmt.setInt(6, exercise.getTrackingTypeOrdinal());
             pstmt.setInt(7, exercise.isCustomOrdinal());

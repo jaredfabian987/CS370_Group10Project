@@ -1,4 +1,5 @@
-package com.repit.Services;
+package com.repit.util;
+import com.repit.Model.enums.WorkoutType;
 
 import java.time.DayOfWeek;
 import java.util.*;
@@ -29,9 +30,7 @@ public class SplitSelector {
      */
 
 
-    public enum WorkoutType {
-        PUSH, PULL, LEGS, UPPER, LOWER, FULL_BODY, CARDIO
-    }
+
     // select optial workout based on avaiable days
     /**
      * @param availableDays is the set of days that the user can workout
