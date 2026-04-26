@@ -1,43 +1,65 @@
 package com.repit.Controllers;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 
-import javafx.scene.Scene;
+import com.repit.main.java.Main;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
-
-import javafx.event.ActionEvent;
-import java.io.IOException;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 
 public class loginController {
-    public  loginController(){
-    }
+
     @FXML
     private Button button;
+
     @FXML
     private Label label;
+
     @FXML
-    private TextField username;
+    private AnchorPane loginFrame;
+
+    @FXML
+    private VBox loginPane;
+
+    @FXML
+    private Hyperlink loginPaneLinker;
+
+    @FXML
+    private Text loginPaneTitleText;
+
     @FXML
     private PasswordField password;
 
-    public void userLogin(ActionEvent event) throws IOException {
-        checkLogin();
+    @FXML
+    private TextField username;
+
+
+    //Loads signup page
+    @FXML
+    void createAccountLinkerClicked(ActionEvent event) {
+        Main.getViewFactory().switchScene("Fxml/signup.fxml");
     }
 
-    private void checkLogin() throws IOException {
-        //Insert Password Checker here ##############################################################
-        //placeholder function
-        if(username.getText().equals("") && password.getText().equals("")){
-            //
-        }
-        //If Either Username OR Password Fields are empty
-        else if (username.getText().isEmpty() || password.getText().equals("")){
+    //Loads
+    @FXML
+    void userLogin(ActionEvent event) {
+        //User input from username and password Text fields
+        String userName = username.getText();
+        String passWord = password.getText();
 
+        //Prevents reading of empty fields in authentication stage
+        if (userName.isEmpty() || passWord.isEmpty()) {
+            label.setText("Please fill all the fields");
+            return;
         }
+
+        //If user is authenicated, load dashboard page
+        Main.getViewFactory().switchScene("Fxml/Client/dashboard.fxml");
     }
+
 }
