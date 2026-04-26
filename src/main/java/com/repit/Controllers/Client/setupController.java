@@ -1,13 +1,18 @@
 package com.repit.Controllers.Client;
 
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 
-public class setupController {
+import java.awt.event.ActionEvent;
+import java.net.URL;
+import java.util.ResourceBundle;
+
+public class setupController implements Initializable {
 
     @FXML
     private RadioButton beginnerLevelRadio;
@@ -22,7 +27,7 @@ public class setupController {
     private CheckBox fridayCheckBox;
 
     @FXML
-    private ComboBox<?> fridayTimeComboBox;
+    private ComboBox<String> fridayTimeComboBox;
 
     @FXML
     private RadioButton intermediateLevelRadio;
@@ -31,7 +36,7 @@ public class setupController {
     private CheckBox mondayCheckBox;
 
     @FXML
-    private ComboBox<?> mondayTimeComboBox;
+    private ComboBox<String> mondayTimeComboBox;
 
     @FXML
     private RadioButton muscleGainGoalRadio;
@@ -43,7 +48,7 @@ public class setupController {
     private CheckBox saturdayCheckBox;
 
     @FXML
-    private ComboBox<?> saturdayTimeComboBox;
+    private ComboBox<String> saturdayTimeComboBox;
 
     @FXML
     private Button saveSetupButton;
@@ -52,27 +57,55 @@ public class setupController {
     private CheckBox sundayCheckBox;
 
     @FXML
-    private ComboBox<?> sundayTimeComboBox;
+    private ComboBox<String> sundayTimeComboBox;
 
     @FXML
     private CheckBox thursdayCheckBox;
 
     @FXML
-    private ComboBox<?> thursdayTimeComboBox;
+    private ComboBox<String> thursdayTimeComboBox;
 
     @FXML
     private CheckBox tuesdayCheckBox;
 
     @FXML
-    private ComboBox<?> tuesdayTimeComboBox;
+    private ComboBox<String> tuesdayTimeComboBox;
 
     @FXML
     private CheckBox wednesdayCheckBox;
 
     @FXML
-    private ComboBox<?> wednesdayTimeComboBox;
+    private ComboBox<String> wednesdayTimeComboBox;
 
     @FXML
     private RadioButton weightLossGoalRadio;
 
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        bindDayToggle(mondayCheckBox, mondayTimeComboBox);
+        bindDayToggle(tuesdayCheckBox, tuesdayTimeComboBox);
+        bindDayToggle(wednesdayCheckBox, wednesdayTimeComboBox);
+        bindDayToggle(thursdayCheckBox, thursdayTimeComboBox);
+        bindDayToggle(fridayCheckBox, fridayTimeComboBox);
+        bindDayToggle(saturdayCheckBox, saturdayTimeComboBox);
+        bindDayToggle(sundayCheckBox, sundayTimeComboBox);
+    }
+
+    //Binds a Checkox to its respective ComboBox, toggling the Checkbox
+    private void bindDayToggle(CheckBox dayCheckBox, ComboBox<String> timeComboBox) {
+        timeComboBox.setDisable(!dayCheckBox.isSelected());
+
+        dayCheckBox.selectedProperty().addListener((observable, wasSelected, isSelected) -> {
+            timeComboBox.setDisable(!isSelected);
+
+            if (!isSelected) {
+                timeComboBox.getSelectionModel().clearSelection();
+            }
+        });
+    }
+
+    @FXML
+    private void saveSetupButtonAction(ActionEvent event) {
+
+    }
 }

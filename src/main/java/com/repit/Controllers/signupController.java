@@ -48,9 +48,18 @@ public class signupController {
         String password = createPasswordField.getText();
         String confirmPassword = reenterPasswordField.getText();
 
+        //Conditional Statements:
+        if (createUsernameField.getText().isEmpty() || createPasswordField.getText().isEmpty() || confirmPassword.isEmpty()) {
+            errorLabel.setText("Please fill all the fields");
+        }
+        if (!password.equals(confirmPassword)) {
+            errorLabel.setText("Passwords do not match");
+        }
+
         //add some user creation service later
         //add user authentication service later
 
+        errorLabel.setText("");
         Main.getViewFactory().switchScene("Fxml/Client/setup.fxml");
     }
 
