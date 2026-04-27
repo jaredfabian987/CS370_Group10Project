@@ -255,7 +255,12 @@
                               <Region VBox.vgrow="ALWAYS" />
                            </children>
                         </VBox>
-                        <Button fx:id="savePlanButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Save Plan" />
+                        <HBox spacing="12.0">
+                           <children>
+                              <Button fx:id="savePlanButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Save Plan" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="finishPlannerButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#finishPlannerButtonClicked" text="Finish Planner" HBox.hgrow="ALWAYS" />
+                           </children>
+                        </HBox>
                      </children>
                   </VBox>
                </children>

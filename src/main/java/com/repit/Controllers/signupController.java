@@ -1,5 +1,6 @@
 package com.repit.Controllers;
 
+import com.repit.Services.ServiceDispatcher;
 import com.repit.main.java.Main;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -24,6 +25,12 @@ public class signupController {
     private Label errorLabel;
 
     @FXML
+    private TextField firstNameField;
+
+    @FXML
+    private TextField lastNameField;
+
+    @FXML
     private Hyperlink loginLinker;
 
     @FXML
@@ -41,24 +48,43 @@ public class signupController {
     @FXML
     private Text signupPaneTitleText;
 
+    //Variables:
+    //ServiceDispatcher
+    private final ServiceDispatcher serviceDispatcher = new ServiceDispatcher();
+
+
     @FXML
     void createAccountClicked(ActionEvent event) {
-        //User input from text fields
+        //User input from text fields:
+        String firstName = firstNameField.getText();
+        String lastName = lastNameField.getText();
         String username = createUsernameField.getText();
         String password = createPasswordField.getText();
         String confirmPassword = reenterPasswordField.getText();
 
-        //Conditional Statements:
-        if (createUsernameField.getText().isEmpty() || createPasswordField.getText().isEmpty() || confirmPassword.isEmpty()) {
+        //UI error handling:
+        if (firstName.isEmpty() || lastName.isEmpty() || username.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
             errorLabel.setText("Please fill all the fields");
+            return;
         }
         if (!password.equals(confirmPassword)) {
             errorLabel.setText("Passwords do not match");
+            return;
         }
-        //hi
-        //add some user creation service later
-        //add user authentication service later
 
+        //Database error handling:
+        boolean registered = serviceDispatcher.handleRegisterRequest(
+                username,
+                password,
+                firstName,
+                lastName,
+                ""
+        );
+
+        if (!registered) {
+            errorLabel.setText("Unable to create account");
+            return;
+        }
         errorLabel.setText("");
         Main.getViewFactory().switchScene("Fxml/Client/setup.fxml");
     }
