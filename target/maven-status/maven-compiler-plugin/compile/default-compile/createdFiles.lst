@@ -1,8 +1,10 @@
+com/repit/Services/PlannerService.class
 com/repit/Services/ProgressService.class
 com/repit/DAOs/WorkoutLogsDAO.class
 com/repit/DAOs/EquipmentDAO.class
 com/repit/Services/UserService.class
 com/repit/Model/enums/WorkoutType.class
+com/repit/DAOs/AvailabilityDAO.class
 com/repit/DAOs/BaseDAO.class
 com/repit/Controllers/Client/dashboardController.class
 com/repit/Controllers/Client/plannerController.class
@@ -14,6 +16,7 @@ com/repit/DAOs/UsersDAO.class
 com/repit/Model/TargetedMuscle.class
 com/repit/DAOs/FitnessProfileDAO.class
 com/repit/Model/PlannedExercise.class
+com/repit/Model/enums/DaysOfWeek.class
 com/repit/Model/FitnessProfile$FitnessLevel.class
 com/repit/Services/DashboardService.class
 com/repit/Model/FitnessProfile.class
@@ -30,7 +33,9 @@ com/repit/Controllers/loginController.class
 com/repit/Services/ExerciseService.class
 com/repit/Model/WorkoutPlan.class
 com/repit/Model/ProgressionSuggestion.class
+com/repit/Model/Availability.class
 com/repit/Controllers/signupController.class
+com/repit/Services/PlannerService$1.class
 com/repit/util/ExercisePriorityQueue.class
 com/repit/Model/enums/MuscleRole.class
 com/repit/util/SplitSelector.class

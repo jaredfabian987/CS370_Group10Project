@@ -5,6 +5,7 @@
 /Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/Controllers/Client/workoutController.java
 /Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/Controllers/loginController.java
 /Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/Controllers/signupController.java
+/Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/DAOs/AvailabilityDAO.java
 /Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/DAOs/BaseDAO.java
 /Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/DAOs/EquipmentDAO.java
 /Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/DAOs/ExercisesDAO.java
@@ -12,6 +13,7 @@
 /Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/DAOs/TargetedMusclesDAO.java
 /Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/DAOs/UsersDAO.java
 /Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/DAOs/WorkoutLogsDAO.java
+/Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/Model/Availability.java
 /Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/Model/DayWorkoutPlan.java
 /Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/Model/Equipment.java
 /Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/Model/Exercise.java
@@ -22,6 +24,7 @@
 /Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/Model/User.java
 /Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/Model/WorkoutLog.java
 /Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/Model/WorkoutPlan.java
+/Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/Model/enums/DaysOfWeek.java
 /Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/Model/enums/DifficultyLevel.java
 /Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/Model/enums/EquipmentType.java
 /Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/Model/enums/ExerciseType.java
@@ -32,6 +35,7 @@
 /Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/Services/DashboardService.java
 /Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/Services/ExerciseService.java
 /Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/Services/FitnessProfileService.java
+/Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/Services/PlannerService.java
 /Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/Services/ProgressService.java
 /Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/Services/ServiceDispatcher.java
 /Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/Services/UserService.java
