@@ -89,6 +89,14 @@ public class PlannedExercise {
     // these are sets completed with your working weight and are taken to musclar failure
     private int workingSets;
 
+    /*
+     * Tracks whether the user has finished this exercise during today's session.
+     * Set to true when the last working set is logged for this exercise.
+     * Used by PlannerService and the dashboard progress bar (n out of n completed).
+     * Defaults to false — every exercise starts incomplete at the beginning of a workout.
+     */
+    private boolean isCompleted;
+
     // Constructors
 
     // default
@@ -132,6 +140,9 @@ public class PlannedExercise {
 
     public int getWorkingSets() {return workingSets;}
     public void setWorkingSets(int workingSets) {this.workingSets = workingSets;}
+
+    public boolean isCompleted() {return isCompleted;}
+    public void setCompleted(boolean completed) {this.isCompleted = completed;}
 
     /*&
     @Override

@@ -4,6 +4,7 @@ import com.repit.DAOs.ExercisesDAO;
 import com.repit.DAOs.FitnessProfileDAO;
 import com.repit.DAOs.UsersDAO;
 import com.repit.DAOs.WorkoutLogsDAO;
+import com.repit.Model.DayWorkoutPlan;
 import com.repit.Model.Exercise;
 import com.repit.Model.FitnessProfile;
 import com.repit.Model.User;
@@ -14,6 +15,7 @@ import com.repit.Model.enums.WorkoutType;
 import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class ServiceDispatcher {
@@ -29,6 +31,7 @@ public class ServiceDispatcher {
     private final ProgressService progressService;
     private final DashboardService dashboardService;
     private final FitnessProfileService fitnessProfileService;
+    private final PlannerService plannerService;
 
     /*
      * the constructor builds all DAOs and writes them into their services.
@@ -50,6 +53,7 @@ public class ServiceDispatcher {
         this.progressService        = new ProgressService(workoutLogsDAO);
         this.dashboardService       = new DashboardService(workoutLogsDAO, fitnessDAO);
         this.fitnessProfileService  = new FitnessProfileService(fitnessDAO);
+        this.plannerService         = new PlannerService(fitnessDAO, exercisesDAO, workoutLogsDAO);
 
         // seed coaching cues on startup — safe to call every launch, only updates by name
         exercisesDAO.seedCoachingCues();
@@ -175,6 +179,18 @@ public class ServiceDispatcher {
         return progressService.suggestProgression(userId, exerciseId, exercise);
     }
 
+    /*
+     * handleGetCompletedExerciseCountTodayRequest
+     * called by WorkoutController or DashboardController for the "n out of n exercises"
+     * counter on the workout screen.
+     * returns the number of distinct exercises the user has completed today.
+     * pair with handleGetTotalExercisesPlannedRequest() to build the full label:
+     * e.g. "3 out of 5 exercises completed"
+     */
+    public int handleGetCompletedExerciseCountTodayRequest(int userId) {
+        return progressService.getCompletedExerciseCountToday(userId);
+    }
+
     // dashboard handlers
 
     /*
@@ -201,6 +217,36 @@ public class ServiceDispatcher {
      */
     public FitnessProfile handleGetProfileSummaryRequest(int userId) {
         return dashboardService.getProfileSummary(userId);
+    }
+
+    /*
+     * handleGetWeeklyWorkoutsCompletedRequest
+     * called by DashboardController to show the "n out of n workouts" progress banner.
+     * returns the number of days the user has already trained this week (Mon-Sun).
+     * pair this with handleGetWeeklyWorkoutsPlannedRequest() to build the full label:
+     * e.g. "2 out of 4 workouts completed"
+     */
+    public int handleGetWeeklyWorkoutsCompletedRequest(int userId) {
+        return dashboardService.getWeeklyWorkoutsCompleted(userId);
+    }
+
+    /*
+     * handleGetWeeklyWorkoutsPlannedRequest
+     * called by DashboardController to get the total planned training days per week.
+     * comes directly from the user's fitness profile (daysPerWeek field).
+     */
+    public int handleGetWeeklyWorkoutsPlannedRequest(int userId) {
+        return dashboardService.getWeeklyWorkoutsPlanned(userId);
+    }
+
+    /*
+     * handleGetTotalExercisesPlannedRequest
+     * called by DashboardController or WorkoutController for the per-session progress counter.
+     * returns how many exercises fit in the user's time budget (minsAvailablePerWorkout / 10).
+     * e.g. 50 min → 5 exercises, so the counter can show "3 out of 5 exercises done"
+     */
+    public int handleGetTotalExercisesPlannedRequest(int userId) {
+        return dashboardService.getTotalExercisesPlannedPerSession(userId);
     }
 
     // fitness profile handlers
@@ -278,9 +324,82 @@ public class ServiceDispatcher {
         return fitnessProfileService.updateProfile(profile);
     }
 
+    // planner handlers
+
     /*
-     * to-do
-     * make some of the planner handlers but after WorkoutDAO is ready
+     * handleGetWeeklyPlanRequest
+     * called by PlannerController to build the full Mon-Sun plan for the dashboard.
+     * returns a map of DayOfWeek -> DayWorkoutPlan.
+     * each training day has a ranked exercise list and an isCompleted flag.
+     * rest days are included with isRestDay = true and an empty exercise list.
+     * returns null if the user has not completed setup.
+     *
+     * HOW THE WORKOUT GENERATION ALGORITHM WORKS (step by step):
+     *
+     *  Step 1 — Load fitness profile
+     *    Read the user's goal (BUILD/MUSCLE/MAINTAIN), daysPerWeek, and
+     *    minsAvailablePerWorkout from FitnessProfileDAO.
+     *
+     *  Step 2 — Pick training days
+     *    Use daysPerWeek to choose which days of the week the user trains.
+     *    Default pattern: 3 days → Mon/Wed/Fri, 4 days → Mon/Tue/Thu/Fri, etc.
+     *    (Will be replaced by AvailabilityDAO once built.)
+     *
+     *  Step 3 — Select the split
+     *    Pass the training days and goal into SplitSelector.selectSplit().
+     *    SplitSelector returns an ordered list of WorkoutTypes — one per training day.
+     *    Example: 3-day MUSCLE_BUILDING → [UPPER, LOWER, FULL_BODY]
+     *    Example: 5-day MUSCLE_BUILDING → [PUSH, PULL, LEGS, UPPER, LOWER]
+     *
+     *  Step 4 — Resolve the time budget
+     *    Floor minsAvailablePerWorkout to the nearest 10-minute block.
+     *    Each 10-minute block = 1 exercise (2 warmup + 2 working sets + rest).
+     *    Example: 50 min → 5 exercise slots.
+     *
+     *  Step 5 — Rank exercises per day
+     *    For each training day, call ExercisePriorityQueue.buildQueue() with
+     *    the day's WorkoutType and the time budget.
+     *    The queue scores every exercise: +2 if the primary muscle matches the day's
+     *    target, +1 per secondary muscle match. Score 0 = wrong day, excluded.
+     *    Compounds always fill first; isolations fill up to a max of 2 slots.
+     *    Example: PUSH day, 50 min → 3 chest/shoulder compounds + 1 tricep + 1 shoulder isolation.
+     *
+     *  Step 6 — Wrap exercises in PlannedExercise
+     *    Each ranked Exercise is wrapped in a PlannedExercise with:
+     *    2 warmup sets + 2 working sets (our standard protocol).
+     *    Suggested weight defaults to 0 here; the workout controller fills it
+     *    in from the user's last logged weight via ProgressService.
+     *
+     *  Step 7 — Mark completed days
+     *    Call WorkoutLogsDAO.getLoggedDatesThisWeek() to get every date this
+     *    Mon-Sun week where the user logged at least one completed set.
+     *    Any training day whose calendar date is in that set gets isCompleted = true.
+     *
+     *  Step 8 — Return the full week
+     *    Return Map<DayOfWeek, DayWorkoutPlan> ordered Monday through Sunday.
      */
+    public Map<DayOfWeek, DayWorkoutPlan> handleGetWeeklyPlanRequest(int userId) {
+        return plannerService.getWeeklyPlan(userId);
+    }
+
+    /*
+     * handleGetTodaysPlanRequest
+     * called by DashboardController to show just today's exercises.
+     * convenience wrapper — returns only the current day's DayWorkoutPlan.
+     * returns null if today is a rest day or if no profile exists.
+     */
+    public DayWorkoutPlan handleGetTodaysPlanRequest(int userId) {
+        return plannerService.getTodaysPlan(userId);
+    }
+
+    /*
+     * handleGetTodaysSummaryRequest
+     * called by DashboardController to populate the "Today's Workout" label.
+     * returns a human-readable string like "Push Day · 5 exercises · 50 min".
+     * returns "Rest Day" if today is a rest day.
+     */
+    public String handleGetTodaysSummaryRequest(int userId) {
+        return plannerService.getTodaysSummary(userId);
+    }
 
 }

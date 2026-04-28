@@ -51,6 +51,17 @@ public class WorkoutLogsDAO extends BaseDAO {
             "SELECT DISTINCT date FROM workout_logs " +
                     "WHERE userId = ? AND date >= ? AND date <= ? AND isCompleted = 1";
 
+    /*
+     * Counts how many distinct exercises the user has completed today.
+     * "Completed" means isCompleted = 1 — a set was successfully logged.
+     * We count DISTINCT exerciseId so logging multiple sets of bench press
+     * only counts as 1 exercise, not 3.
+     * Used by ProgressService to power the "n out of n completed" dashboard counter.
+     */
+    private static final String SELECT_COMPLETED_TODAY_SQL =
+            "SELECT COUNT(DISTINCT exerciseId) FROM workout_logs " +
+                    "WHERE userId = ? AND date = ? AND isCompleted = 1";
+
     private static final String DELETE_SQL =
             "DELETE FROM workout_logs WHERE logId = ? AND userId = ?";
 
@@ -159,6 +170,38 @@ public class WorkoutLogsDAO extends BaseDAO {
 
     public boolean deleteWorkoutLog(WorkoutLog log) {
         return deleteWorkoutLog(log.getLogId(), log.getUserId());
+    }
+
+    /*
+     * getCompletedExercisesCountToday
+     * Returns the number of distinct exercises the user has marked completed today.
+     * This is the "n completed" half of the dashboard progress counter.
+     * The "n total" comes from the user's fitness profile (minsAvailablePerWorkout / 10).
+     *
+     * @param userId the logged-in user's ID
+     * @return count of distinct exercises completed today, 0 if none or on error
+     */
+    public int getCompletedExercisesCountToday(int userId) {
+        try {
+            Statement stmt = connection.createStatement();
+            stmt.execute(TABLE_SQL);
+
+            // today's date in yyyy-MM-dd format — matches how WorkoutLog.date is stored
+            String today = LocalDate.now().toString();
+
+            PreparedStatement pstmt = connection.prepareStatement(SELECT_COMPLETED_TODAY_SQL);
+            pstmt.setInt(1, userId);
+            pstmt.setString(2, today);
+
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+            return 0;
+        } catch (Exception e) {
+            System.out.println("Database Error: " + e.getMessage());
+            return 0;
+        }
     }
 
     /*

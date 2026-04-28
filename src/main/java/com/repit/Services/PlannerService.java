@@ -1,0 +1,352 @@
+package com.repit.Services;
+
+import com.repit.DAOs.ExercisesDAO;
+import com.repit.DAOs.FitnessProfileDAO;
+import com.repit.DAOs.WorkoutLogsDAO;
+import com.repit.Model.DayWorkoutPlan;
+import com.repit.Model.Exercise;
+import com.repit.Model.FitnessProfile;
+import com.repit.Model.PlannedExercise;
+import com.repit.Model.WorkoutPlan;
+import com.repit.Model.enums.WorkoutType;
+import com.repit.util.ExercisePriorityQueue;
+import com.repit.util.SplitSelector;
+
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+/**
+ * PlannerService
+ * Builds the user's weekly workout plan and tracks day-level completion status.
+ *
+ * This service is the entry point for the planner screen on the dashboard.
+ * It answers two questions:
+ *   1. "What exercises am I doing each day this week?"
+ *   2. "Which of those days have I already completed?"
+ *
+ * Responsibilities:
+ * - Reading the user's fitness profile to know their goal, days/week, and time budget
+ * - Delegating split selection to SplitSelector (which days get which workout type)
+ * - Delegating exercise ranking to ExercisePriorityQueue (which exercises go on each day)
+ * - Checking WorkoutLogsDAO to mark which days are already done this week
+ *
+ * Note: Training days currently default based on daysPerWeek (Monday-anchored).
+ * Once AvailabilityDAO is built, it will supply the exact days the user is free,
+ * and this service will use those instead of the defaults.
+ */
+public class PlannerService {
+
+    private final FitnessProfileDAO fitnessProfileDAO;
+    private final ExercisesDAO exercisesDAO;
+    private final WorkoutLogsDAO workoutLogsDAO;
+
+    // minimum available minutes if profile has a very small value —
+    // we need at least 30 min for 3 exercises (2 compound + 1 isolation)
+    private static final int MIN_WORKOUT_MINUTES = 30;
+
+    // each exercise slot = 10 minutes: 2 warmup sets + 2 working sets + rest between sets
+    private static final int MINUTES_PER_EXERCISE = 10;
+
+    public PlannerService(FitnessProfileDAO fitnessProfileDAO,
+                          ExercisesDAO exercisesDAO,
+                          WorkoutLogsDAO workoutLogsDAO) {
+        this.fitnessProfileDAO = fitnessProfileDAO;
+        this.exercisesDAO = exercisesDAO;
+        this.workoutLogsDAO = workoutLogsDAO;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // PUBLIC API
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /**
+     * Builds and returns the user's full weekly plan for the current Mon-Sun week.
+     *
+     * The returned map contains an entry for every day of the week (Monday through Sunday).
+     * Training days have a DayWorkoutPlan populated with exercises.
+     * Rest days have a DayWorkoutPlan where isRestDay = true and the exercise list is empty.
+     * Days the user has already completed have isCompleted = true.
+     *
+     * Returns null if the user has not completed setup (no fitness profile found).
+     *
+     * @param userId the logged-in user's ID
+     * @return ordered map of DayOfWeek -> DayWorkoutPlan, or null if no profile exists
+     */
+    public Map<DayOfWeek, DayWorkoutPlan> getWeeklyPlan(int userId) {
+
+        // ── STEP 1: Load the user's fitness profile ───────────────────────────
+        // The profile gives us three things we need for generation:
+        //   - goal: drives which split SplitSelector picks (muscle building vs weight loss)
+        //   - daysPerWeek: how many training days to schedule (1-7)
+        //   - minsAvailablePerWorkout: time budget per session → how many exercises fit
+        FitnessProfile profile = fitnessProfileDAO.getProfile(userId);
+        if (profile == null) {
+            // user hasn't completed setup — controller should redirect to setup screen
+            return null;
+        }
+
+        // ── STEP 2: Determine which days of the week the user trains ──────────
+        // We pick training days based on how many days per week they workout.
+        // The pattern is designed for balanced recovery (no back-to-back days when possible).
+        // Example: 3 days → Monday, Wednesday, Friday (rest between every session)
+        // Example: 4 days → Monday, Tuesday, Thursday, Friday (one back-to-back pair allowed)
+        //
+        // TODO: replace getDefaultTrainingDays() with AvailabilityDAO once it's ready.
+        // AvailabilityDAO will let the user pick their exact available days
+        // instead of using this default pattern.
+        Set<DayOfWeek> trainingDays = getDefaultTrainingDays(profile.getDaysPerWeek());
+
+        // ── STEP 3: Map the user's goal to the string SplitSelector expects ───
+        // FitnessProfile uses the FitnessGoal enum (BUILD, MUSCLE, MAINTAIN).
+        // SplitSelector uses plain strings ("MUSCLE_BUILDING", "WEIGHT_LOSS").
+        String goalString = mapGoalToSplitString(profile.getGoal());
+
+        // ── STEP 4: Pick the workout split ────────────────────────────────────
+        // SplitSelector looks at how many days they train and their goal,
+        // then returns an ordered list of WorkoutTypes — one per training day.
+        // Example: 3 days, MUSCLE_BUILDING → [UPPER, LOWER, FULL_BODY]
+        // Example: 5 days, MUSCLE_BUILDING → [PUSH, PULL, LEGS, UPPER, LOWER]
+        //
+        // The list order matches the recommended training sequence for recovery:
+        // push muscles recover while pull day runs, then legs gives the upper body a break.
+        List<WorkoutType> split = SplitSelector.selectSplit(trainingDays, goalString);
+
+        // ── STEP 5: Resolve the time budget ───────────────────────────────────
+        // minsAvailablePerWorkout might not be a clean multiple of 10.
+        // We floor it to the nearest 10-minute block because each exercise takes exactly 10 min.
+        // We also enforce a minimum of 30 minutes (at least 3 exercises) so the queue
+        // never returns fewer than the 2-compound minimum.
+        int rawMinutes = (int) profile.getMinsAvailablePerWorkout();
+        int availableMinutes = Math.max(MIN_WORKOUT_MINUTES, (rawMinutes / MINUTES_PER_EXERCISE) * MINUTES_PER_EXERCISE);
+
+        // ── STEP 6: Load all exercises available to this user ─────────────────
+        // This includes both the global exercise library and any custom exercises
+        // the user has created. ExercisePriorityQueue will filter and rank them
+        // based on which workout type each day is assigned.
+        ArrayList<Exercise> allExercises = exercisesDAO.getExercises(userId);
+        if (allExercises == null || allExercises.isEmpty()) {
+            // no exercises seeded yet — return empty plan rather than crashing
+            return buildEmptyWeek();
+        }
+
+        // ── STEP 7: Check which days the user has already completed this week ─
+        // WorkoutLogsDAO returns the set of dates (Mon-Sun) where the user logged
+        // at least one completed set. We use this to set isCompleted on each DayWorkoutPlan.
+        // A day is "done" when its calendar date appears in this set.
+        Set<LocalDate> completedDates = workoutLogsDAO.getLoggedDatesThisWeek(userId);
+
+        // ── STEP 8: Build a DayWorkoutPlan for every day of the week ─────────
+        // We walk Monday through Sunday in order.
+        // Training days get a full exercise list built by ExercisePriorityQueue.
+        // Rest days get an empty DayWorkoutPlan with isRestDay = true.
+        // Each day gets isCompleted set by checking the logged dates from Step 7.
+        Map<DayOfWeek, DayWorkoutPlan> weeklyPlan = new LinkedHashMap<>();
+
+        // pair each training day (calendar order) with its WorkoutType (split order)
+        List<DayOfWeek> orderedTrainingDays = new ArrayList<>(trainingDays);
+        ExercisePriorityQueue priorityQueue = new ExercisePriorityQueue();
+
+        for (DayOfWeek day : DayOfWeek.values()) {
+
+            DayWorkoutPlan dayPlan = new DayWorkoutPlan(day);
+
+            if (trainingDays.contains(day)) {
+
+                // find what position this day is in the training schedule
+                // so we can look up the matching WorkoutType from the split
+                int splitIndex = orderedTrainingDays.indexOf(day);
+                WorkoutType workoutType = (splitIndex < split.size())
+                        ? split.get(splitIndex)
+                        : WorkoutType.FULL_BODY; // fallback if split is shorter
+
+                // ── STEP 8a: Rank and select exercises for this day ───────────
+                // ExercisePriorityQueue scores every exercise against the day's target muscles.
+                // Compounds are always placed first, isolations fill the remaining slots.
+                // The number of slots = availableMinutes / 10.
+                // Example: 50 min → 5 exercises (3 compounds + 2 isolations on a PUSH day)
+                List<Exercise> rankedExercises = priorityQueue.buildQueue(
+                        allExercises, workoutType, availableMinutes);
+
+                // ── STEP 8b: Wrap each Exercise in a PlannedExercise ──────────
+                // PlannedExercise adds context: sets, reps, suggested weight, rest time.
+                // Defaults: 2 warmup sets + 2 working sets (our standard protocol).
+                // suggestedWeight is 0 here — the workout controller fills it in
+                // using ProgressService (last logged weight for that exercise).
+                for (Exercise exercise : rankedExercises) {
+                    PlannedExercise planned = new PlannedExercise(exercise);
+                    // warmupSets and workingSets default to 2 each via PlannedExercise()
+                    dayPlan.addExercise(planned);
+                }
+
+                dayPlan.setWorkoutName(workoutType.name());
+                dayPlan.setRestDay(false);
+
+            } else {
+                // rest day — no exercises, just mark it so the UI can show "REST"
+                dayPlan.setRestDay(true);
+                dayPlan.setWorkoutName("Rest Day");
+            }
+
+            // ── STEP 8c: Mark the day as completed if the user already logged it ─
+            // Convert this day's DayOfWeek to the actual calendar date for this week.
+            // If that date is in the completedDates set, the user already did this workout.
+            LocalDate dayDate = LocalDate.now().with(day);
+            dayPlan.setCompleted(completedDates.contains(dayDate));
+
+            weeklyPlan.put(day, dayPlan);
+        }
+
+        return weeklyPlan;
+    }
+
+    /**
+     * Returns the workout plan for today only.
+     * Convenience wrapper around getWeeklyPlan() — useful for the dashboard
+     * to show just today's exercises without rendering the full week.
+     *
+     * Returns null if no profile exists or if today is a rest day.
+     *
+     * @param userId the logged-in user's ID
+     * @return today's DayWorkoutPlan, or null if rest day or no profile
+     */
+    public DayWorkoutPlan getTodaysPlan(int userId) {
+        Map<DayOfWeek, DayWorkoutPlan> weeklyPlan = getWeeklyPlan(userId);
+        if (weeklyPlan == null) return null;
+
+        DayOfWeek today = LocalDate.now().getDayOfWeek();
+        DayWorkoutPlan todaysPlan = weeklyPlan.get(today);
+
+        // return null for rest days so callers don't try to render an empty exercise list
+        if (todaysPlan == null || todaysPlan.isRestDay()) return null;
+        return todaysPlan;
+    }
+
+    /**
+     * Returns a human-readable summary of today's workout for the dashboard header.
+     * Format: "Push Day · 3 exercises · 30 min"
+     * Returns "Rest Day" if today is a rest day.
+     * Returns "Setup not complete" if the user has no profile.
+     *
+     * @param userId the logged-in user's ID
+     * @return formatted summary string for display on the dashboard
+     */
+    public String getTodaysSummary(int userId) {
+        DayWorkoutPlan todaysPlan = getTodaysPlan(userId);
+        if (todaysPlan == null) return "Rest Day";
+
+        int exerciseCount = todaysPlan.getExercises().size();
+        int totalMinutes = exerciseCount * MINUTES_PER_EXERCISE;
+        return todaysPlan.getWorkoutName() + " · "
+                + exerciseCount + " exercises · "
+                + totalMinutes + " min";
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // PRIVATE HELPERS
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /**
+     * Returns the default set of training days for a given daysPerWeek count.
+     *
+     * The pattern is designed to maximize recovery between sessions:
+     *   1 day  → Wednesday only (midweek full body)
+     *   2 days → Monday, Thursday (3 days apart)
+     *   3 days → Monday, Wednesday, Friday (rest between every session)
+     *   4 days → Monday, Tuesday, Thursday, Friday (one back-to-back pair per half-week)
+     *   5 days → Monday through Friday (rest on weekends)
+     *   6 days → Monday through Saturday (one rest day on Sunday)
+     *   7 days → all days (not recommended, but supported by SplitSelector cap of 6 unique types)
+     *
+     * Returns a LinkedHashSet to preserve calendar order (Monday first).
+     *
+     * TODO: This will be replaced by AvailabilityDAO once it is built.
+     * AvailabilityDAO will store the user's actual available days per day of the week,
+     * so the plan reflects their real schedule instead of this default pattern.
+     *
+     * @param daysPerWeek how many days per week the user wants to train
+     * @return ordered set of DayOfWeek values representing training days
+     */
+    private Set<DayOfWeek> getDefaultTrainingDays(int daysPerWeek) {
+        Set<DayOfWeek> days = new LinkedHashSet<>();
+        switch (Math.min(daysPerWeek, 7)) {
+            case 1:
+                days.add(DayOfWeek.WEDNESDAY);
+                break;
+            case 2:
+                days.addAll(Arrays.asList(DayOfWeek.MONDAY, DayOfWeek.THURSDAY));
+                break;
+            case 3:
+                days.addAll(Arrays.asList(
+                        DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY, DayOfWeek.FRIDAY));
+                break;
+            case 4:
+                days.addAll(Arrays.asList(
+                        DayOfWeek.MONDAY, DayOfWeek.TUESDAY,
+                        DayOfWeek.THURSDAY, DayOfWeek.FRIDAY));
+                break;
+            case 5:
+                days.addAll(Arrays.asList(
+                        DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY,
+                        DayOfWeek.THURSDAY, DayOfWeek.FRIDAY));
+                break;
+            case 6:
+                days.addAll(Arrays.asList(
+                        DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY,
+                        DayOfWeek.THURSDAY, DayOfWeek.FRIDAY, DayOfWeek.SATURDAY));
+                break;
+            default: // 7
+                days.addAll(Arrays.asList(DayOfWeek.values()));
+                break;
+        }
+        return days;
+    }
+
+    /**
+     * Converts FitnessProfile.FitnessGoal into the string SplitSelector expects.
+     *
+     * SplitSelector was written to accept "MUSCLE_BUILDING" or "WEIGHT_LOSS".
+     * FitnessProfile uses the FitnessGoal enum (BUILD, MUSCLE, MAINTAIN).
+     * Mapping:
+     *   BUILD    → "MUSCLE_BUILDING" (user wants to add size and strength)
+     *   MUSCLE   → "MUSCLE_BUILDING" (same focus, different label in the UI)
+     *   MAINTAIN → "WEIGHT_LOSS"     (maintenance goals favor mixed cardio splits)
+     *
+     * @param goal the user's FitnessGoal from their profile
+     * @return the matching string for SplitSelector
+     */
+    private String mapGoalToSplitString(FitnessProfile.FitnessGoal goal) {
+        if (goal == null) return "MUSCLE_BUILDING";
+        switch (goal) {
+            case BUILD:
+            case MUSCLE:
+                return "MUSCLE_BUILDING";
+            case MAINTAIN:
+            default:
+                return "WEIGHT_LOSS";
+        }
+    }
+
+    /**
+     * Builds a full week of empty rest-day plans.
+     * Used as a fallback when no exercises are seeded in the database yet.
+     *
+     * @return map of DayOfWeek -> empty DayWorkoutPlan with isRestDay = true
+     */
+    private Map<DayOfWeek, DayWorkoutPlan> buildEmptyWeek() {
+        Map<DayOfWeek, DayWorkoutPlan> week = new LinkedHashMap<>();
+        for (DayOfWeek day : DayOfWeek.values()) {
+            DayWorkoutPlan plan = new DayWorkoutPlan(day);
+            plan.setRestDay(true);
+            plan.setWorkoutName("Rest Day");
+            week.put(day, plan);
+        }
+        return week;
+    }
+}

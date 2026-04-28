@@ -37,6 +37,14 @@ public class DayWorkoutPlan {
     // catered to user availability
     private boolean isRestDay;
 
+    /*
+     * Tracks whether the user has finished every exercise on this day's plan.
+     * PlannerService sets this to true when the user's logged dates this week
+     * include this day's date. Used by the dashboard to mark day cards as done
+     * and to drive the "n out of n workouts completed" progress banner.
+     */
+    private boolean isCompleted;
+
     // order list of exercises for this day
     // each planned exercise contains: exercise, sets, reps, weight, rest time
     private List<PlannedExercise> exercises;
@@ -80,8 +88,11 @@ public class DayWorkoutPlan {
     public void setWorkoutName(String name){this.workoutName = name;}
 
     public boolean isRestDay() {return isRestDay;}
-    public void setRestDay(boolean restDay) {isRestDay = restDay;
-    }
+    public void setRestDay(boolean restDay) {isRestDay = restDay;}
+
+    public boolean isCompleted() {return isCompleted;}
+    public void setCompleted(boolean completed) {this.isCompleted = completed;}
+
     public List<PlannedExercise> getExercises(){return exercises;}
 
     public void setExercises(List<PlannedExercise> exercises) {this.exercises = exercises;}

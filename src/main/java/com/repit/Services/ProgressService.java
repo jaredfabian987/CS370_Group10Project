@@ -75,6 +75,20 @@ public class ProgressService {
         return new ProgressionSuggestion(nextWeight, TARGET_REPS, true);
     }
 
+    /**
+     * Returns how many distinct exercises the user has completed today.
+     * This is the "n completed" part of the "n out of n" dashboard progress counter.
+     *
+     * Example: if the user has logged bench press and shoulder press today,
+     * this returns 2 — regardless of how many sets they did for each.
+     *
+     * @param userId the logged-in user's ID
+     * @return count of distinct exercises completed today
+     */
+    public int getCompletedExerciseCountToday(int userId) {
+        return workoutLogsDAO.getCompletedExercisesCountToday(userId);
+    }
+
     private static double roundToNearest(double value, double increment) {
         return Math.round(value / increment) * increment;
     }
