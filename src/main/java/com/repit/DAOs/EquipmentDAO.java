@@ -25,7 +25,7 @@ public class EquipmentDAO extends BaseDAO{
                     "exerciseId INTEGER NOT NULL, "+
                     "name TEXT NOT NULL," +
                     "EquipmentType INTEGER NOT NULL, "+
-                    "isCustom INTEGER NOT NULL, "+
+                    "isCustom INTEGER NOT NULL "+
                     ")";
     private static final String INSERT_SQL =
             "INSERT INTO equipment (exerciseId, name, EquipmentType, isCustom) "+
@@ -35,9 +35,9 @@ public class EquipmentDAO extends BaseDAO{
     private static final String SELECT_SQL =
             "SELECT * FROM equipment WHERE equipmentId = ?";
     private static final String DELETE_SQL =
-            "DELETE FROM exercises WHERE exerciseId = ? AND userId = ?";
+            "DELETE FROM equipment WHERE exerciseId = ? AND userId = ?";
     private static final String UPDATE_SQL =
-            "UPDATE profiles SET weight=?, height=?, daysPerWeek=?, minsAvailablePerWorkout=?, level=?, goal=? WHERE userId=?";
+            "UPDATE equipment SET weight=?, height=?, daysPerWeek=?, minsAvailablePerWorkout=?, level=?, goal=? WHERE userId=?";
 
     public boolean saveEquipment(Equipment equipment){
         try {
@@ -67,7 +67,7 @@ public class EquipmentDAO extends BaseDAO{
 
             PreparedStatement pstmt = connection.prepareStatement(SELECT_EXERCISE_SQL);
             pstmt.setInt(1, exerciseId);
-            pstmt.executeUpdate();
+            //pstmt.executeUpdate();
 
             ResultSet rs = pstmt.executeQuery();
             while(rs.next()){
@@ -93,7 +93,7 @@ public class EquipmentDAO extends BaseDAO{
 
             PreparedStatement pstmt = connection.prepareStatement(SELECT_SQL);
             pstmt.setInt(1, equipmentId);
-            pstmt.executeUpdate();
+            //pstmt.executeUpdate();
 
             ResultSet rs = pstmt.executeQuery();
             if(rs.next()){

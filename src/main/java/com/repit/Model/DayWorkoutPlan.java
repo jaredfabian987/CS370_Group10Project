@@ -70,7 +70,7 @@ public class DayWorkoutPlan {
 
     // method to add an exercise
     public void addExercise (PlannedExercise exercise){
-        exercise.setExerciseOrder(exercises.size() + 1);
+        //exercise.setExerciseOrder(exercises.size() + 1);
         exercises.add(exercise);
     }
 

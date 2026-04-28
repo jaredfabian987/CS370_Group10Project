@@ -74,7 +74,7 @@ public class TargetedMusclesDAO extends BaseDAO {
 
             PreparedStatement pstmt = connection.prepareStatement(SELECT_SQL);
             pstmt.setInt(1, targetedMuscleId);
-            pstmt.executeUpdate();
+            //pstmt.executeUpdate();
 
             ResultSet rs = pstmt.executeQuery();
 
