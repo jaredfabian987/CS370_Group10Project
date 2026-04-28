@@ -71,9 +71,7 @@ public class Availability {
         this.minutesPerDay = new LinkedHashMap<>(minutesPerDay);
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
     // Convenience methods
-    // ─────────────────────────────────────────────────────────────────────────
 
     /**
      * Adds or updates a single training day with its available minutes.
