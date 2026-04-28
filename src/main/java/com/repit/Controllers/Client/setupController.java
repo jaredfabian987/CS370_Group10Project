@@ -13,6 +13,8 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.stage.FileChooser;
+
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -188,6 +190,8 @@ public class setupController implements Initializable {
         return true;
     }
 
+    //public String
+
     //
     private void saveSetupInformation(){
 
@@ -198,6 +202,8 @@ public class setupController implements Initializable {
         if (!checkBoxTest()) { return; }
 
         //FitnessProfile.FitnessLevel level =
+
+        //FitnessProfile.FitnessLevel =
 
 
         errorLabel1.setText("");

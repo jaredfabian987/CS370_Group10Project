@@ -86,7 +86,6 @@ public class plannerController implements Initializable {
     //Variable(s):
     //Service Dispatcher
     private final ServiceDispatcher serviceDispatcher = new ServiceDispatcher();
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         bindDayToggle(mondayCheckBox, mondayTimeComboBox);
@@ -126,31 +125,36 @@ public class plannerController implements Initializable {
             anyDaySelected = true;
             if (tuesdayTimeComboBox.getSelectionModel().isEmpty()) {
                 errorMsg += "Tuesday ";
-                allTimeSelected = false;            }
+                allTimeSelected = false;
+            }
         }
         if (wednesdayCheckBox.isSelected()) {
             anyDaySelected = true;
             if (wednesdayTimeComboBox.getSelectionModel().isEmpty()) {
                 errorMsg += "Wednesday ";
-                allTimeSelected = false;            }
+                allTimeSelected = false;
+            }
         }
         if (thursdayCheckBox.isSelected()) {
             anyDaySelected = true;
             if (thursdayTimeComboBox.getSelectionModel().isEmpty()) {
                 errorMsg += "Thursday ";
-                allTimeSelected = false;            }
+                allTimeSelected = false;
+            }
         }
         if (fridayCheckBox.isSelected()) {
             anyDaySelected = true;
             if (fridayTimeComboBox.getSelectionModel().isEmpty()) {
                 errorMsg += "Friday ";
-                allTimeSelected = false;            }
+                allTimeSelected = false;
+            }
         }
         if (saturdayCheckBox.isSelected()) {
             anyDaySelected = true;
             if (saturdayTimeComboBox.getSelectionModel().isEmpty()) {
                 errorMsg += "Saturday ";
-                allTimeSelected = false;            }
+                allTimeSelected = false;
+            }
         }
         if (sundayCheckBox.isSelected()) {
             anyDaySelected = true;

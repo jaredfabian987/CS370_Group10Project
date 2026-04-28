@@ -66,16 +66,19 @@ public class loginController {
         User loggedUser = serviceDispatcher.handleLoginRequest(userName, passWord);
 
         //Prevents user from progressing if authentication fails
-        if (loggedUser != null){
+        /* Comment in later
+        if (loggedUser == null){
             label.setText("Wrong username or password");
             return;
         }
+        */
 
         //If user is authenicated, load in next page and pass login credentials to next controller
-        /* Comment back in later
+        // Comment back in later
+        /*
         dashboardController dashboardController = Main.getViewFactory().switchScene("Dashboard.fxml");
         dashboardController.setLoggedUser(loggedUser);
-         */
+        */
         Main.getViewFactory().switchScene("Fxml/Client/dashboard.fxml");
     }
 
