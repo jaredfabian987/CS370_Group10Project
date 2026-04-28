@@ -28,7 +28,7 @@ public class UsersDAO extends BaseDAO {
                     "VALUES (?,?,?,?,?)";
 
     private static final String DELETE_SQL =
-            "DELETE FROM exercises WHERE userId = ?";
+            "DELETE FROM users WHERE userId = ?";
 
     private static final String UPDATE_SQL =
             "UPDATE users SET password = ? WHERE username = ?";
@@ -42,7 +42,7 @@ public class UsersDAO extends BaseDAO {
 
             PreparedStatement pstmt = connection.prepareStatement(SELECT_USERID_SQL);
             pstmt.setInt(1, userId);
-            pstmt.executeUpdate();
+            //pstmt.executeUpdate();
 
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()){
@@ -71,7 +71,7 @@ public class UsersDAO extends BaseDAO {
 
             PreparedStatement pstmt = connection.prepareStatement(SELECT_USERNAME_SQL);
             pstmt.setString(1, username);
-            pstmt.executeUpdate();
+            //pstmt.executeUpdate();
 
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()){
@@ -105,7 +105,7 @@ public class UsersDAO extends BaseDAO {
                 pstmt = connection.prepareStatement(SELECT_USERNAME_SQL);
                 pstmt.setString(1, user.getUsername());
             }
-            pstmt.executeUpdate();
+            //pstmt.executeUpdate();
 
             ResultSet rs = pstmt.executeQuery();
             if (!rs.next()){ // only 1 user data should be found

@@ -117,7 +117,7 @@ public class ExercisesDAO extends BaseDAO {
 
             PreparedStatement pstmt = conn.prepareStatement(SELECT_SQL);
             pstmt.setInt(1, userId);
-            pstmt.executeUpdate();
+            //pstmt.executeUpdate();
 
             ResultSet rs = pstmt.executeQuery();
 
