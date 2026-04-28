@@ -1,5 +1,6 @@
 package com.repit.Controllers.Client;
 
+import com.repit.Services.ServiceDispatcher;
 import com.repit.main.java.Main;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -79,6 +80,13 @@ public class plannerController implements Initializable {
     @FXML
     private RadioButton weightLossRadialButton;
 
+    @FXML
+    private Label errorLabel1;
+
+    //Variable(s):
+    //Service Dispatcher
+    private final ServiceDispatcher serviceDispatcher = new ServiceDispatcher();
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         bindDayToggle(mondayCheckBox, mondayTimeComboBox);
@@ -102,14 +110,83 @@ public class plannerController implements Initializable {
         });
     }
 
+    public boolean checkBoxTest() {
+        boolean anyDaySelected = false;
+        boolean allTimeSelected = true;
+        String errorMsg = "";
+
+        if (mondayCheckBox.isSelected()) {
+            anyDaySelected = true;
+            if (mondayTimeComboBox.getSelectionModel().isEmpty()) {
+                errorMsg += "Monday ";
+                allTimeSelected = false;
+            }
+        }
+        if (tuesdayCheckBox.isSelected()) {
+            anyDaySelected = true;
+            if (tuesdayTimeComboBox.getSelectionModel().isEmpty()) {
+                errorMsg += "Tuesday ";
+                allTimeSelected = false;            }
+        }
+        if (wednesdayCheckBox.isSelected()) {
+            anyDaySelected = true;
+            if (wednesdayTimeComboBox.getSelectionModel().isEmpty()) {
+                errorMsg += "Wednesday ";
+                allTimeSelected = false;            }
+        }
+        if (thursdayCheckBox.isSelected()) {
+            anyDaySelected = true;
+            if (thursdayTimeComboBox.getSelectionModel().isEmpty()) {
+                errorMsg += "Thursday ";
+                allTimeSelected = false;            }
+        }
+        if (fridayCheckBox.isSelected()) {
+            anyDaySelected = true;
+            if (fridayTimeComboBox.getSelectionModel().isEmpty()) {
+                errorMsg += "Friday ";
+                allTimeSelected = false;            }
+        }
+        if (saturdayCheckBox.isSelected()) {
+            anyDaySelected = true;
+            if (saturdayTimeComboBox.getSelectionModel().isEmpty()) {
+                errorMsg += "Saturday ";
+                allTimeSelected = false;            }
+        }
+        if (sundayCheckBox.isSelected()) {
+            anyDaySelected = true;
+            if (sundayTimeComboBox.getSelectionModel().isEmpty()) {
+                errorMsg += "Sunday ";
+                allTimeSelected = false;
+            }
+        }
+
+        if (!allTimeSelected) {
+            errorMsg += "time(s) need to be selected";
+            errorLabel1.setText(errorMsg);
+            return false;
+        }
+
+        if (!anyDaySelected) {
+            errorLabel1.setText("Select at least ONE day and time");
+            return false;
+        }
+        return true;
+    }
+
     @FXML
     void generatePlanButtonClicked(ActionEvent event) {
+        if (!checkBoxTest()){
+            return;
+        }
 
+        //Update errorLabel1
+        errorLabel1.setText("");
+
+        //integrate here
     }
 
     @FXML
     void finishPlannerButtonClicked(ActionEvent event) {
         Main.getViewFactory().switchScene("Fxml/Client/dashboard.fxml");
     }
-
 }
