@@ -1,5 +1,8 @@
 package com.repit.Controllers;
 
+import com.repit.Controllers.Client.dashboardController;
+import com.repit.Model.User;
+import com.repit.Services.ServiceDispatcher;
 import com.repit.main.java.Main;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -38,6 +41,7 @@ public class loginController {
     @FXML
     private TextField username;
 
+    ServiceDispatcher serviceDispatcher =  new ServiceDispatcher();
 
     //Loads signup page
     @FXML
@@ -48,7 +52,7 @@ public class loginController {
     //Loads
     @FXML
     void userLogin(ActionEvent event) {
-        //User input from username and password Text fields
+        //User input:
         String userName = username.getText();
         String passWord = password.getText();
 
@@ -58,7 +62,20 @@ public class loginController {
             return;
         }
 
-        //If user is authenicated, load dashboard page
+        //User authentication:
+        User loggedUser = serviceDispatcher.handleLoginRequest(userName, passWord);
+
+        //Prevents user from progressing if authentication fails
+        if (loggedUser != null){
+            label.setText("Wrong username or password");
+            return;
+        }
+
+        //If user is authenicated, load in next page and pass login credentials to next controller
+        /* Comment back in later
+        dashboardController dashboardController = Main.getViewFactory().switchScene("Dashboard.fxml");
+        dashboardController.setLoggedUser(loggedUser);
+         */
         Main.getViewFactory().switchScene("Fxml/Client/dashboard.fxml");
     }
 

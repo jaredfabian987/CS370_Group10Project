@@ -106,7 +106,7 @@ public class setupController implements Initializable {
         bindDayToggle(fridayCheckBox, fridayTimeComboBox);
         bindDayToggle(saturdayCheckBox, saturdayTimeComboBox);
         bindDayToggle(sundayCheckBox, sundayTimeComboBox);
-        setLoggedUser(loggedUser);
+        //setLoggedUser(loggedUser);
     }
 
 
