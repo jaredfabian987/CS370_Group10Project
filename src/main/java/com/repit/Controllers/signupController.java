@@ -1,5 +1,9 @@
 package com.repit.Controllers;
 
+import com.repit.Controllers.Client.dashboardController;
+import com.repit.Controllers.Client.setupController;
+import com.repit.Model.User;
+import com.repit.Services.ServiceDispatcher;
 import com.repit.main.java.Main;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -11,6 +15,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import org.slf4j.ILoggerFactory;
 
 public class signupController {
 
@@ -22,6 +27,12 @@ public class signupController {
 
     @FXML
     private Label errorLabel;
+
+    @FXML
+    private TextField firstNameField;
+
+    @FXML
+    private TextField lastNameField;
 
     @FXML
     private Hyperlink loginLinker;
@@ -41,25 +52,53 @@ public class signupController {
     @FXML
     private Text signupPaneTitleText;
 
+    //Variables:
+    //ServiceDispatcher
+    private final ServiceDispatcher serviceDispatcher = new ServiceDispatcher();
+
+
     @FXML
     void createAccountClicked(ActionEvent event) {
-        //User input from text fields
+        //User input from text fields:
+        String firstName = firstNameField.getText();
+        String lastName = lastNameField.getText();
         String username = createUsernameField.getText();
         String password = createPasswordField.getText();
         String confirmPassword = reenterPasswordField.getText();
 
-        //Conditional Statements:
-        if (createUsernameField.getText().isEmpty() || createPasswordField.getText().isEmpty() || confirmPassword.isEmpty()) {
+        //UI error handling:
+        if (firstName.isEmpty() || lastName.isEmpty() || username.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
             errorLabel.setText("Please fill all the fields");
+            return;
         }
         if (!password.equals(confirmPassword)) {
             errorLabel.setText("Passwords do not match");
+            return;
         }
-        //hi
-        //add some user creation service later
-        //add user authentication service later
+
+        //Database error handling:
+        boolean registered = serviceDispatcher.handleRegisterRequest(
+                username,
+                password,
+                firstName,
+                lastName,
+                "12"
+        );
+
+        if (!registered) {
+            errorLabel.setText("Unable to create account");
+            return;
+        }
+
+        User loggedUser = serviceDispatcher.handleLoginRequest(username, password);
 
         errorLabel.setText("");
+
+        //If user is authenicated, load in next page and pass login credentials to next controller
+        /*
+        setupController setupController = Main.getViewFactory().switchScene("Fxml/Client/setup.fxml");
+        setupController.setLoggedUser(loggedUser);
+        */
         Main.getViewFactory().switchScene("Fxml/Client/setup.fxml");
     }
 

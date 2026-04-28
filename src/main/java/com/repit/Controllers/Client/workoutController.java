@@ -1,5 +1,6 @@
 package com.repit.Controllers.Client;
 
+import com.repit.Services.ServiceDispatcher;
 import com.repit.main.java.Main;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -24,7 +25,9 @@ import java.util.regex.Pattern;
 public class workoutController implements Initializable {
 
     public Button playButton;
+
     public Button pauseButton;
+
     @FXML
     private Label coachingCueLabel;
 
@@ -101,11 +104,15 @@ public class workoutController implements Initializable {
 
     private MediaPlayer mediaPlayer;
 
+    //Variable(s):
+    ServiceDispatcher serviceDispatcher = new ServiceDispatcher();
+
     //Initialization:
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         setStateLoading();
 
+        //Set Media Player Bounds
         mediaView.setPreserveRatio(true);
         mediaView.fitWidthProperty().bind(exerciseMediaPane.widthProperty());
         mediaView.fitHeightProperty().bind(exerciseMediaPane.heightProperty());
@@ -173,7 +180,7 @@ public class workoutController implements Initializable {
         mediaPlayer.pause();
     }
 
-    //Navigation Functions:
+    //Navigation Function(s):
     @FXML
     void finishWorkoutClicked(ActionEvent event) {
         //service function that handles
@@ -181,6 +188,7 @@ public class workoutController implements Initializable {
         Main.getViewFactory().switchScene("Fxml/Client/dashboard.fxml");
     }
 
+    //Saving Data Function(s)
     @FXML
     void logClicked(ActionEvent event) {
         //User input variable(s):

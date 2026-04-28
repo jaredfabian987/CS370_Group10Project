@@ -33,12 +33,28 @@
                      </children>
                   </VBox>
                   <Region prefHeight="8.0" />
+                  <Label styleClass="field-label" text="First Name" />
+                  <TextField fx:id="firstNameField" promptText="First Name" />
+                  <Label styleClass="field-label" text="Last Name" />
+                  <TextField fx:id="lastNameField" promptText="Last Name" />
                   <Label styleClass="field-label" text="Username" />
                   <TextField fx:id="createUsernameField" promptText="Create Username" />
-                  <Label styleClass="field-label" text="Password" />
-                  <PasswordField fx:id="createPasswordField" promptText="Create Password" />
-                  <Label styleClass="field-label" text="Confirm Password" />
-                  <PasswordField fx:id="reenterPasswordField" promptText="Re-enter Password" />
+                  <HBox spacing="12.0">
+                     <children>
+                        <VBox spacing="6.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label styleClass="field-label" text="Password" />
+                              <PasswordField fx:id="createPasswordField" promptText="Create Password" />
+                           </children>
+                        </VBox>
+                        <VBox spacing="6.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label styleClass="field-label" text="Confirm Password" />
+                              <PasswordField fx:id="reenterPasswordField" promptText="Re-enter Password" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
                   <Label fx:id="errorLabel" styleClass="error" text="" wrapText="true" />
                   <Region VBox.vgrow="ALWAYS" />
                   <Button fx:id="signupButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#createAccountClicked" prefHeight="42.0" text="Create Account" textAlignment="CENTER" />
