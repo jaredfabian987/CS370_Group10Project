@@ -91,7 +91,7 @@ public class setupController implements Initializable {
 
     //Variables:
     //Service dispatcher
-    private final ServiceDispatcher serviceDispatcher = new ServiceDispatcher();
+    private final ServiceDispatcher serviceDispatcher = Main.getServiceDispatcher();
     private User loggedUser;
     private FitnessProfile fitnessProfile;
 
