@@ -86,6 +86,14 @@ public class plannerController implements Initializable {
     //Variable(s):
     //Service Dispatcher
     private final ServiceDispatcher serviceDispatcher = new ServiceDispatcher();
+
+    // logged-in user — set by dashboardController immediately after switchScene()
+    private com.repit.Model.User loggedUser;
+
+    public void setLoggedUser(com.repit.Model.User loggedUser) {
+        this.loggedUser = loggedUser;
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         bindDayToggle(mondayCheckBox, mondayTimeComboBox);

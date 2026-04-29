@@ -37,7 +37,7 @@ public class EquipmentDAO extends BaseDAO{
     private static final String DELETE_SQL =
             "DELETE FROM equipment WHERE exerciseId = ? AND userId = ?";
     private static final String UPDATE_SQL =
-            "UPDATE equipment SET weight=?, height=?, daysPerWeek=?, minsAvailablePerWorkout=?, level=?, goal=? WHERE userId=?";
+            "UPDATE equipment SET name=?, EquipmentType=?, isCustom=? WHERE equipmentId=?";
 
     public boolean saveEquipment(Equipment equipment){
         try {
@@ -118,10 +118,10 @@ public class EquipmentDAO extends BaseDAO{
             stmt.execute(TABLE_SQL);
 
             PreparedStatement pstmt = connection.prepareStatement(UPDATE_SQL);
-            pstmt.setInt(1, equipment.getExerciseId());
-            pstmt.setString(2, equipment.getName());
-            pstmt.setInt(3, equipment.getTypeOrdinal());
-            pstmt.setInt(4, equipment.getCustomOrdinal());
+            pstmt.setString(1, equipment.getName());
+            pstmt.setInt(2, equipment.getTypeOrdinal());
+            pstmt.setInt(3, equipment.getCustomOrdinal());
+            pstmt.setInt(4, equipment.getExerciseId());
             pstmt.executeUpdate();
 
             return true;

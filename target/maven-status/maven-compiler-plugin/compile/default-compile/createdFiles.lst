@@ -8,7 +8,7 @@ com/repit/DAOs/AvailabilityDAO.class
 com/repit/DAOs/BaseDAO.class
 com/repit/Controllers/Client/dashboardController.class
 com/repit/Controllers/Client/plannerController.class
-com/repit/Main.class
+com/repit/main/java/Main.class
 com/repit/Controllers/Client/workoutController.class
 com/repit/Controllers/Client/settingsController.class
 com/repit/Services/WorkoutService.class
@@ -16,7 +16,6 @@ com/repit/DAOs/UsersDAO.class
 com/repit/Model/TargetedMuscle.class
 com/repit/DAOs/FitnessProfileDAO.class
 com/repit/Model/PlannedExercise.class
-com/repit/Model/enums/DaysOfWeek.class
 com/repit/Model/FitnessProfile$FitnessLevel.class
 com/repit/Services/DashboardService.class
 com/repit/Model/FitnessProfile.class

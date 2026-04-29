@@ -231,13 +231,125 @@ public class setupController implements Initializable {
         CheckBox [] dayCheckBox = {mondayCheckBox, tuesdayCheckBox, wednesdayCheckBox,  thursdayCheckBox, fridayCheckBox, saturdayCheckBox,  sundayCheckBox};
         ComboBox [] timeComboBox = {mondayTimeComboBox, tuesdayTimeComboBox, wednesdayTimeComboBox, thursdayTimeComboBox, fridayTimeComboBox, saturdayTimeComboBox,  sundayTimeComboBox};
         if (!checkBoxTest1(dayCheckBox, timeComboBox)) { return; }
+    @FXML
+    private void saveSetupButtonAction(ActionEvent event) {
 
-        //FitnessProfile.FitnessLevel level =
+        // guard — should never happen but prevents a NullPointerException if
+        // setLoggedUser() was never called before this screen loaded
+        if (loggedUser == null) {
+            errorLabel1.setText("Session error — please log in again.");
+            return;
+        }
 
-        //FitnessProfile.FitnessLevel =
+        // Step 1: validate — make sure at least one day is checked and all checked days have a time
+        if (!checkBoxTest()) { return; }
 
+        // Step 2: read fitness level from the radio buttons
+        // beginnerLevelRadio is selected by default in the FXML so BEG is the fallback
+        FitnessProfile.FitnessLevel level;
+        if (intermediateLevelRadio.isSelected()) {
+            level = FitnessProfile.FitnessLevel.INT;
+        } else if (proficientLevelRadio.isSelected()) {
+            level = FitnessProfile.FitnessLevel.ADV;
+        } else {
+            level = FitnessProfile.FitnessLevel.BEG;
+        }
 
+        // Step 3: read fitness goal from the radio buttons
+        // weightLossGoalRadio is selected by default in the FXML so MAINTAIN is the fallback
+        FitnessProfile.FitnessGoal goal;
+        if (muscleGainGoalRadio.isSelected()) {
+            goal = FitnessProfile.FitnessGoal.MUSCLE;
+        } else {
+            goal = FitnessProfile.FitnessGoal.MAINTAIN;
+        }
+
+        // Step 4: read the checked days and their selected times
+        // daysPerWeek = count of checked days
+        // minsAvailablePerWorkout = the highest minute value across all checked days
+        // we use the max so that the exercise queue never gets cut short on the user's
+        // longest available day
+        int daysPerWeek = 0;
+        int maxMinutes = 0;
+
+        if (mondayCheckBox.isSelected()) {
+            daysPerWeek++;
+            int mins = parseMinutes(mondayTimeComboBox.getValue());
+            if (mins > maxMinutes) maxMinutes = mins;
+        }
+        if (tuesdayCheckBox.isSelected()) {
+            daysPerWeek++;
+            int mins = parseMinutes(tuesdayTimeComboBox.getValue());
+            if (mins > maxMinutes) maxMinutes = mins;
+        }
+        if (wednesdayCheckBox.isSelected()) {
+            daysPerWeek++;
+            int mins = parseMinutes(wednesdayTimeComboBox.getValue());
+            if (mins > maxMinutes) maxMinutes = mins;
+        }
+        if (thursdayCheckBox.isSelected()) {
+            daysPerWeek++;
+            int mins = parseMinutes(thursdayTimeComboBox.getValue());
+            if (mins > maxMinutes) maxMinutes = mins;
+        }
+        if (fridayCheckBox.isSelected()) {
+            daysPerWeek++;
+            int mins = parseMinutes(fridayTimeComboBox.getValue());
+            if (mins > maxMinutes) maxMinutes = mins;
+        }
+        if (saturdayCheckBox.isSelected()) {
+            daysPerWeek++;
+            int mins = parseMinutes(saturdayTimeComboBox.getValue());
+            if (mins > maxMinutes) maxMinutes = mins;
+        }
+        if (sundayCheckBox.isSelected()) {
+            daysPerWeek++;
+            int mins = parseMinutes(sundayTimeComboBox.getValue());
+            if (mins > maxMinutes) maxMinutes = mins;
+        }
+
+        // Step 5: build the FitnessProfile
+        // weight and height are 0.0 — the setup form does not collect them
+        FitnessProfile profile = new FitnessProfile(
+                loggedUser.getUserId(),
+                0.0,
+                0.0,
+                daysPerWeek,
+                maxMinutes,
+                level,
+                goal
+        );
+
+        // Step 6: save via the service dispatcher
+        // if the user already has a profile (re-doing setup), update it instead of inserting
+        // a plain INSERT would fail with a UNIQUE constraint error on userId
+        boolean saved;
+        if (serviceDispatcher.handleGetFitnessProfileRequest(loggedUser.getUserId()) != null) {
+            saved = serviceDispatcher.handleUpdateProfileRequest(profile);
+        } else {
+            saved = serviceDispatcher.handleSaveProfileRequest(profile);
+        }
+        if (!saved) {
+            errorLabel1.setText("Error saving setup — please try again.");
+            return;
+        }
+
+        // Step 7: switch to the dashboard and pass the logged-in user
+        // capturing the returned controller lets us call setLoggedUser() so the
+        // dashboard knows whose data to load
         errorLabel1.setText("");
-        Main.getViewFactory().switchScene("Fxml/Client/dashboard.fxml");
+        dashboardController controller = Main.getViewFactory().switchScene("Fxml/Client/dashboard.fxml");
+        controller.setLoggedUser(loggedUser);
+    }
+
+    // Parses a time string from the combo box into an integer number of minutes.
+    // The combo box values look like "30 minutes" — we split on the space and
+    // parse just the number. Returns 30 as a safe default if parsing fails.
+    private int parseMinutes(String timeString) {
+        try {
+            return Integer.parseInt(timeString.split(" ")[0]);
+        } catch (Exception e) {
+            return 30;
+        }
     }
 }

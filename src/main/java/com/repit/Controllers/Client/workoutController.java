@@ -107,6 +107,13 @@ public class workoutController implements Initializable {
     //Variable(s):
     ServiceDispatcher serviceDispatcher = new ServiceDispatcher();
 
+    // logged-in user — set by dashboardController immediately after switchScene()
+    private com.repit.Model.User loggedUser;
+
+    public void setLoggedUser(com.repit.Model.User loggedUser) {
+        this.loggedUser = loggedUser;
+    }
+
     //Initialization:
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -227,6 +234,7 @@ public class workoutController implements Initializable {
     @FXML
     void nextExerciseClicked(ActionEvent event) {
         //insert updater function here
+
     }
 
 }

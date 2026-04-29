@@ -1,8 +1,14 @@
 package com.repit.DAOs;
 
 import com.repit.Model.Availability;
+import com.repit.Model.Equipment;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.time.DayOfWeek;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * AvailabilityDAO
@@ -56,15 +62,117 @@ import java.time.DayOfWeek;
 public class AvailabilityDAO extends BaseDAO {
 
     private static final String TABLE_SQL =
-            "CREATE TABLE IF NOT EXISTS availability (" +
+            "CREATE TABLE IF NOT EXISTS availabilities (" +
                     "userId INTEGER NOT NULL," +
                     "dayOfWeek INTEGER NOT NULL," +
                     "minutes INTEGER NOT NULL," +
                     "PRIMARY KEY (userId, dayOfWeek)" +
                     ")";
 
+    private static final String INSERT_SQL =
+            "INSERT INTO availabilities (userId, dayOfWeek, minutes) "+
+                    "VALUES (?,?,?)";
+    private static final String SELECT_DAYS_SQL =
+            "SELECT * FROM availabilities WHERE userId = ?";
+
+    private static final String UPDATE_SQL =
+            "UPDATE availabilities SET dayOfWeek=?, minutes=? WHERE userId=?";
+    private static final String DELETE_SQL =
+            "DELETE FROM availabilities WHERE userId = ? AND dayOfWeek = ?";
+
+
     public AvailabilityDAO() {
         super();
+    }
+
+    public boolean saveAvailability(Availability availability){
+        try {
+            Statement stmt = connection.createStatement();
+            stmt.execute(TABLE_SQL);
+
+            Map<DayOfWeek, Integer> minutesPerDay = availability.getMinutesPerDay();
+            for (Map.Entry<DayOfWeek, Integer> entry : minutesPerDay.entrySet()) {
+                DayOfWeek day = entry.getKey();
+                Integer minutes = entry.getValue();
+
+                PreparedStatement pstmt = connection.prepareStatement(INSERT_SQL);
+                pstmt.setInt(1, availability.getUserId());
+                pstmt.setInt(2, day.ordinal());
+                pstmt.setInt(3, minutes);
+                pstmt.executeUpdate();
+            }
+
+            return true;
+        } catch(Exception e){
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+
+    public Availability getAvailability(int userId){
+        Map<DayOfWeek, Integer> minutesPerDay = new HashMap<>();
+        try {
+            Statement stmt = connection.createStatement();
+            stmt.execute(TABLE_SQL);
+
+
+            PreparedStatement pstmt = connection.prepareStatement(SELECT_DAYS_SQL);
+            pstmt.setInt(1, userId);
+
+            ResultSet rs = pstmt.executeQuery();
+            if(rs.next()){
+                DayOfWeek day = DayOfWeek.values()[rs.getInt("dayOfWeek")];
+                int minutes = rs.getInt("minutes");
+                minutesPerDay.put(day, minutes);
+            }
+            return new Availability(userId, minutesPerDay);
+
+        } catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
+    public boolean updateAvailability(Availability availability){
+        try {
+            Statement stmt = connection.createStatement();
+            stmt.execute(TABLE_SQL);
+
+            int userId = availability.getUserId();
+            availability.getMinutesPerDay();
+            Map<DayOfWeek, Integer> minutesPerDay = availability.getMinutesPerDay();
+            for (Map.Entry<DayOfWeek, Integer> entry : minutesPerDay.entrySet()) {
+                DayOfWeek day = entry.getKey();
+                Integer minutes = entry.getValue();
+
+                PreparedStatement pstmt = connection.prepareStatement(UPDATE_SQL);
+                pstmt.setInt(3, userId);
+                pstmt.setInt(1, day.ordinal());
+                pstmt.setInt(2, minutes);
+                pstmt.executeUpdate();
+            }
+
+            return true;
+        } catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+        return false;
+    }
+
+    public boolean removeAvailability(int userId, DayOfWeek day){
+        try {
+            Statement stmt = connection.createStatement();
+            stmt.execute(TABLE_SQL);
+
+            PreparedStatement pstmt = connection.prepareStatement(DELETE_SQL);
+            pstmt.setInt(1, userId);
+            pstmt.setInt(2, day.ordinal());
+            pstmt.executeUpdate();
+            return true;
+        } catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+        return  false;
     }
 
     // TODO: implement saveAvailability(Availability availability)
@@ -78,4 +186,4 @@ public class AvailabilityDAO extends BaseDAO {
 
     // TODO: implement removeDay(int userId, DayOfWeek day)
     //       DELETE FROM availability WHERE userId = ? AND dayOfWeek = ?`
-`}
+}
