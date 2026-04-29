@@ -95,11 +95,11 @@ public class signupController {
         errorLabel.setText("");
 
         //If user is authenicated, load in next page and pass login credentials to next controller
-        /*
+
         setupController setupController = Main.getViewFactory().switchScene("Fxml/Client/setup.fxml");
         setupController.setLoggedUser(loggedUser);
-        */
-        Main.getViewFactory().switchScene("Fxml/Client/setup.fxml");
+
+        //Main.getViewFactory().switchScene("Fxml/Client/setup.fxml");
     }
 
     @FXML
