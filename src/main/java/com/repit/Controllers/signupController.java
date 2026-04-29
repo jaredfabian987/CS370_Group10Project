@@ -54,7 +54,7 @@ public class signupController {
 
     //Variables:
     //ServiceDispatcher
-    private final ServiceDispatcher serviceDispatcher = new ServiceDispatcher();
+    private final ServiceDispatcher serviceDispatcher = Main.getServiceDispatcher();
 
 
     @FXML

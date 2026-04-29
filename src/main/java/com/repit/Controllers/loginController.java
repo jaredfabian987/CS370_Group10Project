@@ -41,7 +41,7 @@ public class loginController {
     @FXML
     private TextField username;
 
-    ServiceDispatcher serviceDispatcher =  new ServiceDispatcher();
+    private final ServiceDispatcher serviceDispatcher = Main.getServiceDispatcher();
 
     //Loads signup page
     @FXML
