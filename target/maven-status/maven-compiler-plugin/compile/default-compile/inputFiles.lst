@@ -1,6 +1,5 @@
 /Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/Controllers/Client/dashboardController.java
 /Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/Controllers/Client/plannerController.java
-/Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/Controllers/Client/settingsController.java
 /Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/Controllers/Client/setupController.java
 /Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/Controllers/Client/workoutController.java
 /Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/Controllers/loginController.java
@@ -40,6 +39,7 @@
 /Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/Services/UserService.java
 /Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/Services/WorkoutService.java
 /Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/View/viewFactory.java
+/Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/main/java/AppLauncher.java
 /Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/main/java/Main.java
 /Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/package-info.java
 /Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/util/ExercisePriorityQueue.java

@@ -10,7 +10,6 @@ com/repit/Controllers/Client/dashboardController.class
 com/repit/Controllers/Client/plannerController.class
 com/repit/main/java/Main.class
 com/repit/Controllers/Client/workoutController.class
-com/repit/Controllers/Client/settingsController.class
 com/repit/Services/WorkoutService.class
 com/repit/DAOs/UsersDAO.class
 com/repit/Model/TargetedMuscle.class

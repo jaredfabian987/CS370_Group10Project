@@ -9,20 +9,22 @@ import java.util.*;
 
 /**
  * ExercisePriorityQueue
- * Pure utility — no database access.
+ * .
  * Ranks and orders exercises for a given workout day based on how well they
  * match the day's target muscles and how much time the user has available.
  *
  * Scoring per exercise:
  * - Primary muscle match (exercise.getMuscle()) -> +2 points
  * - Secondary muscle match (exercise.getSecondaryMuscles()) -> +1 point per match
- * Exercises with a score of 0 are excluded (wrong day entirely).
+ * Exercises with a score of 0 are excluded for example:
+ * A leg exercise like a squat would get a score of 0 on a push day because iit is not the intended target
+ * muscle for that day
  *
  * Time budget — each exercise costs 10 minutes (2 warmup + 2 working sets + rest):
- * - 30 min -> 3 exercises: 2 compounds + 1 isolation
- * - 40 min -> 4 exercises: 2 compounds + 2 isolations
- * - 50 min -> 5 exercises: 3 compounds + 2 isolations
- * - 60 min -> 6 exercises: 4 compounds + 2 isolations
+ * - 30 min = 3 exercises: 2 compounds + 1 isolation
+ * - 40 min = 4 exercises: 2 compounds + 2 isolations
+ * - 50 min = 5 exercises: 3 compounds + 2 isolations
+ * - 60 min = 6 exercises: 4 compounds + 2 isolations
  *
  * Isolation cap is always 2 regardless of time — extra time goes to more compounds.
  * Isolation slots are filled by category priority so push day never ends up with
@@ -145,7 +147,7 @@ public class ExercisePriorityQueue {
         }
     }
 
-    /*
+    /**
      * buildQueue
      * Loads exercises into heaps, scores each one against the workout type,
      * then returns an ordered list that respects the time limit and compound/isolation split.
@@ -171,46 +173,57 @@ public class ExercisePriorityQueue {
                             + MINUTES_PER_EXERCISE + ", got: " + availableMinutes);
         }
 
+        // scoreExercise() uses this to know which muscles to compare against
         this.currentWorkoutType = workoutType;
 
-        // clear heaps from any previous call
+        // clear heaps from any previous call so stale exercises don't carry over
         compoundHeap.clear();
         for (PriorityQueue<Exercise> heap : isolationHeaps.values()) heap.clear();
 
-        // load each exercise into the right heap — skip score-0 exercises (wrong day)
+        // score every exercise — anything with score 0 is irrelevant for this workout type and gets skipped
+        // compounds go into one shared heap; isolations go into a per-muscle-group heap
         for (Exercise exercise : exercises) {
             if (scoreExercise(exercise) > 0) {
                 if (exercise.isCompound()) {
+                    // compounds compete against each other as one group
                     compoundHeap.offer(exercise);
                 } else {
+                    // isolations are bucketed by muscle so we can pick the best tricep
+                    // separately from the best shoulder instead of mixing them together
                     PriorityQueue<Exercise> heap = isolationHeaps.get(exercise.getMuscle());
                     if (heap != null) heap.offer(exercise);
                 }
             }
         }
 
+        // figure out how many total exercise slots fit in the time budget
         int totalSlots = availableMinutes / MINUTES_PER_EXERCISE;
+
+        // isolation slots are capped at MAX_ISOLATION (2) — the rest go to compounds
+        // if we only have enough time for MIN_COMPOUND exercises, give all slots to compounds
         int isolationSlots = totalSlots > MIN_COMPOUND
                 ? Math.min(MAX_ISOLATION, totalSlots - MIN_COMPOUND) : 0;
         int compoundSlots = totalSlots - isolationSlots;
 
         List<Exercise> result = new ArrayList<>();
 
-        // 1. fill compound slots — highest scoring compounds first
+        // 1. fill compound slots first — the heap is sorted highest score first,
+        //    so poll() always gives the best remaining compound
         while (!compoundHeap.isEmpty() && result.size() < compoundSlots) {
             result.add(compoundHeap.poll());
         }
 
-        // 2. fill isolation slots using priority order
-        // ensures 1 tricep + 1 shoulder on push day instead of 2 triceps and 0 shoulders
+        // 2. fill isolation slots using the priority order for this workout type
+        //    each MuscleGroup in the list gets one slot — this guarantees variety
+        //    (e.g. push day gets 1 tricep + 1 shoulder, never 2 triceps)
         List<MuscleGroup> priority = ISOLATION_PRIORITY_MAP.get(workoutType);
         if (priority != null) {
             int filled = 0;
             for (MuscleGroup mg : priority) {
-                if (filled >= isolationSlots) break;
+                if (filled >= isolationSlots) break;             // all isolation slots used
                 PriorityQueue<Exercise> heap = isolationHeaps.get(mg);
                 if (heap != null && !heap.isEmpty()) {
-                    result.add(heap.poll());
+                    result.add(heap.poll());                     // best exercise for this muscle group
                     filled++;
                 }
             }
@@ -219,7 +232,7 @@ public class ExercisePriorityQueue {
         return result;
     }
 
-    /*
+    /**
      * getMaxExercises
      * Returns how many exercises fit in a given number of minutes.
      * Useful for controllers that need to know the cap before calling buildQueue.
@@ -232,19 +245,26 @@ public class ExercisePriorityQueue {
     }
 
     private int scoreExercise(Exercise exercise) {
+        // can't score without knowing the workout type
         if (currentWorkoutType == null) return 0;
+
+        // look up which muscle groups this workout type cares about
         Set<MuscleGroup> targets = WORKOUT_CATEGORY_MAP.get(currentWorkoutType);
+
+        // REST, CARDIO, CORE have empty target sets — nothing scores above 0
         if (targets == null || targets.isEmpty()) return 0;
 
         int score = 0;
 
-        // score the exercise's primary muscle group
+        // +2 if the exercise's main muscle is a target for today (e.g. bench press → CHEST on push day)
         if (targets.contains(exercise.getMuscle())) {
             score += PRIMARY_SCORE;
         }
 
-        // score secondary muscles — a row hitting BACK + BICEPS is more relevant
-        // on a PULL day than a back exercise with no bicep involvement
+        // +1 for each secondary muscle that also matches a target
+        // this helps rank exercises that hit multiple relevant muscles higher
+        // e.g. a barbell row hitting BACK (primary) + BICEPS (secondary) scores higher on pull day
+        //      than a row with no bicep involvement
         for (TargetedMuscle tm : exercise.getSecondaryMuscles()) {
             for (MuscleGroup target : targets) {
                 if (target.name().equalsIgnoreCase(tm.getMuscle())) {
@@ -253,6 +273,7 @@ public class ExercisePriorityQueue {
             }
         }
 
+        // score of 0 means this exercise has nothing to do with today's workout type — it gets filtered out
         return score;
     }
 }

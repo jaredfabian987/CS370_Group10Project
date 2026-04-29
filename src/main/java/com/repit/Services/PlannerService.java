@@ -8,6 +8,7 @@ import com.repit.Model.Exercise;
 import com.repit.Model.FitnessProfile;
 import com.repit.Model.PlannedExercise;
 import com.repit.Model.WorkoutPlan;
+import com.repit.Model.enums.ExerciseType;
 import com.repit.Model.enums.WorkoutType;
 import com.repit.util.ExercisePriorityQueue;
 import com.repit.util.SplitSelector;
@@ -172,26 +173,47 @@ public class PlannerService {
                         ? split.get(splitIndex)
                         : WorkoutType.FULL_BODY; // fallback if split is shorter
 
-                // STEP 8a: Rank and select exercises for this day
-                // ExercisePriorityQueue scores every exercise against the day's target muscles.
-                // Compounds are always placed first, isolations fill the remaining slots.
-                // The number of slots = availableMinutes / 10.
-                // Example: 50 min → 5 exercises (3 compounds + 2 isolations on a PUSH day)
-                List<Exercise> rankedExercises = priorityQueue.buildQueue(
-                        allExercises, workoutType, availableMinutes);
+                // STEP 8a: Select exercises for this day
+                // CARDIO days are handled differently from strength days —
+                // the priority queue is skipped and we just pick one cardio
+                // exercise that fills the user's full available time.
+                // Strength days (PUSH, PULL, LEGS, UPPER, LOWER, FULL_BODY) use
+                // the priority queue to rank and select multiple exercises.
+                if (workoutType == WorkoutType.CARDIO) {
 
-                // ── STEP 8b: Wrap each Exercise in a PlannedExercise
-                // PlannedExercise adds context: sets, reps, suggested weight, rest time.
-                // Defaults: 2 warmup sets + 2 working sets (our standard protocol).
-                // suggestedWeight is 0 here — the workout controller fills it in
-                // using ProgressService (last logged weight for that exercise).
-                for (Exercise exercise : rankedExercises) {
-                    PlannedExercise planned = new PlannedExercise(exercise);
-                    // warmupSets and workingSets default to 2 each via PlannedExercise()
-                    dayPlan.addExercise(planned);
+                    // pick one cardio exercise — just one activity for the session
+                    Exercise cardioExercise = selectCardioExercise(allExercises);
+
+                    if (cardioExercise != null) {
+                        PlannedExercise planned = new PlannedExercise(cardioExercise);
+                        dayPlan.addExercise(planned);
+                    }
+
+                    // name the day "Cardio · X min" so the UI shows the duration
+                    dayPlan.setWorkoutName("Cardio · " + availableMinutes + " min");
+
+                } else {
+
+                    // strength day — rank all exercises by muscle group match,
+                    // then fill compound slots first and isolation slots after
+                    // number of slots = availableMinutes / 10
+                    // Example: 50 min → 5 exercises (3 compounds + 2 isolations on PUSH)
+                    List<Exercise> rankedExercises = priorityQueue.buildQueue(
+                            allExercises, workoutType, availableMinutes);
+
+                    // STEP 8b: Wrap each Exercise in a PlannedExercise
+                    // PlannedExercise adds sets, reps, and suggested weight context.
+                    // Defaults: 2 warmup sets + 2 working sets (standard protocol).
+                    // suggestedWeight is 0 here — the workout controller fills it in
+                    // using ProgressService (last logged weight for that exercise).
+                    for (Exercise exercise : rankedExercises) {
+                        PlannedExercise planned = new PlannedExercise(exercise);
+                        dayPlan.addExercise(planned);
+                    }
+
+                    dayPlan.setWorkoutName(workoutType.name());
                 }
 
-                dayPlan.setWorkoutName(workoutType.name());
                 dayPlan.setRestDay(false);
 
             } else {
@@ -349,6 +371,30 @@ public class PlannerService {
             default:
                 return "WEIGHT_LOSS";
         }
+    }
+
+    /**
+     * Picks one cardio exercise from the full exercise list for a CARDIO day.
+     *
+     * Cardio days use only ONE exercise that fills the user's entire available time
+     * (e.g. 30 min of running, 45 min of cycling). The priority queue is not used
+     * because there is no muscle-group scoring for cardio — any cardio exercise works.
+     *
+     * Selection: first exercise in the list with ExerciseType.CARDIO.
+     * Returns null if no cardio exercises exist in the database yet.
+     *
+     * @param allExercises the full exercise list loaded from ExercisesDAO
+     * @return one cardio Exercise, or null if none are seeded
+     */
+    private Exercise selectCardioExercise(List<Exercise> allExercises) {
+        for (Exercise exercise : allExercises) {
+            // find the first exercise tagged as CARDIO type in the database
+            if (exercise.getExerciseType() == ExerciseType.CARDIO) {
+                return exercise;
+            }
+        }
+        // no cardio exercises seeded yet — caller handles the null gracefully
+        return null;
     }
 
     /**
