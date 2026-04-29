@@ -40,9 +40,8 @@ public class Availability {
      */
     private Map<DayOfWeek, Integer> minutesPerDay;
 
-    // ─────────────────────────────────────────────────────────────────────────
     // Constructors
-    // ─────────────────────────────────────────────────────────────────────────
+
 
     public Availability() {
         this.minutesPerDay = new LinkedHashMap<>();

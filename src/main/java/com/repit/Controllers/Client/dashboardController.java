@@ -151,7 +151,7 @@ public class dashboardController implements Initializable {
             int col = i % 4;
             int row = i / 4;
 
-            // ── build the card ────────────────────────────────────────────────
+            // ── build the card
             VBox dayCard = new VBox(6);
             dayCard.getStyleClass().add("mini-card");
 
