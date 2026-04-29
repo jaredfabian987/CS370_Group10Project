@@ -71,6 +71,7 @@ public class dashboardController implements Initializable {
     public void setLoggedUser(User loggedUser) {
         this.loggedUser = loggedUser;
         loadDashboardData();
+        System.out.println("loggedUser: " + loggedUser.getUsername());
     }
 
     // ─────────────────────────────────────────────────────────────────────────
