@@ -234,6 +234,7 @@ public class workoutController implements Initializable {
     @FXML
     void nextExerciseClicked(ActionEvent event) {
         //insert updater function here
+
     }
 
 }
