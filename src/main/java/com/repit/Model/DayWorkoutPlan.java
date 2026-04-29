@@ -28,7 +28,7 @@ public class DayWorkoutPlan {
     private DayOfWeek dayOfWeek;
 
     // nae fo the workout for this day
-    // user friendly label that describes the focus
+    // user-friendly label that describes the focus
     // for example like: push day , pull day, legs
     private String workoutName;
 
@@ -99,13 +99,13 @@ public class DayWorkoutPlan {
 
     public int getEstimatedDurationMinutes() {return estimatedDurationMinutes;}
     public void setEstimatedDurationMinutes(int estimatedDurationMinutes) {this.estimatedDurationMinutes = estimatedDurationMinutes;}
-    /*
+
     @Override
     public String toString(){
         if (isRestDay){
             return dayOfWeek + ": REST DAY";
         }
-        return dayOfWeek + ": " + workoutName + " (" exercises.size() + " exercises";
+        return dayOfWeek + ": " + workoutName + " (" + exercises.size() + " exercises";
     }
-     */
+
 }

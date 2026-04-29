@@ -58,9 +58,7 @@ public class Availability {
         this.minutesPerDay = new LinkedHashMap<>(minutesPerDay);
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Core getters and setters
-    // ─────────────────────────────────────────────────────────────────────────
+    // getters and setters
 
     public int getUserId() { return userId; }
     public void setUserId(int userId) { this.userId = userId; }

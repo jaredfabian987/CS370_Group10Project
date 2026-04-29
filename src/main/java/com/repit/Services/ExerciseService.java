@@ -14,7 +14,6 @@ import java.util.List;
  *
  * Responsibilities:
  * - Fetching exercises from ExercisesDAO
- * - Providing swap candidates when a user wants to replace an exercise
  * - Delegating exercise ranking to ExercisePriorityQueue
  *
  * Controllers never touch ExercisesDAO or ExercisePriorityQueue directly.
@@ -42,33 +41,16 @@ public class ExerciseService {
         return exercisesDAO.getExercises(userId);
     }
 
-    // --- Exercise Swapping ---
-
-    /**
-     * Returns valid replacement candidates for a given exercise.
-     * Candidates must share the same primary muscle group as the original.
-     *
-     * @param exerciseId the exercise the user wants to replace
-     * @return list of exercises that are valid swaps
-     * TODO: implement once ExercisesDAO supports fetching by muscle group
-     */
+    // --- Exercise Swapping --- (feature removed)
+    /*
     public ArrayList<Exercise> getSwapCandidates(int exerciseId) {
         return new ArrayList<>();
     }
 
-    /**
-     * Replaces an exercise in a user's plan with the chosen candidate.
-     * Only affects this user's plan — other users are not impacted.
-     *
-     * @param originalId    the exercise being replaced
-     * @param replacementId the exercise being swapped in
-     * @param userId        the user performing the swap
-     * @return true if the swap was saved successfully
-     * TODO: implement once WorkoutPlanDAO is ready
-     */
     public boolean swapExercise(int originalId, int replacementId, int userId) {
         return false;
     }
+    */
 
     // --- Exercise Ranking ---
 

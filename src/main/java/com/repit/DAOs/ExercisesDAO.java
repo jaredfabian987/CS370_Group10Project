@@ -10,8 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ExercisesDAO extends BaseDAO {
+    // userId = 0 is reserved for global/seeded exercises visible to everyone
+    // userId = -1 is the default on the Exercise model (no owner)
+    // this query returns both the user's custom exercises AND the global library
     private static final String SELECT_SQL =
-            "SELECT * FROM exercises WHERE userId = ?";
+            "SELECT * FROM exercises WHERE userId = ? OR userId = 0";
 
     private static final String TABLE_SQL =
             "CREATE TABLE IF NOT EXISTS exercises (" +
@@ -148,6 +151,10 @@ public class ExercisesDAO extends BaseDAO {
                         rs.getInt("userId")
                 );
                 newExercise.setCoachingCue(rs.getString("coachingCue"));
+                // isCompound is not stored as its own column — derive it from exerciseType
+                // COMPOUND and STRENGTH both go into the compound heap in ExercisePriorityQueue
+                newExercise.setCompound(
+                        exerciseType == ExerciseType.COMPOUND || exerciseType == ExerciseType.STRENGTH);
                 UserExercises.add(newExercise);
             }
             return UserExercises;

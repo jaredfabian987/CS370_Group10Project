@@ -3,11 +3,7 @@ package com.repit.main.java;
 import com.repit.Services.ServiceDispatcher;
 import com.repit.View.viewFactory;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
-
-import java.net.URL;
 
 public class Main extends Application {
     private static viewFactory viewFactory;

@@ -135,24 +135,16 @@ public class ServiceDispatcher {
         return exerciseService.getExercises(userId);
     }
 
+    // --- Exercise Swapping --- (feature removed)
     /*
-     * handleGetSwapCandidatesRequest
-     * called when the user wants to swap an exercise
-     * returns only the approved replacement candidates for that exercise
-     * but never the full exercise list
-     */
     public ArrayList<Exercise> handleGetSwapCandidatesRequest(int exerciseId) {
         return exerciseService.getSwapCandidates(exerciseId);
     }
 
-    /*
-     * handleSwapExerciseRequest
-     * called when the user confirms a swap and replaces the original exercise with
-     * the chosen candidate for that user's plan only and does not affect other users
-     */
     public boolean handleSwapExercisesRequest(int originalId, int replacementId, int userId) {
         return exerciseService.swapExercise(originalId, replacementId, userId);
     }
+    */
 
     /*
      * handleBuildExerciseQueueRequest

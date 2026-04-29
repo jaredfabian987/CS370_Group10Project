@@ -144,7 +144,7 @@ public class PlannedExercise {
     public boolean isCompleted() {return isCompleted;}
     public void setCompleted(boolean completed) {this.isCompleted = completed;}
 
-    /*&
+
     @Override
     public String toString() {
         if (exercise == null){
@@ -152,5 +152,5 @@ public class PlannedExercise {
         }
         return exercise.getName() + ": " + workingSets + " sets x " + targetReps + " reps";
     }
-    */
+
 }
