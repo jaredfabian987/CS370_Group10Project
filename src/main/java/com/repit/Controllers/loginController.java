@@ -63,7 +63,7 @@ public class loginController {
         }
 
         //User authentication:
-        User loggedUser = serviceDispatcher.handleLoginRequest(userName, passWord);
+        //User loggedUser = serviceDispatcher.handleLoginRequest(userName, passWord);
 
         //Prevents user from progressing if authentication fails
         /* Comment in later
