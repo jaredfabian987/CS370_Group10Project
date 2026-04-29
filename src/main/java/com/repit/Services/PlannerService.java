@@ -37,9 +37,17 @@ import java.util.Set;
  * - Delegating exercise ranking to ExercisePriorityQueue (which exercises go on each day)
  * - Checking WorkoutLogsDAO to mark which days are already done this week
  *
+ * Rest day rule:
+ * Rest days are simply the days the user is NOT available to train — they are not
+ * chosen directly, they are whatever days remain after training days are assigned.
+ * For 1-5 training days, the gaps between sessions are rest days.
+ * For 6-7 training days there are no gaps — the split just continues across every
+ * day of the week with no forced rest days from availability. In the 7-day case
+ * SplitSelector caps the unique workout types at 6 and repeats as needed.
+ *
  * Note: Training days currently default based on daysPerWeek (Monday-anchored).
- * Once AvailabilityDAO is built, it will supply the exact days the user is free,
- * and this service will use those instead of the defaults.
+ * Once AvailabilityDAO is built, it will supply the exact days the user marked as
+ * available, and rest days will be derived from whatever days are NOT in that set.
  */
 public class PlannerService {
 
@@ -187,7 +195,11 @@ public class PlannerService {
                 dayPlan.setRestDay(false);
 
             } else {
-                // rest day — no exercises, just mark it so the UI can show "REST"
+                // rest day — this day is not in the user's availability.
+                // rest days are never chosen directly by the user; they are simply
+                // whichever days of the week are NOT marked as training days.
+                // for 6 or 7 training days there are no rest days from availability —
+                // the split continues every day with no gaps.
                 dayPlan.setRestDay(true);
                 dayPlan.setWorkoutName("Rest Day");
             }
@@ -253,20 +265,28 @@ public class PlannerService {
     /**
      * Returns the default set of training days for a given daysPerWeek count.
      *
-     * The pattern is designed to maximize recovery between sessions:
-     *   1 day  → Wednesday only (midweek full body)
-     *   2 days → Monday, Thursday (3 days apart)
-     *   3 days → Monday, Wednesday, Friday (rest between every session)
+     * Rest day rule:
+     * Rest days are NOT picked by the user — they are whichever days are NOT
+     * in the returned training day set. For 1-5 days the gaps between sessions
+     * become the rest days. For 6-7 days the split runs continuously with no
+     * gaps, so there are no rest days derived from availability.
+     *
+     * Default patterns (designed to space sessions for recovery where possible):
+     *   1 day  → Wednesday only (midweek, one full-body session)
+     *   2 days → Monday, Thursday (3 days apart, equal recovery on both sides)
+     *   3 days → Monday, Wednesday, Friday (rest day between every session)
      *   4 days → Monday, Tuesday, Thursday, Friday (one back-to-back pair per half-week)
-     *   5 days → Monday through Friday (rest on weekends)
-     *   6 days → Monday through Saturday (one rest day on Sunday)
-     *   7 days → all days (not recommended, but supported by SplitSelector cap of 6 unique types)
+     *   5 days → Monday through Friday (weekends become the rest days)
+     *   6 days → Monday through Saturday (split continues daily, Sunday is the only rest day)
+     *   7 days → all 7 days (split continues with no rest days from availability;
+     *             SplitSelector caps unique workout types at 6 and repeats as needed)
      *
      * Returns a LinkedHashSet to preserve calendar order (Monday first).
      *
      * TODO: This will be replaced by AvailabilityDAO once it is built.
-     * AvailabilityDAO will store the user's actual available days per day of the week,
-     * so the plan reflects their real schedule instead of this default pattern.
+     * AvailabilityDAO will store the exact days the user marked as available.
+     * Rest days will then be derived automatically as whatever days are NOT in
+     * that set — the same rule applies regardless of how many days they train.
      *
      * @param daysPerWeek how many days per week the user wants to train
      * @return ordered set of DayOfWeek values representing training days
