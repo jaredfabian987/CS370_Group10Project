@@ -1,7 +1,9 @@
 package com.repit.Controllers.Client;
 
+import com.repit.Model.Availability;
 import com.repit.Model.FitnessProfile;
 import com.repit.Model.User;
+import com.repit.Services.PlannerService;
 import com.repit.Services.ServiceDispatcher;
 import com.repit.main.java.Main;
 import javafx.event.ActionEvent;
@@ -13,7 +15,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
-import javafx.stage.FileChooser;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -92,6 +93,7 @@ public class setupController implements Initializable {
     //Service dispatcher
     private final ServiceDispatcher serviceDispatcher = new ServiceDispatcher();
     private User loggedUser;
+    private FitnessProfile fitnessProfile;
 
 
     //Set logged user
@@ -108,7 +110,6 @@ public class setupController implements Initializable {
         bindDayToggle(fridayCheckBox, fridayTimeComboBox);
         bindDayToggle(saturdayCheckBox, saturdayTimeComboBox);
         bindDayToggle(sundayCheckBox, sundayTimeComboBox);
-        //setLoggedUser(loggedUser);
     }
 
 
@@ -126,6 +127,36 @@ public class setupController implements Initializable {
     }
 
     //Helper function that checks for valid inputs and updates errLabel with respective error message
+    public boolean checkBoxTest1(CheckBox[] dayCheckBox, ComboBox[] timeComboBox) {
+        boolean anyDaySelected = false;
+        boolean allTimeSelected = true;
+        String [] days = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+
+        String errorMsg = "";
+
+        for (int i  = 0; i < dayCheckBox.length; i++) {
+            if (dayCheckBox[i].isSelected()) {
+                anyDaySelected = true;
+                if (timeComboBox[i].getSelectionModel().isEmpty()) {
+                    errorMsg += days[i] + " ";
+                    allTimeSelected = false;
+                }
+            }
+        }
+        if (!allTimeSelected) {
+            errorMsg += "time(s) need to be selected";
+            errorLabel1.setText(errorMsg);
+            return false;
+        }
+
+        if (!anyDaySelected) {
+            errorLabel1.setText("Select at least ONE day and time");
+            return false;
+        }
+        return true;
+    }
+
+    /*
     public boolean checkBoxTest() {
         boolean anyDaySelected = false;
         boolean allTimeSelected = true;
@@ -189,17 +220,17 @@ public class setupController implements Initializable {
         }
         return true;
     }
+    */
 
-    //public String
-
-    //
     private void saveSetupInformation(){
 
     }
 
     @FXML
     private void saveSetupButtonAction(ActionEvent event) {
-        if (!checkBoxTest()) { return; }
+        CheckBox [] dayCheckBox = {mondayCheckBox, tuesdayCheckBox, wednesdayCheckBox,  thursdayCheckBox, fridayCheckBox, saturdayCheckBox,  sundayCheckBox};
+        ComboBox [] timeComboBox = {mondayTimeComboBox, tuesdayTimeComboBox, wednesdayTimeComboBox, thursdayTimeComboBox, fridayTimeComboBox, saturdayTimeComboBox,  sundayTimeComboBox};
+        if (!checkBoxTest1(dayCheckBox, timeComboBox)) { return; }
 
         //FitnessProfile.FitnessLevel level =
 
