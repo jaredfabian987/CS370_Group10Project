@@ -92,13 +92,15 @@ public class FitnessProfileDAO extends BaseDAO{
             stmt.execute(TABLE_SQL);
 
             PreparedStatement pstmt = connection.prepareStatement(UPDATE_SQL);
-            pstmt.setInt(1, profile.getUserId());
-            pstmt.setDouble(2, profile.getWeight());
-            pstmt.setDouble(3, profile.getHeight());
-            pstmt.setInt(4, profile.getDaysPerWeek());
-            pstmt.setDouble(5, profile.getMinsAvailablePerWorkout());
-            pstmt.setInt(6, profile.getLevelByInt());
-            pstmt.setInt(7, profile.getGoalByInt());
+            // order must match the SET clause: weight, height, daysPerWeek,
+            // minsAvailablePerWorkout, level, goal, then userId for the WHERE clause
+            pstmt.setDouble(1, profile.getWeight());
+            pstmt.setDouble(2, profile.getHeight());
+            pstmt.setInt(3, profile.getDaysPerWeek());
+            pstmt.setDouble(4, profile.getMinsAvailablePerWorkout());
+            pstmt.setInt(5, profile.getLevelByInt());
+            pstmt.setInt(6, profile.getGoalByInt());
+            pstmt.setInt(7, profile.getUserId());
             pstmt.executeUpdate();
             return true;
         } catch (Exception e) {

@@ -12,13 +12,19 @@ import java.time.DayOfWeek;
  * (e.g., 3 days → always Monday, Wednesday, Friday). This DAO will replace
  * that default by letting the user pick their own specific days and times.
  *
+ * Rest day rule:
+ * Rest days are NOT stored in this table. They are derived automatically —
+ * any day of the week that does NOT appear as a row for this user is a rest day.
+ * For users with 6 or 7 training days there are no rest days from availability;
+ * the split simply continues every day of the week with no gaps.
+ *
  * What this DAO needs to do:
  *
  *  1. saveAvailability(Availability availability)
  *     - Persist the full Availability object for a user.
  *     - Iterates availability.getMinutesPerDay() and writes one row per training day.
  *     - Replaces any existing rows for that userId (delete-then-insert pattern).
- *     - Days not in the map are implicitly rest days — no row needed for them.
+ *     - Days not in the map have no row — PlannerService treats them as rest days.
  *
  *  2. getAvailability(int userId) -> Availability
  *     - Reads all rows for that userId and reconstructs the Availability object.
@@ -77,5 +83,5 @@ public class AvailabilityDAO extends BaseDAO {
     //       INSERT OR REPLACE INTO availability (userId, dayOfWeek, minutes) VALUES (?, ?, ?)
 
     // TODO: implement removeDay(int userId, DayOfWeek day)
-    //       DELETE FROM availability WHERE userId = ? AND dayOfWeek = ?`
-`}
+    //       DELETE FROM availability WHERE userId = ? AND dayOfWeek = ?
+}

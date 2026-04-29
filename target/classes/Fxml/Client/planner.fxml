@@ -1,20 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Priority?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Text?>
+<?import java.lang.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="640.0" prefWidth="960.0" styleClass="screen planner-screen" stylesheets="@../../Styles/planner.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.repit.Controllers.Client.plannerController">
+<AnchorPane prefHeight="640.0" prefWidth="960.0" styleClass="screen planner-screen" stylesheets="@../../Styles/planner.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.repit.Controllers.Client.plannerController">
    <children>
       <VBox spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <padding>
@@ -45,18 +38,131 @@
                         <VBox spacing="12.0" styleClass="card-body" VBox.vgrow="ALWAYS">
                            <children>
                               <Label text="Goal" />
-                              <ComboBox prefWidth="240.0" promptText="Select goal" />
-                              <Label text="Training Split" />
-                              <ComboBox prefWidth="240.0" promptText="Select split" />
-                              <Label text="Available Equipment" />
-                              <CheckBox mnemonicParsing="false" text="Bodyweight only" />
-                              <CheckBox mnemonicParsing="false" text="Dumbbells" />
-                              <CheckBox mnemonicParsing="false" text="Barbell" />
-                              <CheckBox mnemonicParsing="false" text="Machines" />
+                              <HBox prefHeight="27.0" prefWidth="337.0">
+                                 <children>
+                                    <RadioButton fx:id="weightLossRadialButton" mnemonicParsing="false" selected="true" styleClass="check-box" stylesheets="@../../Styles/planner.css" text="Weight Loss">
+                                       <toggleGroup>
+                                          <ToggleGroup fx:id="fitnessGoalToggleGroup" />
+                                       </toggleGroup>
+                                    </RadioButton>
+                                    <Region prefHeight="27.0" prefWidth="58.0" />
+                                    <RadioButton fx:id="muscleGainRadialButton" mnemonicParsing="false" prefHeight="18.0" prefWidth="94.0" text="Muscle Gain" toggleGroup="$fitnessGoalToggleGroup" />
+                                 </children>
+                              </HBox>
+                              <Label fx:id="availabiltiyLabel" text="Availability" />
+                              <GridPane hgap="16.0" styleClass="schedule-grid" vgap="10.0">
+                                 <columnConstraints>
+                                    <ColumnConstraints hgrow="NEVER" minWidth="110.0" prefWidth="130.0" />
+                                    <ColumnConstraints hgrow="ALWAYS" minWidth="140.0" prefWidth="180.0" />
+                                 </columnConstraints>
+                                 <children>
+                                    <CheckBox fx:id="mondayCheckBox" mnemonicParsing="false" text="Monday" GridPane.rowIndex="0" />
+                                    <ComboBox fx:id="mondayTimeComboBox" prefWidth="180.0" promptText="Duration" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                       <items>
+                                          <FXCollections fx:factory="observableArrayList">
+                                             <String fx:value="10 minutes" />
+                                             <String fx:value="20 minutes" />
+                                             <String fx:value="30 minutes" />
+                                             <String fx:value="40 minutes" />
+                                             <String fx:value="50 minutes" />
+                                             <String fx:value="60 minutes" />
+                                          </FXCollections>
+                                       </items>
+                                    </ComboBox>
+                                    <CheckBox fx:id="tuesdayCheckBox" mnemonicParsing="false" text="Tuesday" GridPane.rowIndex="1" />
+                                    <ComboBox fx:id="tuesdayTimeComboBox" prefWidth="180.0" promptText="Duration" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                       <items>
+                                          <FXCollections fx:factory="observableArrayList">
+                                             <String fx:value="10 minutes" />
+                                             <String fx:value="20 minutes" />
+                                             <String fx:value="30 minutes" />
+                                             <String fx:value="40 minutes" />
+                                             <String fx:value="50 minutes" />
+                                             <String fx:value="60 minutes" />
+                                          </FXCollections>
+                                       </items>
+                                    </ComboBox>
+                                    <CheckBox fx:id="wednesdayCheckBox" mnemonicParsing="false" text="Wednesday" GridPane.rowIndex="2" />
+                                    <ComboBox fx:id="wednesdayTimeComboBox" prefWidth="180.0" promptText="Duration" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                       <items>
+                                          <FXCollections fx:factory="observableArrayList">
+                                             <String fx:value="10 minutes" />
+                                             <String fx:value="20 minutes" />
+                                             <String fx:value="30 minutes" />
+                                             <String fx:value="40 minutes" />
+                                             <String fx:value="50 minutes" />
+                                             <String fx:value="60 minutes" />
+                                          </FXCollections>
+                                       </items>
+                                    </ComboBox>
+                                    <CheckBox fx:id="thursdayCheckBox" mnemonicParsing="false" text="Thursday" GridPane.rowIndex="3" />
+                                    <ComboBox fx:id="thursdayTimeComboBox" prefWidth="180.0" promptText="Duration" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                       <items>
+                                          <FXCollections fx:factory="observableArrayList">
+                                             <String fx:value="10 minutes" />
+                                             <String fx:value="20 minutes" />
+                                             <String fx:value="30 minutes" />
+                                             <String fx:value="40 minutes" />
+                                             <String fx:value="50 minutes" />
+                                             <String fx:value="60 minutes" />
+                                          </FXCollections>
+                                       </items>
+                                    </ComboBox>
+                                    <CheckBox fx:id="fridayCheckBox" mnemonicParsing="false" text="Friday" GridPane.rowIndex="4" />
+                                    <ComboBox fx:id="fridayTimeComboBox" prefWidth="180.0" promptText="Duration" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                       <items>
+                                          <FXCollections fx:factory="observableArrayList">
+                                             <String fx:value="10 minutes" />
+                                             <String fx:value="20 minutes" />
+                                             <String fx:value="30 minutes" />
+                                             <String fx:value="40 minutes" />
+                                             <String fx:value="50 minutes" />
+                                             <String fx:value="60 minutes" />
+                                          </FXCollections>
+                                       </items>
+                                    </ComboBox>
+                                    <CheckBox fx:id="saturdayCheckBox" mnemonicParsing="false" text="Saturday" GridPane.rowIndex="5" />
+                                    <ComboBox fx:id="saturdayTimeComboBox" prefWidth="180.0" promptText="Duration" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                       <items>
+                                          <FXCollections fx:factory="observableArrayList">
+                                             <String fx:value="10 minutes" />
+                                             <String fx:value="20 minutes" />
+                                             <String fx:value="30 minutes" />
+                                             <String fx:value="40 minutes" />
+                                             <String fx:value="50 minutes" />
+                                             <String fx:value="60 minutes" />
+                                          </FXCollections>
+                                       </items>
+                                    </ComboBox>
+                                    <CheckBox fx:id="sundayCheckBox" mnemonicParsing="false" text="Sunday" GridPane.rowIndex="6" />
+                                    <ComboBox fx:id="sundayTimeComboBox" prefWidth="180.0" promptText="Duration" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                                       <items>
+                                          <FXCollections fx:factory="observableArrayList">
+                                             <String fx:value="10 minutes" />
+                                             <String fx:value="20 minutes" />
+                                             <String fx:value="30 minutes" />
+                                             <String fx:value="40 minutes" />
+                                             <String fx:value="50 minutes" />
+                                             <String fx:value="60 minutes" />
+                                          </FXCollections>
+                                       </items>
+                                    </ComboBox>
+                                 </children>
+                                 <rowConstraints>
+                                    <RowConstraints />
+                                    <RowConstraints />
+                                    <RowConstraints />
+                                    <RowConstraints />
+                                    <RowConstraints />
+                                    <RowConstraints />
+                                    <RowConstraints />
+                                 </rowConstraints>
+                              </GridPane>
                               <Region VBox.vgrow="ALWAYS" />
+                              <Label fx:id="errorLabel1" />
                            </children>
                         </VBox>
-                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Generate Plan" />
+                        <Button fx:id="generatePlanButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#generatePlanButtonClicked" text="Generate Plan" />
                      </children>
                   </VBox>
                   <VBox prefWidth="560.0" spacing="14.0" styleClass="panel-card content-card planner-card" HBox.hgrow="ALWAYS">
@@ -70,65 +176,80 @@
                         <Separator />
                         <VBox spacing="12.0" styleClass="card-body" VBox.vgrow="ALWAYS">
                            <children>
-                              <GridPane hgap="12.0" vgap="12.0" styleClass="planner-grid">
+                              <GridPane hgap="12.0" styleClass="planner-grid" vgap="12.0">
                                  <children>
                                     <VBox prefWidth="118.0" spacing="6.0" styleClass="day-card">
                                        <children>
-                                          <Label text="Mon" styleClass="planner-day" />
-                                          <Label text="Upper Body" styleClass="planner-item" />
+                                          <Label styleClass="planner-day" text="Mon" />
+                                          <Label styleClass="planner-item" text="Upper Body" />
                                           <Label text="45 min" />
                                        </children>
                                     </VBox>
                                     <VBox prefWidth="118.0" spacing="6.0" styleClass="day-card day-card-active" GridPane.columnIndex="1">
                                        <children>
-                                          <Label text="Tue" styleClass="planner-day" />
-                                          <Label text="Lower Body" styleClass="planner-item" />
+                                          <Label styleClass="planner-day" text="Tue" />
+                                          <Label styleClass="planner-item" text="Lower Body" />
                                           <Label text="45 min" />
                                        </children>
                                     </VBox>
                                     <VBox prefWidth="118.0" spacing="6.0" styleClass="day-card" GridPane.columnIndex="2">
                                        <children>
-                                          <Label text="Wed" styleClass="planner-day" />
-                                          <Label text="Recovery" styleClass="planner-item" />
+                                          <Label styleClass="planner-day" text="Wed" />
+                                          <Label styleClass="planner-item" text="Recovery" />
                                           <Label text="Mobility" />
                                        </children>
                                     </VBox>
                                     <VBox prefWidth="118.0" spacing="6.0" styleClass="day-card" GridPane.columnIndex="3">
                                        <children>
-                                          <Label text="Thu" styleClass="planner-day" />
-                                          <Label text="Push" styleClass="planner-item" />
+                                          <Label styleClass="planner-day" text="Thu" />
+                                          <Label styleClass="planner-item" text="Push" />
                                           <Label text="60 min" />
                                        </children>
                                     </VBox>
                                     <VBox prefWidth="118.0" spacing="6.0" styleClass="day-card" GridPane.rowIndex="1">
                                        <children>
-                                          <Label text="Fri" styleClass="planner-day" />
-                                          <Label text="Recovery" styleClass="planner-item" />
+                                          <Label styleClass="planner-day" text="Fri" />
+                                          <Label styleClass="planner-item" text="Recovery" />
                                           <Label text="Walk" />
                                        </children>
                                     </VBox>
                                     <VBox prefWidth="118.0" spacing="6.0" styleClass="day-card" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                        <children>
-                                          <Label text="Sat" styleClass="planner-day" />
-                                          <Label text="Core" styleClass="planner-item" />
+                                          <Label styleClass="planner-day" text="Sat" />
+                                          <Label styleClass="planner-item" text="Core" />
                                           <Label text="30 min" />
                                        </children>
                                     </VBox>
                                     <VBox prefWidth="118.0" spacing="6.0" styleClass="day-card" GridPane.columnIndex="2" GridPane.rowIndex="1">
                                        <children>
-                                          <Label text="Sun" styleClass="planner-day" />
-                                          <Label text="Rest" styleClass="planner-item" />
+                                          <Label styleClass="planner-day" text="Sun" />
+                                          <Label styleClass="planner-item" text="Rest" />
                                           <Label text="Off day" />
                                        </children>
                                     </VBox>
                                  </children>
+                                 <columnConstraints>
+                                    <ColumnConstraints />
+                                    <ColumnConstraints />
+                                    <ColumnConstraints />
+                                    <ColumnConstraints />
+                                 </columnConstraints>
+                                 <rowConstraints>
+                                    <RowConstraints />
+                                    <RowConstraints />
+                                 </rowConstraints>
                               </GridPane>
                               <Separator />
                               <Label text="Current focus: balanced strength split with recovery blocks between higher effort days." wrapText="true" />
                               <Region VBox.vgrow="ALWAYS" />
                            </children>
                         </VBox>
-                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Save Plan" />
+                        <HBox spacing="12.0">
+                           <children>
+                              <Button fx:id="savePlanButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Save Plan" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="finishPlannerButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#finishPlannerButtonClicked" text="Finish Planner" HBox.hgrow="ALWAYS" />
+                           </children>
+                        </HBox>
                      </children>
                   </VBox>
                </children>
