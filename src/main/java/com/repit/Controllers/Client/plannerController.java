@@ -85,7 +85,7 @@ public class plannerController implements Initializable {
 
     //Variable(s):
     //Service Dispatcher
-    private final ServiceDispatcher serviceDispatcher = new ServiceDispatcher();
+    private final ServiceDispatcher serviceDispatcher = Main.getServiceDispatcher();
 
     // logged-in user — set by dashboardController immediately after switchScene()
     private com.repit.Model.User loggedUser;

@@ -91,7 +91,7 @@ public class setupController implements Initializable {
 
     //Variables:
     //Service dispatcher
-    private final ServiceDispatcher serviceDispatcher = new ServiceDispatcher();
+    private final ServiceDispatcher serviceDispatcher = Main.getServiceDispatcher();
     private User loggedUser;
     private FitnessProfile fitnessProfile;
 
@@ -230,9 +230,6 @@ public class setupController implements Initializable {
     private void saveSetupButtonAction(ActionEvent event) {
         CheckBox [] dayCheckBox = {mondayCheckBox, tuesdayCheckBox, wednesdayCheckBox,  thursdayCheckBox, fridayCheckBox, saturdayCheckBox,  sundayCheckBox};
         ComboBox [] timeComboBox = {mondayTimeComboBox, tuesdayTimeComboBox, wednesdayTimeComboBox, thursdayTimeComboBox, fridayTimeComboBox, saturdayTimeComboBox,  sundayTimeComboBox};
-        if (!checkBoxTest1(dayCheckBox, timeComboBox)) { return; }
-    @FXML
-    private void saveSetupButtonAction(ActionEvent event) {
 
         // guard — should never happen but prevents a NullPointerException if
         // setLoggedUser() was never called before this screen loaded
@@ -242,7 +239,7 @@ public class setupController implements Initializable {
         }
 
         // Step 1: validate — make sure at least one day is checked and all checked days have a time
-        if (!checkBoxTest()) { return; }
+        if (!checkBoxTest1(dayCheckBox, timeComboBox)) { return; }
 
         // Step 2: read fitness level from the radio buttons
         // beginnerLevelRadio is selected by default in the FXML so BEG is the fallback

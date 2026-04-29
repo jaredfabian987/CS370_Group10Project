@@ -54,7 +54,7 @@ public class dashboardController implements Initializable {
     // logged-in user — set by the previous screen via setLoggedUser()
     private User loggedUser;
 
-    private final ServiceDispatcher serviceDispatcher = new ServiceDispatcher();
+    private final ServiceDispatcher serviceDispatcher = Main.getServiceDispatcher();
 
     // ─────────────────────────────────────────────────────────────────────────
     // Initialization
@@ -71,6 +71,7 @@ public class dashboardController implements Initializable {
     public void setLoggedUser(User loggedUser) {
         this.loggedUser = loggedUser;
         loadDashboardData();
+        System.out.println("loggedUser: " + loggedUser.getUsername());
     }
 
     // ─────────────────────────────────────────────────────────────────────────

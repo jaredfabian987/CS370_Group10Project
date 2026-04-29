@@ -41,7 +41,7 @@ public class loginController {
     @FXML
     private TextField username;
 
-    ServiceDispatcher serviceDispatcher =  new ServiceDispatcher();
+    private final ServiceDispatcher serviceDispatcher = Main.getServiceDispatcher();
 
     //Loads signup page
     @FXML
@@ -63,23 +63,23 @@ public class loginController {
         }
 
         //User authentication:
-        //User loggedUser = serviceDispatcher.handleLoginRequest(userName, passWord);
+        User loggedUser = serviceDispatcher.handleLoginRequest(userName, passWord);
 
         //Prevents user from progressing if authentication fails
-        /* Comment in later
+        //Comment in later
         if (loggedUser == null){
             label.setText("Wrong username or password");
             return;
         }
-        */
+
 
         //If user is authenicated, load in next page and pass login credentials to next controller
         // Comment back in later
-        /*
-        dashboardController dashboardController = Main.getViewFactory().switchScene("Dashboard.fxml");
+
+        dashboardController dashboardController = Main.getViewFactory().switchScene("Fxml/Client/dashboard.fxml");
         dashboardController.setLoggedUser(loggedUser);
-        */
-        Main.getViewFactory().switchScene("Fxml/Client/dashboard.fxml");
+
+        //Main.getViewFactory().switchScene("Fxml/Client/dashboard.fxml");
     }
 
 }

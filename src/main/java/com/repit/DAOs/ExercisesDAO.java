@@ -95,6 +95,9 @@ public class ExercisesDAO extends BaseDAO {
         };
 
         try {
+            Statement stmt = connection.createStatement();
+            stmt.execute(TABLE_SQL);
+
             for (String[] pair : cues) {
                 PreparedStatement pstmt = connection.prepareStatement(
                         "UPDATE exercises SET coachingCue = ? WHERE name = ?");
@@ -162,11 +165,10 @@ public class ExercisesDAO extends BaseDAO {
     * */
     public boolean saveExercise(Exercise exercise){
         try{
-            Connection conn = DriverManager.getConnection("jdbc:sqlite:repit.db");
-            Statement stmt = conn.createStatement();
+            Statement stmt = connection.createStatement();
             stmt.execute(TABLE_SQL);
 
-            PreparedStatement pstmt = conn.prepareStatement(INSERT_SQL);
+            PreparedStatement pstmt = connection.prepareStatement(INSERT_SQL);
             pstmt.setInt(1, exercise.getExerciseId());
             pstmt.setString(2, exercise.getName());
             pstmt.setInt(3, exercise.getMuscleOrdinal());

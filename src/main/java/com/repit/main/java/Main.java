@@ -1,5 +1,6 @@
 package com.repit.main.java;
 
+import com.repit.Services.ServiceDispatcher;
 import com.repit.View.viewFactory;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -10,7 +11,8 @@ import java.net.URL;
 
 public class Main extends Application {
     private static viewFactory viewFactory;
-    //hi
+    private static final ServiceDispatcher serviceDispatcher = new ServiceDispatcher();
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         viewFactory = new viewFactory(primaryStage);
@@ -22,9 +24,11 @@ public class Main extends Application {
     public static viewFactory getViewFactory() {
         return viewFactory;
     }
-    /*
+    //ServiceDispatcher will be used across all pages of the app
+    public static ServiceDispatcher getServiceDispatcher() {return serviceDispatcher;}
+
     public static void main(String[] args) {
         launch(args);
     }
-    */
+
 }
