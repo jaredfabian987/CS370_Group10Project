@@ -66,10 +66,9 @@
     -fx-padding: 4;
 }
 
-.combo-box {
+.combo-box,
+.list-view {
     -fx-background-color: #14171a;
-    -fx-text-fill: #f3f4f6;
-    -fx-prompt-text-fill: #71717a;
     -fx-background-radius: 8;
     -fx-border-color: #2a2f36;
     -fx-border-radius: 8;
@@ -77,7 +76,8 @@
 }
 
 .combo-box .list-cell,
-.combo-box-popup .list-cell {
+.combo-box-popup .list-cell,
+.list-view .list-cell {
     -fx-background-color: transparent;
     -fx-text-fill: #f3f4f6;
 }
@@ -98,13 +98,10 @@
 }
 
 .combo-box-popup .list-cell:hover,
-.combo-box-popup .list-cell:filled:selected {
+.combo-box-popup .list-cell:filled:selected,
+.list-view .list-cell:filled:selected {
     -fx-background-color: #203126;
     -fx-text-fill: #f3f4f6;
-}
-
-.combo-box:focused {
-    -fx-border-color: #22c55e;
 }
 
 .check-box,
