@@ -53,7 +53,8 @@ public class FitnessProfileDAO extends BaseDAO{
             pstmt.executeUpdate();
             return true;
         } catch (Exception e){
-            System.out.println(e.getMessage());
+            System.out.println("saveProfile FAILED: " + e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }
