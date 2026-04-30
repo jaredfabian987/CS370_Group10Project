@@ -120,7 +120,7 @@ public class AvailabilityDAO extends BaseDAO {
             pstmt.setInt(1, userId);
 
             ResultSet rs = pstmt.executeQuery();
-            if(rs.next()){
+            while (rs.next()) {  // while — not if — so ALL training days are loaded
                 DayOfWeek day = DayOfWeek.values()[rs.getInt("dayOfWeek")];
                 int minutes = rs.getInt("minutes");
                 minutesPerDay.put(day, minutes);
@@ -139,7 +139,6 @@ public class AvailabilityDAO extends BaseDAO {
             stmt.execute(TABLE_SQL);
 
             int userId = availability.getUserId();
-            availability.getMinutesPerDay();
             Map<DayOfWeek, Integer> minutesPerDay = availability.getMinutesPerDay();
             for (Map.Entry<DayOfWeek, Integer> entry : minutesPerDay.entrySet()) {
                 DayOfWeek day = entry.getKey();

@@ -10,7 +10,7 @@ public class WorkoutLog {
     private double weight;
 
     public int getLogId(){ return logId; }
-    public int getUserId(){ return userId; }
+    public int getUserId(){ return userId;}
     public int getExerciseId() { return exerciseId; }
     public int getCompletion() { return isCompleted ? 1 : 0; }
     public boolean isCompleted() { return isCompleted; }

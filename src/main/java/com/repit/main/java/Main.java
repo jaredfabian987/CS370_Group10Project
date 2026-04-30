@@ -1,5 +1,6 @@
 package com.repit.main.java;
 
+import com.repit.DAOs.DatabaseSeeder;
 import com.repit.Services.ServiceDispatcher;
 import com.repit.View.viewFactory;
 import javafx.application.Application;
@@ -11,6 +12,9 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        // seed the exercise library on every launch — safe to call repeatedly
+        DatabaseSeeder.seed();
+
         viewFactory = new viewFactory(primaryStage);
         viewFactory.switchScene("Fxml/login.fxml");
         primaryStage.setTitle("Rep-It: Login");

@@ -392,6 +392,10 @@ public class workoutController implements Initializable {
         Main.getViewFactory().switchScene("Fxml/Client/dashboard.fxml");
     }
 
+    private URL getMediaResource(String exercise) {
+        // TODO: partner to complete — map exercise name to its video resource URL
+        return null;
+    }
 
     //Saving Data Function(s)
     @FXML
