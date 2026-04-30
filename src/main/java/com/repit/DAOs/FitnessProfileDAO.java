@@ -28,7 +28,7 @@ public class FitnessProfileDAO extends BaseDAO{
                     ")";
 
     private static final String INSERT_SQL =
-            "INSERT INTO profiles (userId, weight, height, daysPerWeek, minsAvailablePerWorkout, level, goal) "+
+            "INSERT OR REPLACE INTO profiles (userId, weight, height, daysPerWeek, minsAvailablePerWorkout, level, goal) "+
                     "VALUES (?,?,?,?,?,?,?)";
 
     private static final String DELETE_SQL =

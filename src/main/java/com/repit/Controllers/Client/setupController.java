@@ -318,14 +318,9 @@ public class setupController implements Initializable {
         );
 
         // Step 6: save via the service dispatcher
-        // if the user already has a profile (re-doing setup), update it instead of inserting
-        // a plain INSERT would fail with a UNIQUE constraint error on userId
-        boolean saved;
-        if (serviceDispatcher.handleGetFitnessProfileRequest(loggedUser.getUserId()) != null) {
-            saved = serviceDispatcher.handleUpdateProfileRequest(profile);
-        } else {
-            saved = serviceDispatcher.handleSaveProfileRequest(profile);
-        }
+        // INSERT OR REPLACE handles both new and returning users in one shot —
+        // no need to check first whether a profile already exists
+        boolean saved = serviceDispatcher.handleSaveProfileRequest(profile);
         if (!saved) {
             errorLabel1.setText("Error saving setup — please try again.");
             return;

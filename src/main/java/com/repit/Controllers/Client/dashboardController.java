@@ -57,9 +57,9 @@ public class dashboardController implements Initializable {
 
     private final ServiceDispatcher serviceDispatcher = Main.getServiceDispatcher();
 
-    // ─────────────────────────────────────────────────────────────────────────
+
     // Initialization
-    // ─────────────────────────────────────────────────────────────────────────
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -85,9 +85,9 @@ public class dashboardController implements Initializable {
         loadDashboardData();
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
+
     // States
-    // ─────────────────────────────────────────────────────────────────────────
+
 
     // placeholder state — shown while the screen initializes before the user is set
     private void setStateLoading() {
@@ -103,7 +103,7 @@ public class dashboardController implements Initializable {
 
         int userId = loggedUser.getUserId();
 
-        // ── Today's workout card ──────────────────────────────────────────────
+        //  Today's workout card
         // getTodaysPlanRequest returns null if today is a rest day or no profile exists
         DayWorkoutPlan todaysPlan = serviceDispatcher.handleGetTodaysPlanRequest(userId);
 
@@ -131,7 +131,7 @@ public class dashboardController implements Initializable {
         double progress = planned > 0 ? (double) completed / planned : 0.0;
         workoutCompletionProgressBar.setProgress(progress);
 
-        // ── Weekly planner grid ───────────────────────────────────────────────
+        // Weekly planner grid
         // returns a Map<DayOfWeek, DayWorkoutPlan> for every day Mon-Sun
         // null means the user has no profile yet
         Map<DayOfWeek, DayWorkoutPlan> weeklyPlan =
