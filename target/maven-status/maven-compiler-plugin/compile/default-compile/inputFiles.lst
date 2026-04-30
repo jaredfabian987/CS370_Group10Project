@@ -6,6 +6,7 @@
 /Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/Controllers/signupController.java
 /Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/DAOs/AvailabilityDAO.java
 /Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/DAOs/BaseDAO.java
+/Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/DAOs/DatabaseSeeder.java
 /Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/DAOs/EquipmentDAO.java
 /Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/DAOs/ExercisesDAO.java
 /Users/jaredfabian/Desktop/CS370_Group10Project/src/main/java/com/repit/DAOs/FitnessProfileDAO.java

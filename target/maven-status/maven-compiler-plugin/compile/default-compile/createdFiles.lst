@@ -9,6 +9,7 @@ com/repit/DAOs/BaseDAO.class
 com/repit/Controllers/Client/dashboardController.class
 com/repit/Controllers/Client/plannerController.class
 com/repit/main/java/Main.class
+com/repit/DAOs/DatabaseSeeder.class
 com/repit/Controllers/Client/workoutController.class
 com/repit/Services/WorkoutService.class
 com/repit/DAOs/UsersDAO.class
@@ -22,6 +23,7 @@ com/repit/Model/WorkoutLog.class
 com/repit/View/viewFactory.class
 com/repit/package-info.class
 com/repit/Services/ServiceDispatcher.class
+com/repit/main/java/AppLauncher.class
 com/repit/DAOs/ExercisesDAO.class
 com/repit/Model/Exercise.class
 com/repit/Model/DayWorkoutPlan.class
