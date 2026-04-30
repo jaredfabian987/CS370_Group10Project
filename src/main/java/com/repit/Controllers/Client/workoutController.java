@@ -1,5 +1,10 @@
 package com.repit.Controllers.Client;
 
+import com.repit.Model.DayWorkoutPlan;
+import com.repit.Model.Equipment;
+import com.repit.Model.Exercise;
+import com.repit.Model.PlannedExercise;
+import com.repit.Model.User;
 import com.repit.Services.ServiceDispatcher;
 import com.repit.main.java.Main;
 import javafx.event.ActionEvent;
@@ -14,10 +19,11 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.stage.FileChooser;
-import java.awt.event.MouseEvent;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -108,17 +114,22 @@ public class workoutController implements Initializable {
     private final ServiceDispatcher serviceDispatcher = Main.getServiceDispatcher();
 
     // logged-in user — set by dashboardController immediately after switchScene()
-    private com.repit.Model.User loggedUser;
+    private User loggedUser;
+    private int currentExerciseIndex;
+    private DayWorkoutPlan dayWorkoutPlan;
+    private List<PlannedExercise> plannedExercises = List.of();
 
-    public void setLoggedUser(com.repit.Model.User loggedUser) {
+    public void setLoggedUser(User loggedUser) {
         this.loggedUser = loggedUser;
+
+        //Load in User data...
+        loadWorkout();
     }
 
     //Initialization:
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         setStateLoading();
-
         //Set Media Player Bounds
         mediaView.setPreserveRatio(true);
         mediaView.fitWidthProperty().bind(exerciseMediaPane.widthProperty());
@@ -128,7 +139,9 @@ public class workoutController implements Initializable {
     //State(s):
     public void setStateLoading() {
         //First VBox:
+        workoutAreaLabel.setText("Loading...");
         workoutDurationLabel.setText("Estimated duration: -- minutes");
+        workoutProgressBar.setProgress(0);
         workoutCompletionLabel.setText("0 of 0 exercises completed");
 
         nextExerciseLabel.setText("Loading...");
@@ -151,8 +164,117 @@ public class workoutController implements Initializable {
         logSet4Label.setText("-- lbs");
     }
 
-    public void setStateLoaded(){
-        workoutDurationLabel.setText("Estimated duration: Loading...");
+    private void loadWorkout() {
+        if (loggedUser == null) {
+            errorLabel.setText("Login Error");
+            return;
+        }
+
+        dayWorkoutPlan = serviceDispatcher.handleGetTodaysPlanRequest(loggedUser.getUserId());
+
+        if (dayWorkoutPlan == null || dayWorkoutPlan.isRestDay() || dayWorkoutPlan.getExercises() == null || dayWorkoutPlan.getExercises().isEmpty()) {
+            workoutAreaLabel.setText("Rest Day");
+            workoutDurationLabel.setText("Estimated duration: 0 minutes");
+            workoutProgressBar.setProgress(0);
+            workoutCompletionLabel.setText("0 of 0 exercises completed");
+
+            nextExerciseLabel.setText("No workout scheduled");
+            nextExerciseAmtLabel.setText("0 sets x 0 reps");
+
+            currentExerciseLabel.setText("No exercise loaded");
+            coachingCueLabel.setText("Enjoy your recovery day.");
+
+            reqEquip1Label.setText("--");
+            reqEquip2Label.setText("--");
+            reqEquip3Label.setText("--");
+
+            logSet1Label.setText("-- lbs");
+            logSet2Label.setText("-- lbs");
+            logSet3Label.setText("-- lbs");
+            logSet4Label.setText("-- lbs");
+
+            logExerciseButton.setDisable(true);
+            nextExerciseButton.setDisable(true);
+            errorLabel.setText("");
+            return;
+        }
+
+        plannedExercises = dayWorkoutPlan.getExercises();
+        currentExerciseIndex = 0;
+        logExerciseButton.setDisable(false);
+        nextExerciseButton.setDisable(true);
+        errorLabel.setText("");
+
+        renderCurrentExercise();
+    }
+
+    /*
+    Populates workout page with current exercise data.
+     */
+    private void renderCurrentExercise() {
+        //Errors (these should not happen):
+        //Returns if workout fails to load
+        if (dayWorkoutPlan == null || plannedExercises == null || plannedExercises.isEmpty()) {
+            return;
+        }
+        //Returns if currentExercise is out of bounds
+        if (currentExerciseIndex < 0 || currentExerciseIndex >= plannedExercises.size()) {
+            return;
+        }
+
+        //Local variables:
+        PlannedExercise currentPlannedExercise = plannedExercises.get(currentExerciseIndex);
+        Exercise currentExercise = currentPlannedExercise.getExercise();
+
+        //First Vbox:
+        workoutAreaLabel.setText(dayWorkoutPlan.getWorkoutName());
+        workoutDurationLabel.setText("Estimated duration: " + dayWorkoutPlan.getEstimatedDurationMinutes() + " minutes");
+
+        //Calculates and updates the workoutProgressBar
+        double currentWorkoutProgressVal = (double) currentExerciseIndex / (double) plannedExercises.size();
+        workoutProgressBar.setProgress(currentWorkoutProgressVal);
+        workoutCompletionLabel.setText(currentExerciseIndex + " of " + plannedExercises.size() + " exercises completed");
+
+        if (currentExerciseIndex + 1 < plannedExercises.size()) {
+            PlannedExercise nextPlannedExercise = plannedExercises.get(currentExerciseIndex + 1);
+            nextExerciseLabel.setText(nextPlannedExercise.getExercise().getName());
+            nextExerciseAmtLabel.setText(nextPlannedExercise.getWorkingSets() + " sets x " + nextPlannedExercise.getTargetReps() + " reps");
+        } else {
+            nextExerciseLabel.setText("Finish Workout");
+            nextExerciseAmtLabel.setText("Last exercise");
+        }
+
+        //Second Vbox:
+        currentExerciseLabel.setText(currentExercise.getName());
+        coachingCueLabel.setText(currentExercise.getCoachingCue());
+
+        //Checks if there is any required equipment, if found display equipment, else "--"
+        List<Equipment> requiredEquipment = currentExercise.getRequiredEquipment();
+        reqEquip1Label.setText(requiredEquipment.size() > 0 ? requiredEquipment.get(0).getName() : "--");
+        reqEquip2Label.setText(requiredEquipment.size() > 1 ? requiredEquipment.get(1).getName() : "--");
+        reqEquip3Label.setText(requiredEquipment.size() > 2 ? requiredEquipment.get(2).getName() : "--");
+
+        //Third Vbox:
+        double suggestedWeight = currentPlannedExercise.getSuggestWeight();
+        int targetReps = currentPlannedExercise.getTargetReps();
+
+        if (currentExercise.isBodyweight()) {
+            logSet1Label.setText("Warm-up");
+            logSet2Label.setText("Warm-up");
+            logSet3Label.setText(targetReps + " reps");
+            logSet4Label.setText(targetReps + " reps");
+        } else {
+            String weightLabel = ((int) suggestedWeight) + " lbs";
+            logSet1Label.setText(weightLabel);
+            logSet2Label.setText(weightLabel);
+            logSet3Label.setText(weightLabel);
+            logSet4Label.setText(weightLabel);
+        }
+
+        workingSet3TextField.clear();
+        workingSet4TextField.clear();
+        nextExerciseButton.setDisable(true);
+        errorLabel.setText("");
     }
 
     //MediaPlayer Functions:
@@ -176,6 +298,11 @@ public class workoutController implements Initializable {
             mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
         }
     }
+
+    void loadMedia(Exercise exercise) {
+
+    }
+
     //Play MediaPlayer
     @FXML
     void playClicked(ActionEvent event) {
@@ -193,6 +320,14 @@ public class workoutController implements Initializable {
         //service function that handles
 
         Main.getViewFactory().switchScene("Fxml/Client/dashboard.fxml");
+    }
+
+    private URL getMediaResource(String exercise) {
+        return switch (exercise) {
+            case "hi":
+
+        }
+
     }
 
     //Saving Data Function(s)
@@ -235,6 +370,7 @@ public class workoutController implements Initializable {
     void nextExerciseClicked(ActionEvent event) {
         //insert updater function here
 
+        currentExerciseIndex++;
     }
 
 }
