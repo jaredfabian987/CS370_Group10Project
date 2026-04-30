@@ -5,6 +5,7 @@ import com.repit.Model.Equipment;
 import com.repit.Model.Exercise;
 import com.repit.Model.PlannedExercise;
 import com.repit.Model.User;
+import com.repit.Model.WorkoutLog;
 import com.repit.Services.ServiceDispatcher;
 import com.repit.main.java.Main;
 import javafx.event.ActionEvent;
@@ -23,6 +24,7 @@ import javafx.stage.FileChooser;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
@@ -130,7 +132,7 @@ public class workoutController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         setStateLoading();
-        //Set Media Player Bounds
+        //Set Media Player Bounds and bind
         mediaView.setPreserveRatio(true);
         mediaView.fitWidthProperty().bind(exerciseMediaPane.widthProperty());
         mediaView.fitHeightProperty().bind(exerciseMediaPane.heightProperty());
@@ -247,6 +249,8 @@ public class workoutController implements Initializable {
         //Second Vbox:
         currentExerciseLabel.setText(currentExercise.getName());
         coachingCueLabel.setText(currentExercise.getCoachingCue());
+        errorLabel.setText("");
+        loadMedia(currentExercise);
 
         //Checks if there is any required equipment, if found display equipment, else "--"
         List<Equipment> requiredEquipment = currentExercise.getRequiredEquipment();
@@ -258,6 +262,7 @@ public class workoutController implements Initializable {
         double suggestedWeight = currentPlannedExercise.getSuggestWeight();
         int targetReps = currentPlannedExercise.getTargetReps();
 
+        //If currentExercise is a body weight exercise
         if (currentExercise.isBodyweight()) {
             logSet1Label.setText("Warm-up");
             logSet2Label.setText("Warm-up");
@@ -274,11 +279,10 @@ public class workoutController implements Initializable {
         workingSet3TextField.clear();
         workingSet4TextField.clear();
         nextExerciseButton.setDisable(true);
-        errorLabel.setText("");
     }
 
     //MediaPlayer Functions:
-    //Replace FileChooser with passed in string that gets file location from resources
+    //Temporary tester for the media player
     @FXML
     void selectMedia(ActionEvent event) throws IOException {
         FileChooser fileChooser = new FileChooser();
@@ -286,31 +290,97 @@ public class workoutController implements Initializable {
         File selectedFile = fileChooser.showOpenDialog(exerciseMediaPane.getScene().getWindow());
 
         if (selectedFile != null) {
-            String mediaUrl = selectedFile.toURI().toString();
-            media = new Media(mediaUrl);
-            mediaPlayer = new MediaPlayer(new Media(mediaUrl));
-
-            mediaView.setMediaPlayer(mediaPlayer);
-
-            //Media player behaviors
-            mediaPlayer.setAutoPlay(false);
-            mediaPlayer.setMute(true);
-            mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+            configureMediaPlayer(selectedFile.toURI().toString());
+            errorLabel.setText("");
         }
     }
 
+    //Loads the video of the current exercise
     void loadMedia(Exercise exercise) {
+        URL mediaResource = getMediaResource(exercise);
 
+        //Checks if video exists, if not, dispose of Media player, set error message and return
+        if (mediaResource == null) {
+            deleteMediaPlayer();
+            mediaView.setMediaPlayer(null);
+            errorLabel.setText("No demo video available for this exercise");
+            return;
+        }
+
+        configureMediaPlayer(mediaResource.toExternalForm());
+    }
+
+    //Retrieve media source and return
+    private URL getMediaResource(Exercise exercise) {
+        //If exercise is not loaded, return null
+        if (exercise == null || exercise.getName() == null || exercise.getName().isBlank()) {
+            return null;
+        }
+        //Regex to normalize the name, replaces spaces with dashes and makes string all lowercase
+        String normalizedName = exercise.getName().trim().toLowerCase().replaceAll("[^a-z0-9]+", "-").replaceAll("(^-+|-+$)", "");
+
+        //Store the string of the media path
+        String mediaPath = "/Videos/" + normalizedName + ".mp4";
+
+        //Store the URL of the video for the exercis, if not found, return null
+        URL mediaResource = getClass().getResource(mediaPath);
+        if (mediaResource != null) {
+            return mediaResource;
+        }
+        return null;
+    }
+
+    //Configures Media player
+    private void configureMediaPlayer(String mediaUrl) {
+        //Delete existing media player to save resources
+        deleteMediaPlayer();
+
+        //Error handling:
+        try {
+            media = new Media(mediaUrl);
+            mediaPlayer = new MediaPlayer(media);
+            mediaView.setMediaPlayer(mediaPlayer);
+            mediaPlayer.setAutoPlay(true);
+            mediaPlayer.setMute(true);
+            mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+        } catch (RuntimeException e) {
+            deleteMediaPlayer();
+            mediaView.setMediaPlayer(null);
+            errorLabel.setText("Video failed to load: " + e.getMessage());
+        }
+    }
+
+    //Deletes media player object
+    private void deleteMediaPlayer() {
+        //Frees resources, sets up for next video to be loaded
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+            mediaPlayer.dispose();
+            mediaPlayer = null;
+        }
+        media = null;
     }
 
     //Play MediaPlayer
     @FXML
     void playClicked(ActionEvent event) {
+        //If no media is loaded into media player, set
+        if (mediaPlayer == null) {
+            errorLabel.setText("No exercise video is loaded");
+            return;
+        }
+        //Reset errorLabel
+        errorLabel.setText("");
         mediaPlayer.play();
     }
     //Pause MediaPlayer
     @FXML
     void pauseClicked(ActionEvent event) {
+        if (mediaPlayer == null) {
+            errorLabel.setText("No exercise video is loaded");
+            return;
+        }
+        errorLabel.setText("");
         mediaPlayer.pause();
     }
 
@@ -318,21 +388,19 @@ public class workoutController implements Initializable {
     @FXML
     void finishWorkoutClicked(ActionEvent event) {
         //service function that handles
-
+        deleteMediaPlayer();
         Main.getViewFactory().switchScene("Fxml/Client/dashboard.fxml");
     }
 
-    private URL getMediaResource(String exercise) {
-        return switch (exercise) {
-            case "hi":
-
-        }
-
-    }
 
     //Saving Data Function(s)
     @FXML
     void logClicked(ActionEvent event) {
+        if (loggedUser == null || plannedExercises == null || currentExerciseIndex < 0 || currentExerciseIndex >= plannedExercises.size()) {
+            errorLabel.setText("Error: no exercise is loaded");
+            return;
+        }
+
         //User input variable(s):
         String workingSet3 = workingSet3TextField.getText();
         String workingSet4 = workingSet4TextField.getText();
@@ -359,11 +427,31 @@ public class workoutController implements Initializable {
         //Clear error
         errorLabel.setText("");
 
-        //Service call:
-        //insert service function here
+        //Comment back in later:
+        /*
+        PlannedExercise currentPlannedExercise = plannedExercises.get(currentExerciseIndex);
+        Exercise currentExercise = currentPlannedExercise.getExercise();
+
+        int set3Reps = Integer.parseInt(workingSet3);
+        int set4Reps = Integer.parseInt(workingSet4);
+        double workingWeight = currentExercise.isBodyweight() ? 0 : currentPlannedExercise.getSuggestWeight();
+        String today = LocalDate.now().toString();
+
+        WorkoutLog set3Log = new WorkoutLog(0, loggedUser.getUserId(), currentExercise.getExerciseId(), true, today, set3Reps, workingWeight);
+        WorkoutLog set4Log = new WorkoutLog(0, loggedUser.getUserId(), currentExercise.getExerciseId(), true, today, set4Reps, workingWeight);
+
+        boolean savedSet3 = serviceDispatcher.handleSaveLogRequest(set3Log);
+        boolean savedSet4 = serviceDispatcher.handleSaveLogRequest(set4Log);
+
+        if (!savedSet3 || !savedSet4) {
+            errorLabel.setText("Error: failed to save workout log");
+            return;
+        }
+        */
 
         //Allow user to continue
         nextExerciseButton.setDisable(false);
+        errorLabel.setText("Sets logged");
     }
 
     @FXML
@@ -371,6 +459,13 @@ public class workoutController implements Initializable {
         //insert updater function here
 
         currentExerciseIndex++;
+
+        if (currentExerciseIndex >= plannedExercises.size()) {
+            finishWorkoutClicked(event);
+            return;
+        }
+
+        renderCurrentExercise();
     }
 
 }
