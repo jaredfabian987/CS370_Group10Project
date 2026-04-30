@@ -1,6 +1,7 @@
 package com.repit.Controllers.Client;
 
 import com.repit.Model.DayWorkoutPlan;
+import com.repit.Model.FitnessProfile;
 import com.repit.Model.User;
 import com.repit.Services.ServiceDispatcher;
 import com.repit.main.java.Main;
@@ -70,8 +71,18 @@ public class dashboardController implements Initializable {
     // passing the user here triggers the real data load
     public void setLoggedUser(User loggedUser) {
         this.loggedUser = loggedUser;
-        loadDashboardData();
         System.out.println("loggedUser: " + loggedUser.getUsername());
+
+        // If the user never finished setup (no fitness profile in DB),
+        // redirect them to the setup screen instead of loading the dashboard.
+        FitnessProfile profile = serviceDispatcher.handleGetFitnessProfileRequest(loggedUser.getUserId());
+        if (profile == null) {
+            setupController controller = Main.getViewFactory().switchScene("Fxml/Client/setup.fxml");
+            if (controller != null) controller.setLoggedUser(loggedUser);
+            return;
+        }
+
+        loadDashboardData();
     }
 
     // ─────────────────────────────────────────────────────────────────────────
