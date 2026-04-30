@@ -323,11 +323,8 @@ public class workoutController implements Initializable {
     }
 
     private URL getMediaResource(String exercise) {
-        return switch (exercise) {
-            case "hi":
-
-        }
-
+        // TODO: partner to complete — map exercise name to its video resource URL
+        return null;
     }
 
     //Saving Data Function(s)
