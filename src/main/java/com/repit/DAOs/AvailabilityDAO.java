@@ -174,15 +174,5 @@ public class AvailabilityDAO extends BaseDAO {
         return  false;
     }
 
-    // TODO: implement saveAvailability(Availability availability)
-    //       delete all existing rows for userId, then insert one row per training day
 
-    // TODO: implement getAvailability(int userId) -> Availability
-    //       query all rows where userId = ?, build and return Availability object
-
-    // TODO: implement updateMinutesForDay(int userId, DayOfWeek day, int minutes)
-    //       INSERT OR REPLACE INTO availability (userId, dayOfWeek, minutes) VALUES (?, ?, ?)
-
-    // TODO: implement removeDay(int userId, DayOfWeek day)
-    //       DELETE FROM availability WHERE userId = ? AND dayOfWeek = ?`
 }
