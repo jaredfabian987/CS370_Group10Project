@@ -25,7 +25,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -114,6 +116,39 @@ public class workoutController implements Initializable {
 
     //Variable(s):
     private final ServiceDispatcher serviceDispatcher = Main.getServiceDispatcher();
+
+    // Maps exercise names (as stored in DB) to their video file names in /Videos/
+    private static final Map<String, String> VIDEO_MAP = new HashMap<>();
+    static {
+        VIDEO_MAP.put("Cable Bicep Curls",                    "cable-bicep-curl.mp4");
+        VIDEO_MAP.put("Cable Hammer Curls",                   "cable-hammer-curl.mp4");
+        VIDEO_MAP.put("Inclined Bicep Curls",                 "bicep-curl.mp4");
+        VIDEO_MAP.put("Overhead Tricep Extensions",           "overhead-tricep-extension.mp4");
+        VIDEO_MAP.put("Tricep Pushdowns",                     "tricep-pushdown.mp4");
+        VIDEO_MAP.put("Cable Rows",                           "seated-cable-row.mp4");
+        VIDEO_MAP.put("Lat Pulldowns (Wide Grip)",            "lat-pulldown.mp4");
+        VIDEO_MAP.put("Lat Pulldowns (Close Grip)",           "close-grip-lat-pulldown.mp4");
+        VIDEO_MAP.put("Smith Machine Row",                    "barbell-row.mp4");
+        VIDEO_MAP.put("Cable Chest Flys (Lower Chest)",       "lower-cable-chest-fly.mp4");
+        VIDEO_MAP.put("Cable Chest Flys (Upper Chest)",       "upper-cable-chest-fly.mp4");
+        VIDEO_MAP.put("Flat Bench (Barbell Bench Press)",     "bench-press.mp4");
+        VIDEO_MAP.put("Incline Smith Machine Bench Press",    "smith-machine-incline-bench-press.mp4");
+        VIDEO_MAP.put("Flat Bench (Dumbbell Bench Press)",    "dumbbell-bench-press.mp4");
+        VIDEO_MAP.put("Incline Bench (Dumbbell Bench Press)", "incline-bench-press.mp4");
+        VIDEO_MAP.put("Dumbbell RDLs",                        "romanian-deadlift.mp4");
+        VIDEO_MAP.put("Squat Free Weight",                    "barbell-squat.mp4");
+        VIDEO_MAP.put("Leg Extensions",                       "leg-extension.mp4");
+        VIDEO_MAP.put("Leg Curls Laying Down",                "leg-curl.mp4");
+        VIDEO_MAP.put("Seated Calf Raises",                   "seated-calf-raise.mp4");
+        VIDEO_MAP.put("Dumbbell Shoulder Press",              "overhead-press.mp4");
+        VIDEO_MAP.put("Seated Dumbbell Lateral Raises",       "dumbbell-chest-fly.mp4");
+        VIDEO_MAP.put("Seated Rear Delt Flys",                "rear-delt-fly.mp4");
+    }
+
+    // Debounce: tracks the last time a user triggered an action button.
+    // Prevents spam-clicking log/next/finish from firing multiple times rapidly.
+    private long lastActionTime = 0;
+    private static final long ACTION_COOLDOWN_MS = 800;
 
     // logged-in user — set by dashboardController immediately after switchScene()
     private User loggedUser;
@@ -310,24 +345,16 @@ public class workoutController implements Initializable {
         configureMediaPlayer(mediaResource.toExternalForm());
     }
 
-    //Retrieve media source and return
+    //Retrieve media source and return — looks up the exercise name in VIDEO_MAP
     private URL getMediaResource(Exercise exercise) {
-        //If exercise is not loaded, return null
         if (exercise == null || exercise.getName() == null || exercise.getName().isBlank()) {
             return null;
         }
-        //Regex to normalize the name, replaces spaces with dashes and makes string all lowercase
-        String normalizedName = exercise.getName().trim().toLowerCase().replaceAll("[^a-z0-9]+", "-").replaceAll("(^-+|-+$)", "");
-
-        //Store the string of the media path
-        String mediaPath = "/Videos/" + normalizedName + ".mp4";
-
-        //Store the URL of the video for the exercis, if not found, return null
-        URL mediaResource = getClass().getResource(mediaPath);
-        if (mediaResource != null) {
-            return mediaResource;
+        String fileName = VIDEO_MAP.get(exercise.getName());
+        if (fileName == null) {
+            return null; // no video registered for this exercise
         }
-        return null;
+        return getClass().getResource("/Videos/" + fileName);
     }
 
     //Configures Media player
@@ -387,19 +414,25 @@ public class workoutController implements Initializable {
     //Navigation Function(s):
     @FXML
     void finishWorkoutClicked(ActionEvent event) {
-        //service function that handles
+        if (isThrottled()) return;
         deleteMediaPlayer();
-        Main.getViewFactory().switchScene("Fxml/Client/dashboard.fxml");
+        dashboardController controller = Main.getViewFactory().switchScene("Fxml/Client/dashboard.fxml");
+        if (controller != null) controller.setLoggedUser(loggedUser);
     }
 
-    private URL getMediaResource(String exercise) {
-        // TODO: partner to complete — map exercise name to its video resource URL
-        return null;
+    // Returns true if a button was clicked too recently — prevents spam clicks from
+    // firing the same action multiple times before the UI has finished updating.
+    private boolean isThrottled() {
+        long now = System.currentTimeMillis();
+        if (now - lastActionTime < ACTION_COOLDOWN_MS) return true;
+        lastActionTime = now;
+        return false;
     }
 
     //Saving Data Function(s)
     @FXML
     void logClicked(ActionEvent event) {
+        if (isThrottled()) return;
         if (loggedUser == null || plannedExercises == null || currentExerciseIndex < 0 || currentExerciseIndex >= plannedExercises.size()) {
             errorLabel.setText("Error: no exercise is loaded");
             return;
@@ -460,7 +493,7 @@ public class workoutController implements Initializable {
 
     @FXML
     void nextExerciseClicked(ActionEvent event) {
-        //insert updater function here
+        if (isThrottled()) return;
 
         currentExerciseIndex++;
 
