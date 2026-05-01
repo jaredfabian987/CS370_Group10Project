@@ -104,6 +104,7 @@ public class plannerController implements Initializable {
 
     public void setLoggedUser(User loggedUser) {
         this.loggedUser = loggedUser;
+        loadPlanner();
     }
 
     // ── Initialization
@@ -168,6 +169,22 @@ public class plannerController implements Initializable {
             return false;
         }
         return true;
+    }
+
+    private void loadPlanner() {
+        if (loggedUser == null) {return;}
+
+        int userId = loggedUser.getUserId();
+
+        Map<DayOfWeek, DayWorkoutPlan> weeklyPlan =
+                serviceDispatcher.handleGetWeeklyPlanRequest(userId);
+        weeklyPlannerGridPane.getChildren().clear();
+
+        DayOfWeek today = LocalDate.now().getDayOfWeek();
+        DayOfWeek[] days     = DayOfWeek.values(); // MONDAY through SUNDAY
+        String[]    dayNames = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
+
+        updateWeeklyPlanner(weeklyPlan);
     }
 
 
