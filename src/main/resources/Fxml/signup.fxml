@@ -57,7 +57,7 @@
                   </HBox>
                   <Label fx:id="errorLabel" styleClass="error" text="" wrapText="true" />
                   <Region VBox.vgrow="ALWAYS" />
-                  <Button fx:id="signupButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#createAccountClicked" prefHeight="42.0" text="Create Account" textAlignment="CENTER" />
+                  <Button fx:id="signupButton" defaultButton="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#createAccountClicked" prefHeight="42.0" text="Create Account" textAlignment="CENTER" />
                   <Hyperlink fx:id="loginLinker" onAction="#loginLinkerClicked" text="Already have an account?" />
                </children>
             </VBox>
