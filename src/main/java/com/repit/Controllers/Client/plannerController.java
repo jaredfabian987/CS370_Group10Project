@@ -1,5 +1,6 @@
 package com.repit.Controllers.Client;
 
+import com.repit.Model.Availability;
 import com.repit.Model.DayWorkoutPlan;
 import com.repit.Model.FitnessProfile;
 import com.repit.Model.User;
@@ -196,10 +197,16 @@ public class plannerController implements Initializable {
                 ? FitnessProfile.FitnessGoal.MUSCLE
                 : FitnessProfile.FitnessGoal.MAINTAIN;
 
-        // Step 3: count days and find max minutes
+        // Step 3: count days, find max minutes, and build the per-day Availability
+        // we save daysPerWeek + maxMinutes to the FitnessProfile (legacy), and
+        // the full Availability map to AvailabilityDAO (the source of truth for
+        // PlannerService — tells it exactly which days the user picked)
         int daysPerWeek = 0;
         int maxMinutes  = 0;
 
+        Availability availability = new Availability(loggedUser.getUserId());
+        DayOfWeek[] dayKeys = {DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY,
+                DayOfWeek.THURSDAY, DayOfWeek.FRIDAY, DayOfWeek.SATURDAY, DayOfWeek.SUNDAY};
         CheckBox[] dayBoxes  = {mondayCheckBox, tuesdayCheckBox, wednesdayCheckBox,
                 thursdayCheckBox, fridayCheckBox, saturdayCheckBox, sundayCheckBox};
         ComboBox<String>[] timeBoxes = new ComboBox[]{mondayTimeComboBox, tuesdayTimeComboBox,
@@ -209,6 +216,7 @@ public class plannerController implements Initializable {
             if (dayBoxes[i].isSelected()) {
                 daysPerWeek++;
                 int mins = parseMinutes(timeBoxes[i].getValue());
+                availability.setMinutesForDay(dayKeys[i], mins);
                 if (mins > maxMinutes) maxMinutes = mins;
             }
         }
@@ -243,6 +251,10 @@ public class plannerController implements Initializable {
             errorLabel1.setText("Error saving plan — please try again.");
             return;
         }
+
+        // persist the exact per-day schedule so PlannerService picks the right
+        // days and per-day minute budgets
+        serviceDispatcher.handleSaveAvailabilityRequest(availability);
 
         // Step 6: get the generated weekly plan and show it in the week view
         Map<DayOfWeek, DayWorkoutPlan> weeklyPlan =
@@ -311,7 +323,11 @@ public class plannerController implements Initializable {
                 workoutText = "Rest";
                 detailText  = "Off day";
             } else {
-                int minutes = plan.getExercises().size() * 10;
+                // show the user's scheduled minutes for this day (from Availability),
+                // not exercises*10 — the queue may return fewer exercises if seed
+                // data is sparse, but the user's budget shouldn't appear shorter
+                int minutes = plan.getEstimatedDurationMinutes();
+                if (minutes <= 0) minutes = plan.getExercises().size() * 10;
                 workoutText = plan.getWorkoutName();
                 detailText  = minutes + " min";
             }

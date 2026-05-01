@@ -27,11 +27,11 @@ public class ExercisesDAO extends BaseDAO {
                     "exerciseType INTEGER NOT NULL, "+
                     //compounds score for heap
                     "compoundScore INTEGER NOT NULL, "+
-                    //muscle identification
-                    "primaryMusclesId INTEGER NOT NULL, "+
+                    //muscle identification (nullable — muscle group is stored in the category column)
+                    "primaryMusclesId INTEGER, "+
                     "secondaryMusclesId INTEGER, "+
                     //equipment
-                    "requiredEquipmentId NOT NULL,"+
+                    "requiredEquipmentId INTEGER,"+
                     "trackingType INTEGER NOT NULL," +
                     "isCustom TEXT NOT NULL,"+
                     "userId INTEGER,"+
@@ -114,52 +114,75 @@ public class ExercisesDAO extends BaseDAO {
     }
 
     public ArrayList<Exercise> getExercises(int userId){
-        ArrayList<Exercise> UserExercises = new ArrayList<>();
+        ArrayList<Exercise> userExercises = new ArrayList<>();
         try {
-            Connection conn = DriverManager.getConnection("jdbc:sqlite:repit.db");
-            Statement stmt = conn.createStatement();
+            Statement stmt = connection.createStatement();
             stmt.execute(TABLE_SQL);
+            stmt.close();
             migrateCoachingCue();
 
-            PreparedStatement pstmt = conn.prepareStatement(SELECT_SQL);
+            // STEP 1: Read all raw row data into memory first.
+            // We must close the ResultSet before calling targetedMusclesDAO or equipmentDAO,
+            // because all three DAOs share the same connection. Having two ResultSets open
+            // on the same connection simultaneously causes them to interfere.
+            PreparedStatement pstmt = connection.prepareStatement(SELECT_SQL);
             pstmt.setInt(1, userId);
-            //pstmt.executeUpdate();
-
             ResultSet rs = pstmt.executeQuery();
 
-            while (rs.next()){
-                int exerciseId = rs.getInt("exerciseId");
-                List<TargetedMuscle> primaryMuscles = targetedMusclesDAO.getTargetedMusclesFromExerciseId(exerciseId, MuscleRole.PRIMARY);
+            List<Object[]> rawRows = new ArrayList<>();
+            while (rs.next()) {
+                rawRows.add(new Object[]{
+                    rs.getInt("exerciseId"),
+                    rs.getString("name"),
+                    rs.getInt("category"),
+                    rs.getInt("difficulty"),
+                    rs.getInt("exerciseType"),
+                    rs.getInt("compoundScore"),
+                    rs.getInt("trackingType"),
+                    rs.getInt("isCustom"),
+                    rs.getInt("userId"),
+                    rs.getString("coachingCue")
+                });
+            }
+            rs.close();
+            pstmt.close();
+
+            // STEP 2: Now that the ResultSet is closed, do the nested DAO calls safely.
+            for (Object[] row : rawRows) {
+                int exerciseId        = (int)    row[0];
+                MuscleGroup muscle    = MuscleGroup.values()[(int) row[2]];
+                DifficultyLevel diff  = DifficultyLevel.values()[(int) row[3]];
+                ExerciseType exType   = ExerciseType.values()[(int) row[4]];
+                TrackingType tracking = TrackingType.values()[(int) row[6]];
+
+                List<TargetedMuscle> primaryMuscles   = targetedMusclesDAO.getTargetedMusclesFromExerciseId(exerciseId, MuscleRole.PRIMARY);
                 List<TargetedMuscle> secondaryMuscles = targetedMusclesDAO.getTargetedMusclesFromExerciseId(exerciseId, MuscleRole.SECONDARY);
-                List<Equipment> requiredEquipment = equipmentDAO.getEquipmentsFromExercise(exerciseId);
-                MuscleGroup muscle = MuscleGroup.values()[rs.getInt("category")];
-                DifficultyLevel difficultyLevel = DifficultyLevel.values()[rs.getInt("difficulty")];
-                ExerciseType exerciseType = ExerciseType.values()[rs.getInt("exerciseType")];
-                TrackingType trackingType = TrackingType.values()[rs.getInt("trackingType")];
+                List<Equipment> requiredEquipment     = equipmentDAO.getEquipmentsFromExercise(exerciseId);
+
                 Exercise newExercise = new Exercise(
                         exerciseId,
-                        rs.getString("name"),
+                        (String) row[1],
                         muscle,
-                        difficultyLevel,
-                        exerciseType,
-                        rs.getInt("compoundScore"),
+                        diff,
+                        exType,
+                        (int) row[5],
                         primaryMuscles,
                         secondaryMuscles,
                         requiredEquipment,
-                        trackingType,
-                        rs.getInt("isCustom")==1,
-                        rs.getInt("userId")
+                        tracking,
+                        (int) row[7] == 1,
+                        (int) row[8]
                 );
-                newExercise.setCoachingCue(rs.getString("coachingCue"));
-                // isCompound is not stored as its own column — derive it from exerciseType
-                // COMPOUND and STRENGTH both go into the compound heap in ExercisePriorityQueue
-                newExercise.setCompound(
-                        exerciseType == ExerciseType.COMPOUND || exerciseType == ExerciseType.STRENGTH);
-                UserExercises.add(newExercise);
+                newExercise.setCoachingCue((String) row[9]);
+                // isCompound is derived from exerciseType — not stored as its own column
+                newExercise.setCompound(exType == ExerciseType.COMPOUND || exType == ExerciseType.STRENGTH);
+                userExercises.add(newExercise);
             }
-            return UserExercises;
-        }  catch(Exception e){
-            System.out.println(e.getMessage());
+            return userExercises;
+
+        } catch (Exception e) {
+            System.out.println("getExercises error: " + e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }

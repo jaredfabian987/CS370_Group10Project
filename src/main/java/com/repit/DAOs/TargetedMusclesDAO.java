@@ -23,10 +23,13 @@ public class TargetedMusclesDAO extends BaseDAO {
     private static final String SELECT_SQL =
             "SELECT * FROM muscles WHERE targetedMuscleId = ?";
 
+    // NOTE: exerciseId must NOT be UNIQUE — each exercise has multiple muscle rows
+    // (one PRIMARY + multiple SECONDARY). UNIQUE caused all but the first muscle
+    // for each exercise to be silently dropped on insert.
     private static final String TABLE_SQL =
             "CREATE TABLE IF NOT EXISTS muscles (" +
                     "targetedMuscleId INTEGER PRIMARY KEY," +
-                    "exerciseId INTEGER NOT NULL UNIQUE," +
+                    "exerciseId INTEGER NOT NULL," +
                     "muscle TEXT NOT NULL," +
                     "role INTEGER NOT NULL"+
                     ")";
@@ -99,8 +102,8 @@ public class TargetedMusclesDAO extends BaseDAO {
 
             PreparedStatement pstmt = connection.prepareStatement(SELECT_FROM_EXERCISE_SQL);
             pstmt.setInt(1, exerciseId);
-            pstmt.executeUpdate();
-
+            // do NOT call executeUpdate() on a SELECT — it throws on SQLite,
+            // which used to send this method into the catch block and return null
 
             ArrayList<TargetedMuscle> targetedMusclesFromExercise = new ArrayList<>();
             ResultSet rs = pstmt.executeQuery();
@@ -118,9 +121,11 @@ public class TargetedMusclesDAO extends BaseDAO {
             }
             return targetedMusclesFromExercise;
         } catch (Exception e){
-            System.out.println(e.getMessage());
+            System.out.println("getTargetedMusclesFromExerciseId error: " + e.getMessage());
         }
-        return null;
+        // never return null — callers (ExercisePriorityQueue, Exercise constructor)
+        // assume a non-null list and would NPE otherwise
+        return new ArrayList<>();
     }
 
     public ArrayList<TargetedMuscle> getTargetedMusclesFromExerciseId(int exerciseId){

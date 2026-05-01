@@ -1,9 +1,11 @@
 package com.repit.Services;
 
+import com.repit.DAOs.AvailabilityDAO;
 import com.repit.DAOs.ExercisesDAO;
 import com.repit.DAOs.FitnessProfileDAO;
 import com.repit.DAOs.UsersDAO;
 import com.repit.DAOs.WorkoutLogsDAO;
+import com.repit.Model.Availability;
 import com.repit.Model.DayWorkoutPlan;
 import com.repit.Model.Exercise;
 import com.repit.Model.FitnessProfile;
@@ -32,6 +34,7 @@ public class ServiceDispatcher {
     private final DashboardService dashboardService;
     private final FitnessProfileService fitnessProfileService;
     private final PlannerService plannerService;
+    private final AvailabilityDAO availabilityDAO;
 
     /*
      * the constructor builds all DAOs and writes them into their services.
@@ -45,6 +48,7 @@ public class ServiceDispatcher {
         WorkoutLogsDAO workoutLogsDAO   = new WorkoutLogsDAO();
         ExercisesDAO exercisesDAO       = new ExercisesDAO();
         FitnessProfileDAO fitnessDAO    = new FitnessProfileDAO();
+        this.availabilityDAO            = new AvailabilityDAO();
 
         // wire each DAO into its matching service
         this.userService            = new UserService(usersDAO);
@@ -53,7 +57,7 @@ public class ServiceDispatcher {
         this.progressService        = new ProgressService(workoutLogsDAO);
         this.dashboardService       = new DashboardService(workoutLogsDAO, fitnessDAO);
         this.fitnessProfileService  = new FitnessProfileService(fitnessDAO);
-        this.plannerService         = new PlannerService(fitnessDAO, exercisesDAO, workoutLogsDAO);
+        this.plannerService         = new PlannerService(fitnessDAO, exercisesDAO, workoutLogsDAO, availabilityDAO);
 
         // seed coaching cues on startup — safe to call every launch, only updates by name
         exercisesDAO.seedCoachingCues();
@@ -392,6 +396,32 @@ public class ServiceDispatcher {
      */
     public String handleGetTodaysSummaryRequest(int userId) {
         return plannerService.getTodaysSummary(userId);
+    }
+
+    // availability handlers
+
+    /*
+     * handleSaveAvailabilityRequest
+     * Persists the user's exact training-day schedule (which days, how many minutes each).
+     * Called by setupController and plannerController right after saving the profile.
+     * Replaces any existing rows for this user — delete first so old picks don't linger.
+     */
+    public boolean handleSaveAvailabilityRequest(Availability availability) {
+        // wipe old per-day rows so days the user just unchecked don't survive the save
+        for (java.time.DayOfWeek day : java.time.DayOfWeek.values()) {
+            availabilityDAO.removeAvailability(availability.getUserId(), day);
+        }
+        return availabilityDAO.saveAvailability(availability);
+    }
+
+    /*
+     * handleGetAvailabilityRequest
+     * Returns the user's saved schedule, or null if they haven't set one up yet.
+     * PlannerService uses this internally; controllers can also call it to pre-fill
+     * the planner screen checkboxes when the user revisits the page.
+     */
+    public Availability handleGetAvailabilityRequest(int userId) {
+        return availabilityDAO.getAvailability(userId);
     }
 
 }

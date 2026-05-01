@@ -8,12 +8,20 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
     private static viewFactory viewFactory;
-    private static final ServiceDispatcher serviceDispatcher = new ServiceDispatcher();
+    // NOTE: ServiceDispatcher must NOT be a static field initializer.
+    // Static fields run when the class loads — before start() — which means
+    // ServiceDispatcher would create the exercises table (with its NOT NULL constraints)
+    // before DatabaseSeeder.seed() can insert any rows, causing INSERT OR IGNORE to
+    // silently skip every exercise row and leaving the exercises table empty.
+    // Initializing here (after seed()) guarantees the table is pre-populated first.
+    private static ServiceDispatcher serviceDispatcher;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         // seed the exercise library on every launch — safe to call repeatedly
         DatabaseSeeder.seed();
+        // create DAOs AFTER seeding so the schema is already correct
+        serviceDispatcher = new ServiceDispatcher();
 
         viewFactory = new viewFactory(primaryStage);
         viewFactory.switchScene("Fxml/login.fxml");

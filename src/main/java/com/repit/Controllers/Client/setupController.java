@@ -266,43 +266,31 @@ public class setupController implements Initializable {
         // minsAvailablePerWorkout = the highest minute value across all checked days
         // we use the max so that the exercise queue never gets cut short on the user's
         // longest available day
+        // build a per-day Availability map directly from the checkboxes — this is
+        // what PlannerService reads to know exactly which days the user picked
+        // (instead of falling back to the Mon/Wed/Fri default pattern)
+        Availability availability = new Availability(loggedUser.getUserId());
         int daysPerWeek = 0;
         int maxMinutes = 0;
 
-        if (mondayCheckBox.isSelected()) {
-            daysPerWeek++;
-            int mins = parseMinutes(mondayTimeComboBox.getValue());
-            if (mins > maxMinutes) maxMinutes = mins;
-        }
-        if (tuesdayCheckBox.isSelected()) {
-            daysPerWeek++;
-            int mins = parseMinutes(tuesdayTimeComboBox.getValue());
-            if (mins > maxMinutes) maxMinutes = mins;
-        }
-        if (wednesdayCheckBox.isSelected()) {
-            daysPerWeek++;
-            int mins = parseMinutes(wednesdayTimeComboBox.getValue());
-            if (mins > maxMinutes) maxMinutes = mins;
-        }
-        if (thursdayCheckBox.isSelected()) {
-            daysPerWeek++;
-            int mins = parseMinutes(thursdayTimeComboBox.getValue());
-            if (mins > maxMinutes) maxMinutes = mins;
-        }
-        if (fridayCheckBox.isSelected()) {
-            daysPerWeek++;
-            int mins = parseMinutes(fridayTimeComboBox.getValue());
-            if (mins > maxMinutes) maxMinutes = mins;
-        }
-        if (saturdayCheckBox.isSelected()) {
-            daysPerWeek++;
-            int mins = parseMinutes(saturdayTimeComboBox.getValue());
-            if (mins > maxMinutes) maxMinutes = mins;
-        }
-        if (sundayCheckBox.isSelected()) {
-            daysPerWeek++;
-            int mins = parseMinutes(sundayTimeComboBox.getValue());
-            if (mins > maxMinutes) maxMinutes = mins;
+        java.time.DayOfWeek[] dayKeys = {
+                java.time.DayOfWeek.MONDAY, java.time.DayOfWeek.TUESDAY,
+                java.time.DayOfWeek.WEDNESDAY, java.time.DayOfWeek.THURSDAY,
+                java.time.DayOfWeek.FRIDAY, java.time.DayOfWeek.SATURDAY,
+                java.time.DayOfWeek.SUNDAY};
+        CheckBox[] dayBoxes = {mondayCheckBox, tuesdayCheckBox, wednesdayCheckBox,
+                thursdayCheckBox, fridayCheckBox, saturdayCheckBox, sundayCheckBox};
+        ComboBox<String>[] timeBoxes = new ComboBox[]{mondayTimeComboBox, tuesdayTimeComboBox,
+                wednesdayTimeComboBox, thursdayTimeComboBox, fridayTimeComboBox,
+                saturdayTimeComboBox, sundayTimeComboBox};
+
+        for (int i = 0; i < dayBoxes.length; i++) {
+            if (dayBoxes[i].isSelected()) {
+                daysPerWeek++;
+                int mins = parseMinutes(timeBoxes[i].getValue());
+                availability.setMinutesForDay(dayKeys[i], mins);
+                if (mins > maxMinutes) maxMinutes = mins;
+            }
         }
 
         // Step 5: build the FitnessProfile
@@ -325,6 +313,10 @@ public class setupController implements Initializable {
             errorLabel1.setText("Error saving setup — please try again.");
             return;
         }
+
+        // persist the per-day schedule too — PlannerService uses this to know
+        // exactly which days the user picked, not just how many
+        serviceDispatcher.handleSaveAvailabilityRequest(availability);
 
         // Step 7: switch to the dashboard and pass the logged-in user
         // capturing the returned controller lets us call setLoggedUser() so the

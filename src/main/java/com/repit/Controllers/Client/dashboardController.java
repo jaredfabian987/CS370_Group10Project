@@ -110,9 +110,9 @@ public class dashboardController implements Initializable {
         if (todaysPlan != null && !todaysPlan.isRestDay()) {
             // show the workout type name (PUSH, PULL, LEGS, etc.)
             todaysWorkoutLabel.setText(todaysPlan.getWorkoutName());
-            // each exercise takes 10 minutes — multiply by count for total time
-            int minutes = todaysPlan.getExercises().size() * 10;
-            estimatedTimeLabel.setText("Estimated time: " + minutes + " minutes");
+            // show the scheduled time the user reserved (from Availability),
+            // not exercises*10 which may underreport when the queue is sparse
+            estimatedTimeLabel.setText("Estimated time: " + planMinutes(todaysPlan) + " minutes");
         } else {
             todaysWorkoutLabel.setText("Rest Day");
             estimatedTimeLabel.setText("No workout today — enjoy your rest");
@@ -188,12 +188,10 @@ public class dashboardController implements Initializable {
                 detail = plan.getWorkoutName();
             } else if (day == today) {
                 status = "Today";
-                detail = plan.getWorkoutName() + " · "
-                        + (plan.getExercises().size() * 10) + " min";
+                detail = plan.getWorkoutName() + " · " + planMinutes(plan) + " min";
             } else {
                 status = "Scheduled";
-                detail = plan.getWorkoutName() + " · "
-                        + (plan.getExercises().size() * 10) + " min";
+                detail = plan.getWorkoutName() + " · " + planMinutes(plan) + " min";
             }
 
             Label statusLabel = new Label(status);
@@ -205,6 +203,13 @@ public class dashboardController implements Initializable {
             dayCard.getChildren().addAll(dayNameLabel, statusLabel, detailLabel);
             weeklyPlannerGridPane.add(dayCard, col, row);
         }
+    }
+
+    // returns the user's scheduled minutes for this day (from Availability),
+    // falling back to exercises*10 if the duration wasn't set
+    private int planMinutes(DayWorkoutPlan plan) {
+        int minutes = plan.getEstimatedDurationMinutes();
+        return minutes > 0 ? minutes : plan.getExercises().size() * 10;
     }
 
     // Button handlers

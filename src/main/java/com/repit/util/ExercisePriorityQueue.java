@@ -265,7 +265,12 @@ public class ExercisePriorityQueue {
         // this helps rank exercises that hit multiple relevant muscles higher
         // e.g. a barbell row hitting BACK (primary) + BICEPS (secondary) scores higher on pull day
         //      than a row with no bicep involvement
-        for (TargetedMuscle tm : exercise.getSecondaryMuscles()) {
+        // defensive: Exercise.getSecondaryMuscles() should always return a list,
+        // but if it ever returns null (e.g. legacy data, partially-built Exercise),
+        // skip the secondary-muscle bonus rather than crash the planner
+        List<TargetedMuscle> secondary = exercise.getSecondaryMuscles();
+        if (secondary == null) secondary = java.util.Collections.emptyList();
+        for (TargetedMuscle tm : secondary) {
             for (MuscleGroup target : targets) {
                 if (target.name().equalsIgnoreCase(tm.getMuscle())) {
                     score += SECONDARY_SCORE;

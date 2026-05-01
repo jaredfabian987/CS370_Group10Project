@@ -1,8 +1,10 @@
 package com.repit.Services;
 
+import com.repit.DAOs.AvailabilityDAO;
 import com.repit.DAOs.ExercisesDAO;
 import com.repit.DAOs.FitnessProfileDAO;
 import com.repit.DAOs.WorkoutLogsDAO;
+import com.repit.Model.Availability;
 import com.repit.Model.DayWorkoutPlan;
 import com.repit.Model.Exercise;
 import com.repit.Model.FitnessProfile;
@@ -55,6 +57,7 @@ public class PlannerService {
     private final FitnessProfileDAO fitnessProfileDAO;
     private final ExercisesDAO exercisesDAO;
     private final WorkoutLogsDAO workoutLogsDAO;
+    private final AvailabilityDAO availabilityDAO;
 
     // minimum available minutes if profile has a very small value —
     // we need at least 30 min for 3 exercises (2 compound + 1 isolation)
@@ -65,10 +68,12 @@ public class PlannerService {
 
     public PlannerService(FitnessProfileDAO fitnessProfileDAO,
                           ExercisesDAO exercisesDAO,
-                          WorkoutLogsDAO workoutLogsDAO) {
+                          WorkoutLogsDAO workoutLogsDAO,
+                          AvailabilityDAO availabilityDAO) {
         this.fitnessProfileDAO = fitnessProfileDAO;
         this.exercisesDAO = exercisesDAO;
         this.workoutLogsDAO = workoutLogsDAO;
+        this.availabilityDAO = availabilityDAO;
     }
 
     // PUBLIC API
@@ -100,15 +105,16 @@ public class PlannerService {
         }
 
         // STEP 2: Determine which days of the week the user trains
-        // We pick training days based on how many days per week they workout.
-        // The pattern is designed for balanced recovery (no back-to-back days when possible).
-        // Example: 3 days → Monday, Wednesday, Friday (rest between every session)
-        // Example: 4 days → Monday, Tuesday, Thursday, Friday (one back-to-back pair allowed)
-        //
-        // TODO: replace getDefaultTrainingDays() with AvailabilityDAO once it's ready.
-        // AvailabilityDAO will let the user pick their exact available days
-        // instead of using this default pattern.
-        Set<DayOfWeek> trainingDays = getDefaultTrainingDays(profile.getDaysPerWeek());
+        // First preference: the user's saved Availability (specific days they picked
+        // on the setup/planner screen). Fallback: default pattern based on daysPerWeek
+        // for legacy profiles that were saved before AvailabilityDAO was wired in.
+        Availability availability = availabilityDAO.getAvailability(userId);
+        Set<DayOfWeek> trainingDays;
+        if (availability != null && !availability.getAvailableDays().isEmpty()) {
+            trainingDays = new LinkedHashSet<>(availability.getAvailableDays());
+        } else {
+            trainingDays = getDefaultTrainingDays(profile.getDaysPerWeek());
+        }
 
         // STEP 3: Map the user's goal to the string SplitSelector expects ───
         // FitnessProfile uses the FitnessGoal enum (BUILD, MUSCLE, MAINTAIN).
@@ -125,13 +131,14 @@ public class PlannerService {
         // push muscles recover while pull day runs, then legs gives the upper body a break.
         List<WorkoutType> split = SplitSelector.selectSplit(trainingDays, goalString);
 
-        //  STEP 5: Resolve the time budget
+        //  STEP 5: Resolve the time budget (per-day if availability is set,
+        //          otherwise fall back to profile.minsAvailablePerWorkout)
         // minsAvailablePerWorkout might not be a clean multiple of 10.
         // We floor it to the nearest 10-minute block because each exercise takes exactly 10 min.
         // We also enforce a minimum of 30 minutes (at least 3 exercises) so the queue
         // never returns fewer than the 2-compound minimum.
-        int rawMinutes = (int) profile.getMinsAvailablePerWorkout();
-        int availableMinutes = Math.max(MIN_WORKOUT_MINUTES, (rawMinutes / MINUTES_PER_EXERCISE) * MINUTES_PER_EXERCISE);
+        int fallbackRawMinutes = (int) profile.getMinsAvailablePerWorkout();
+        int fallbackMinutes = snapToTenMinBlock(fallbackRawMinutes);
 
         // STEP 6: Load all exercises available to this user
         // This includes both the global exercise library and any custom exercises
@@ -173,6 +180,16 @@ public class PlannerService {
                         ? split.get(splitIndex)
                         : WorkoutType.FULL_BODY; // fallback if split is shorter
 
+                // resolve this day's specific time budget — per-day if availability
+                // has it, otherwise the profile-wide fallback
+                int availableMinutes;
+                if (availability != null && availability.isTrainingDay(day)) {
+                    availableMinutes = snapToTenMinBlock(availability.getMinutesForDay(day));
+                } else {
+                    availableMinutes = fallbackMinutes;
+                }
+                dayPlan.setEstimatedDurationMinutes(availableMinutes);
+
                 // STEP 8a: Select exercises for this day
                 // CARDIO days are handled differently from strength days —
                 // the priority queue is skipped and we just pick one cardio
@@ -189,8 +206,9 @@ public class PlannerService {
                         dayPlan.addExercise(planned);
                     }
 
-                    // name the day "Cardio · X min" so the UI shows the duration
-                    dayPlan.setWorkoutName("Cardio · " + availableMinutes + " min");
+                    // workout name is just the type — the UI appends the duration
+                    // separately from dayPlan.getEstimatedDurationMinutes()
+                    dayPlan.setWorkoutName("Cardio");
 
                 } else {
 
@@ -274,7 +292,10 @@ public class PlannerService {
         if (todaysPlan == null) return "Rest Day";
 
         int exerciseCount = todaysPlan.getExercises().size();
-        int totalMinutes = exerciseCount * MINUTES_PER_EXERCISE;
+        // prefer the user's scheduled budget (set by getWeeklyPlan from Availability);
+        // fall back to exercises*10 if no schedule was saved
+        int totalMinutes = todaysPlan.getEstimatedDurationMinutes();
+        if (totalMinutes <= 0) totalMinutes = exerciseCount * MINUTES_PER_EXERCISE;
         return todaysPlan.getWorkoutName() + " · "
                 + exerciseCount + " exercises · "
                 + totalMinutes + " min";
@@ -282,6 +303,18 @@ public class PlannerService {
 
 
     // PRIVATE HELPERS
+
+    /**
+     * Floors a raw minute value to the nearest 10-minute block, with a 30-minute
+     * minimum. Each exercise slot is exactly 10 minutes (2 warmup + 2 working sets),
+     * so we can't have partial slots — and we always want room for at least
+     * 2 compounds + 1 isolation.
+     */
+    private int snapToTenMinBlock(int rawMinutes) {
+        return Math.max(MIN_WORKOUT_MINUTES,
+                (rawMinutes / MINUTES_PER_EXERCISE) * MINUTES_PER_EXERCISE);
+    }
+
 
 
     /**
