@@ -26,8 +26,10 @@ import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -155,6 +157,12 @@ public class workoutController implements Initializable {
     private int currentExerciseIndex;
     private DayWorkoutPlan dayWorkoutPlan;
     private List<PlannedExercise> plannedExercises = List.of();
+
+    // Tracks which exercises in this session the user has already logged.
+    // Used by finishWorkoutClicked to know which exercises still need a 0-rep
+    // placeholder entry (so the dashboard can correctly show the workout as
+    // partially completed).
+    private final Set<Integer> loggedExerciseIds = new HashSet<>();
 
     public void setLoggedUser(User loggedUser) {
         this.loggedUser = loggedUser;
@@ -297,18 +305,30 @@ public class workoutController implements Initializable {
         double suggestedWeight = currentPlannedExercise.getSuggestWeight();
         int targetReps = currentPlannedExercise.getTargetReps();
 
-        //If currentExercise is a body weight exercise
-        if (currentExercise.isBodyweight()) {
-            logSet1Label.setText("Warm-up");
-            logSet2Label.setText("Warm-up");
+        // Show weight if PlannerService populated one — either the user's last
+        // logged weight or the seeded week-1 starting weight from starting_weights.
+        // Fall back to "— / target reps" only for true bodyweight movements
+        // (suggestedWeight == 0, e.g. pull-ups or unseeded custom exercises).
+        // We can't rely on Exercise.isBodyweight() because it checks an empty
+        // requiredEquipment list and the seeder doesn't populate equipment yet,
+        // so every exercise would falsely look like a bodyweight movement.
+        if (suggestedWeight > 0) {
+            // Standard warmup ramp: 50% → 75% → 100% → 100% of working weight,
+            // rounded to the nearest 5 lbs (gym plates increment in 2.5s/5s).
+            int warmup1 = roundTo5(suggestedWeight * 0.5);
+            int warmup2 = roundTo5(suggestedWeight * 0.75);
+            int working = roundTo5(suggestedWeight);
+            logSet1Label.setText(warmup1 + " lbs");
+            logSet2Label.setText(warmup2 + " lbs");
+            logSet3Label.setText(working + " lbs");
+            logSet4Label.setText(working + " lbs");
+        } else {
+            // FXML already shows "warm-up" in the type column — don't repeat it
+            // in the target column. Em dash for warmup rows; rep target for working sets.
+            logSet1Label.setText("—");
+            logSet2Label.setText("—");
             logSet3Label.setText(targetReps + " reps");
             logSet4Label.setText(targetReps + " reps");
-        } else {
-            String weightLabel = ((int) suggestedWeight) + " lbs";
-            logSet1Label.setText(weightLabel);
-            logSet2Label.setText(weightLabel);
-            logSet3Label.setText(weightLabel);
-            logSet4Label.setText(weightLabel);
         }
 
         workingSet3TextField.clear();
@@ -415,6 +435,27 @@ public class workoutController implements Initializable {
     @FXML
     void finishWorkoutClicked(ActionEvent event) {
         if (isThrottled()) return;
+
+        // "Finish Workout" acts as a stop-and-save button. Any exercise the user
+        // didn't get to (didn't click Log on) gets a single 0-rep placeholder log
+        // entry with isCompleted = false. This way:
+        //   - completed exercises remain marked completed (existing logs untouched)
+        //   - skipped exercises show up in WorkoutLogs as "attempted but 0 reps"
+        //   - the dashboard's "n / m exercises" counter and weekly progress banner
+        //     can correctly report partial completion vs full completion
+        if (loggedUser != null && plannedExercises != null) {
+            String today = LocalDate.now().toString();
+            int userId = loggedUser.getUserId();
+            for (PlannedExercise planned : plannedExercises) {
+                int exerciseId = planned.getExercise().getExerciseId();
+                if (!loggedExerciseIds.contains(exerciseId)) {
+                    WorkoutLog skipped = new WorkoutLog(
+                            0, userId, exerciseId, false, today, 0, 0.0);
+                    serviceDispatcher.handleSaveLogRequest(skipped);
+                }
+            }
+        }
+
         deleteMediaPlayer();
         dashboardController controller = Main.getViewFactory().switchScene("Fxml/Client/dashboard.fxml");
         if (controller != null) controller.setLoggedUser(loggedUser);
@@ -427,6 +468,13 @@ public class workoutController implements Initializable {
         if (now - lastActionTime < ACTION_COOLDOWN_MS) return true;
         lastActionTime = now;
         return false;
+    }
+
+    // Rounds a weight to the nearest 5 lbs — every gym plate combo lands on a
+    // multiple of 5 (or 2.5, but we keep it whole-number simple here).
+    // Used to display clean warmup/working set targets in the log panel.
+    private int roundTo5(double weight) {
+        return (int) (Math.round(weight / 5.0) * 5);
     }
 
     //Saving Data Function(s)
@@ -464,18 +512,23 @@ public class workoutController implements Initializable {
         //Clear error
         errorLabel.setText("");
 
-        //Comment back in later:
-        /*
+        // Save the two working sets as separate WorkoutLog rows — keeping each
+        // set as its own entry lets ProgressService analyze rep ranges per set
+        // (e.g. "set 4 dropped to 5 reps → don't progress next week").
         PlannedExercise currentPlannedExercise = plannedExercises.get(currentExerciseIndex);
         Exercise currentExercise = currentPlannedExercise.getExercise();
 
         int set3Reps = Integer.parseInt(workingSet3);
         int set4Reps = Integer.parseInt(workingSet4);
-        double workingWeight = currentExercise.isBodyweight() ? 0 : currentPlannedExercise.getSuggestWeight();
+        // Use the seeded/last-known suggested weight as the recorded working weight.
+        // Bodyweight movements (suggestedWeight == 0) get logged as 0 lbs.
+        double workingWeight = currentPlannedExercise.getSuggestWeight();
         String today = LocalDate.now().toString();
+        int userId = loggedUser.getUserId();
+        int exerciseId = currentExercise.getExerciseId();
 
-        WorkoutLog set3Log = new WorkoutLog(0, loggedUser.getUserId(), currentExercise.getExerciseId(), true, today, set3Reps, workingWeight);
-        WorkoutLog set4Log = new WorkoutLog(0, loggedUser.getUserId(), currentExercise.getExerciseId(), true, today, set4Reps, workingWeight);
+        WorkoutLog set3Log = new WorkoutLog(0, userId, exerciseId, true, today, set3Reps, workingWeight);
+        WorkoutLog set4Log = new WorkoutLog(0, userId, exerciseId, true, today, set4Reps, workingWeight);
 
         boolean savedSet3 = serviceDispatcher.handleSaveLogRequest(set3Log);
         boolean savedSet4 = serviceDispatcher.handleSaveLogRequest(set4Log);
@@ -484,7 +537,10 @@ public class workoutController implements Initializable {
             errorLabel.setText("Error: failed to save workout log");
             return;
         }
-        */
+
+        // remember this exercise was completed — finishWorkoutClicked uses this
+        // to know which exercises still need a 0-rep placeholder
+        loggedExerciseIds.add(exerciseId);
 
         //Allow user to continue
         nextExerciseButton.setDisable(false);

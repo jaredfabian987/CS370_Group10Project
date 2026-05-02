@@ -7,8 +7,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.DayOfWeek;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * AvailabilityDAO
@@ -110,7 +111,12 @@ public class AvailabilityDAO extends BaseDAO {
     }
 
     public Availability getAvailability(int userId){
-        Map<DayOfWeek, Integer> minutesPerDay = new HashMap<>();
+        // TreeMap keeps DayOfWeek entries in calendar order (MONDAY → SUNDAY)
+        // regardless of insert order. PlannerService relies on this order to
+        // pair training days with the split (e.g. for 5 days the split is
+        // [PUSH, PULL, LEGS, UPPER, LOWER] paired with the days in calendar order).
+        // A plain HashMap would shuffle the days and put PULL on Saturday, etc.
+        Map<DayOfWeek, Integer> minutesPerDay = new TreeMap<>();
         try {
             Statement stmt = connection.createStatement();
             stmt.execute(TABLE_SQL);

@@ -9,6 +9,7 @@ import com.repit.Model.DayWorkoutPlan;
 import com.repit.Model.Exercise;
 import com.repit.Model.FitnessProfile;
 import com.repit.Model.PlannedExercise;
+import com.repit.Model.WorkoutLog;
 import com.repit.Model.WorkoutPlan;
 import com.repit.Model.enums.ExerciseType;
 import com.repit.Model.enums.WorkoutType;
@@ -163,8 +164,13 @@ public class PlannerService {
         // Each day gets isCompleted set by checking the logged dates from Step 7.
         Map<DayOfWeek, DayWorkoutPlan> weeklyPlan = new LinkedHashMap<>();
 
-        // pair each training day (calendar order) with its WorkoutType (split order)
+        // Pair each training day (calendar order) with its WorkoutType (split order).
+        // We explicitly sort by DayOfWeek's natural order (MONDAY=1 ... SUNDAY=7) so
+        // the pairing is guaranteed to be Mon→split[0], Tue→split[1], etc. — no matter
+        // what backing collection trainingDays came from. Without this, a HashMap-backed
+        // source could shuffle the days and put PULL on Saturday instead of Tuesday.
         List<DayOfWeek> orderedTrainingDays = new ArrayList<>(trainingDays);
+        orderedTrainingDays.sort(java.util.Comparator.naturalOrder());
         ExercisePriorityQueue priorityQueue = new ExercisePriorityQueue();
 
         for (DayOfWeek day : DayOfWeek.values()) {
@@ -202,8 +208,7 @@ public class PlannerService {
                     Exercise cardioExercise = selectCardioExercise(allExercises);
 
                     if (cardioExercise != null) {
-                        PlannedExercise planned = new PlannedExercise(cardioExercise);
-                        dayPlan.addExercise(planned);
+                        dayPlan.addExercise(buildPlannedExercise(cardioExercise, userId, profile));
                     }
 
                     // workout name is just the type — the UI appends the duration
@@ -225,8 +230,7 @@ public class PlannerService {
                     // suggestedWeight is 0 here — the workout controller fills it in
                     // using ProgressService (last logged weight for that exercise).
                     for (Exercise exercise : rankedExercises) {
-                        PlannedExercise planned = new PlannedExercise(exercise);
-                        dayPlan.addExercise(planned);
+                        dayPlan.addExercise(buildPlannedExercise(exercise, userId, profile));
                     }
 
                     dayPlan.setWorkoutName(workoutType.name());
@@ -303,6 +307,30 @@ public class PlannerService {
 
 
     // PRIVATE HELPERS
+
+    /**
+     * Builds a PlannedExercise with a sensible suggested weight populated.
+     *
+     * Lookup order:
+     *   1. Last logged set for this user + exercise (carries the user's actual
+     *      working weight forward week to week)
+     *   2. Seeded starting weight for the exercise at the user's fitness level
+     *      (week-1 default, comes from the starting_weights table)
+     *   3. 0 lbs (bodyweight or unseeded custom exercise)
+     */
+    private PlannedExercise buildPlannedExercise(Exercise exercise, int userId, FitnessProfile profile) {
+        PlannedExercise planned = new PlannedExercise(exercise);
+
+        WorkoutLog lastLog = workoutLogsDAO.getLastLogForExercise(userId, exercise.getExerciseId());
+        if (lastLog != null && lastLog.getWeight() > 0) {
+            planned.setSuggestWeight(lastLog.getWeight());
+        } else {
+            int levelOrdinal = profile.getLevel() == null ? 0 : profile.getLevel().ordinal();
+            double startingWeight = exercisesDAO.getStartingWeight(exercise.getExerciseId(), levelOrdinal);
+            planned.setSuggestWeight(startingWeight);
+        }
+        return planned;
+    }
 
     /**
      * Floors a raw minute value to the nearest 10-minute block, with a 30-minute

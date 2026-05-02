@@ -145,6 +145,120 @@ public class DatabaseSeeder {
         { 21, "TRICEPS" }, // Dumbbell Shoulder Press
     };
 
+    /*
+     * STARTING_WEIGHTS — week-1 baselines (in lbs) for users who have never logged
+     * a set yet. Indexed by exerciseId, with three columns: BEG, INT, ADV (matching
+     * FitnessLevel.values() ordinals).
+     *
+     * Numbers are based on average gym benchmarks (Stronglifts/Strength Standards-style)
+     * for an average ~165 lb adult. Once a user logs an actual working set,
+     * ProgressService uses that real weight instead — these only matter on day 1.
+     *
+     * Dumbbell entries are PER DUMBBELL (each hand). Cable/machine entries are
+     * total stack weight. No entries here for bodyweight movements.
+     *
+     * Format: { exerciseId, BEG_lbs, INT_lbs, ADV_lbs }
+     */
+    private static final Object[][] STARTING_WEIGHTS = {
+        // Biceps isolations
+        { 1,  20.0, 35.0, 50.0 }, // Cable Bicep Curls
+        { 2,  20.0, 35.0, 50.0 }, // Cable Hammer Curls
+        { 3,  15.0, 25.0, 40.0 }, // Inclined Bicep Curls (per dumbbell)
+
+        // Triceps isolations
+        { 4,  25.0, 45.0, 70.0 }, // Overhead Tricep Extensions
+        { 5,  30.0, 55.0, 85.0 }, // Tricep Pushdowns
+
+        // Back compounds
+        { 6,  60.0, 110.0, 170.0 }, // Cable Rows
+        { 7,  60.0, 110.0, 160.0 }, // Lat Pulldowns (Wide Grip)
+        { 8,  60.0, 110.0, 160.0 }, // Lat Pulldowns (Close Grip)
+        { 9,  65.0, 115.0, 175.0 }, // Smith Machine Row
+
+        // Chest isolations (cables)
+        { 10, 20.0, 35.0, 55.0 }, // Cable Chest Flys (Lower Chest)
+        { 11, 20.0, 35.0, 55.0 }, // Cable Chest Flys (Upper Chest)
+
+        // Chest compounds
+        { 12, 65.0, 135.0, 205.0 }, // Flat Bench (Barbell Bench Press)
+        { 13, 65.0, 115.0, 175.0 }, // Incline Smith Machine Bench Press
+        { 14, 30.0,  55.0,  85.0 }, // Flat Bench (Dumbbell Bench Press) — per dumbbell
+        { 15, 25.0,  50.0,  75.0 }, // Incline Bench (Dumbbell Bench Press) — per dumbbell
+
+        // Leg compounds
+        { 16, 30.0,  55.0,  85.0 }, // Dumbbell RDLs (per dumbbell)
+        { 17, 65.0, 155.0, 245.0 }, // Squat Free Weight (barbell, includes the bar)
+
+        // Leg isolations
+        { 18, 50.0,  90.0, 140.0 }, // Leg Extensions
+        { 19, 40.0,  75.0, 120.0 }, // Leg Curls Laying Down
+        { 20, 45.0,  90.0, 145.0 }, // Seated Calf Raises
+
+        // Shoulder compound
+        { 21, 25.0,  45.0,  70.0 }, // Dumbbell Shoulder Press (per dumbbell)
+
+        // Shoulder isolations
+        { 22, 10.0,  20.0,  30.0 }, // Seated Dumbbell Lateral Raises (per dumbbell)
+        { 23, 10.0,  20.0,  30.0 }, // Seated Rear Delt Flys (per dumbbell)
+    };
+
+    /*
+     * EQUIPMENT — required gear for each of the 23 exercises.
+     * Workout screen shows up to 3 entries (reqEquip1/2/3Label), so most
+     * exercises here have 1-2 entries.
+     *
+     * EquipmentType ordinals: FREE_WEIGHT=0, MACHINE=1, CARDIO=2, BODYWEIGHT=3
+     * Format: { exerciseId, name, equipmentType }
+     */
+    private static final Object[][] EQUIPMENT = {
+        // Biceps isolations
+        { 1,  "Cable Machine",          1 }, // Cable Bicep Curls
+        { 2,  "Cable Machine",          1 }, // Cable Hammer Curls
+        { 3,  "Dumbbells",              0 }, // Inclined Bicep Curls
+        { 3,  "Incline Bench",          0 },
+
+        // Triceps isolations
+        { 4,  "Dumbbell",               0 }, // Overhead Tricep Extensions
+        { 5,  "Cable Machine",          1 }, // Tricep Pushdowns
+
+        // Back compounds
+        { 6,  "Cable Machine",          1 }, // Cable Rows
+        { 7,  "Lat Pulldown Machine",   1 }, // Lat Pulldowns (Wide Grip)
+        { 8,  "Lat Pulldown Machine",   1 }, // Lat Pulldowns (Close Grip)
+        { 9,  "Smith Machine",          1 }, // Smith Machine Row
+
+        // Chest isolations (cables)
+        { 10, "Cable Machine",          1 }, // Cable Chest Flys (Lower Chest)
+        { 11, "Cable Machine",          1 }, // Cable Chest Flys (Upper Chest)
+
+        // Chest compounds
+        { 12, "Barbell",                0 }, // Flat Bench (Barbell Bench Press)
+        { 12, "Flat Bench",             0 },
+        { 13, "Smith Machine",          1 }, // Incline Smith Machine Bench Press
+        { 13, "Incline Bench",          0 },
+        { 14, "Dumbbells",              0 }, // Flat Bench (Dumbbell Bench Press)
+        { 14, "Flat Bench",             0 },
+        { 15, "Dumbbells",              0 }, // Incline Bench (Dumbbell Bench Press)
+        { 15, "Incline Bench",          0 },
+
+        // Leg compounds
+        { 16, "Dumbbells",              0 }, // Dumbbell RDLs
+        { 17, "Barbell",                0 }, // Squat Free Weight
+        { 17, "Squat Rack",             0 },
+
+        // Leg isolations
+        { 18, "Leg Extension Machine",  1 }, // Leg Extensions
+        { 19, "Leg Curl Machine",       1 }, // Leg Curls Laying Down
+        { 20, "Calf Raise Machine",     1 }, // Seated Calf Raises
+
+        // Shoulder compound
+        { 21, "Dumbbells",              0 }, // Dumbbell Shoulder Press
+
+        // Shoulder isolations
+        { 22, "Dumbbells",              0 }, // Seated Dumbbell Lateral Raises
+        { 23, "Dumbbells",              0 }, // Seated Rear Delt Flys
+    };
+
     /**
      * Seeds the 23 exercises and their secondary muscles into the database.
      * Safe to call on every app launch — INSERT OR IGNORE skips rows that already exist.
@@ -194,12 +308,12 @@ public class DatabaseSeeder {
             }
 
             // seed secondary muscles into the muscles table
-            // the muscles table has a UNIQUE constraint on exerciseId so only one row per exercise
-            // primary muscle is already in exercises.category — this table is secondary-only
+            // exerciseId is NOT unique — each exercise can have multiple secondary
+            // muscles (and we may add more rows in the future)
             conn.createStatement().execute(
                 "CREATE TABLE IF NOT EXISTS muscles (" +
                 "targetedMuscleId INTEGER PRIMARY KEY," +
-                "exerciseId INTEGER NOT NULL UNIQUE," +
+                "exerciseId INTEGER NOT NULL," +
                 "muscle TEXT NOT NULL," +
                 "role INTEGER NOT NULL" +
                 ")"
@@ -213,6 +327,68 @@ public class DatabaseSeeder {
                 musclePstmt.setInt(1,    (int) sm[0]);    // exerciseId
                 musclePstmt.setString(2, (String) sm[1]); // muscle name (must match MuscleGroup.name())
                 musclePstmt.executeUpdate();
+            }
+
+            // seed required equipment for each exercise.
+            // ensure the table exists with the schema EquipmentDAO uses
+            conn.createStatement().execute(
+                "CREATE TABLE IF NOT EXISTS equipment (" +
+                "equipmentId INTEGER PRIMARY KEY," +
+                "exerciseId INTEGER NOT NULL," +
+                "name TEXT NOT NULL," +
+                "EquipmentType INTEGER NOT NULL," +
+                "isCustom INTEGER NOT NULL" +
+                ")"
+            );
+
+            // guard against duplicates on every app launch — equipmentId is
+            // auto-increment so a plain INSERT would re-insert the whole list each run.
+            // we only seed if NO global equipment rows exist yet (custom user
+            // equipment is never touched: it has isCustom = 1).
+            java.sql.ResultSet eqCountRs = conn.createStatement().executeQuery(
+                "SELECT COUNT(*) FROM equipment WHERE isCustom = 0");
+            int existingGlobalEquipment = eqCountRs.next() ? eqCountRs.getInt(1) : 0;
+            eqCountRs.close();
+
+            if (existingGlobalEquipment == 0) {
+                String equipmentInsertSql =
+                    "INSERT INTO equipment (exerciseId, name, EquipmentType, isCustom) " +
+                    "VALUES (?, ?, ?, 0)";
+                PreparedStatement eqPstmt = conn.prepareStatement(equipmentInsertSql);
+
+                for (Object[] eq : EQUIPMENT) {
+                    eqPstmt.setInt(1,    (int) eq[0]);    // exerciseId
+                    eqPstmt.setString(2, (String) eq[1]); // name
+                    eqPstmt.setInt(3,    (int) eq[2]);    // EquipmentType ordinal
+                    eqPstmt.executeUpdate();
+                }
+            }
+
+            // seed week-1 starting weights — keyed by (exerciseId, level).
+            // ProgressService falls back to this table when the user has never
+            // logged a set for the exercise yet.
+            conn.createStatement().execute(
+                "CREATE TABLE IF NOT EXISTS starting_weights (" +
+                "exerciseId INTEGER NOT NULL," +
+                "level INTEGER NOT NULL," +
+                "weight REAL NOT NULL," +
+                "PRIMARY KEY (exerciseId, level)" +
+                ")"
+            );
+
+            String startingWeightInsertSql =
+                "INSERT OR IGNORE INTO starting_weights (exerciseId, level, weight) VALUES (?, ?, ?)";
+            PreparedStatement swPstmt = conn.prepareStatement(startingWeightInsertSql);
+
+            for (Object[] row : STARTING_WEIGHTS) {
+                int exerciseId = (int) row[0];
+                // columns 1..3 are BEG/INT/ADV in FitnessLevel ordinal order
+                for (int level = 0; level < 3; level++) {
+                    swPstmt.setInt(1, exerciseId);
+                    swPstmt.setInt(2, level);
+                    swPstmt.setDouble(3, (double) row[level + 1]);
+                    swPstmt.executeUpdate();
+                }
             }
 
             System.out.println("DatabaseSeeder: 23 exercises seeded successfully.");

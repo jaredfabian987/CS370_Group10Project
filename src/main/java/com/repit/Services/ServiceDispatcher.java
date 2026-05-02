@@ -44,20 +44,20 @@ public class ServiceDispatcher {
     public ServiceDispatcher() {
 
         // build DAOs
-        UsersDAO usersDAO               = new UsersDAO();
-        WorkoutLogsDAO workoutLogsDAO   = new WorkoutLogsDAO();
-        ExercisesDAO exercisesDAO       = new ExercisesDAO();
-        FitnessProfileDAO fitnessDAO    = new FitnessProfileDAO();
-        this.availabilityDAO            = new AvailabilityDAO();
+        UsersDAO usersDAO = new UsersDAO();
+        WorkoutLogsDAO workoutLogsDAO = new WorkoutLogsDAO();
+        ExercisesDAO exercisesDAO = new ExercisesDAO();
+        FitnessProfileDAO fitnessDAO = new FitnessProfileDAO();
+        this.availabilityDAO = new AvailabilityDAO();
 
         // wire each DAO into its matching service
-        this.userService            = new UserService(usersDAO);
-        this.workoutService         = new WorkoutService(workoutLogsDAO);
-        this.exerciseService        = new ExerciseService(exercisesDAO);
-        this.progressService        = new ProgressService(workoutLogsDAO);
-        this.dashboardService       = new DashboardService(workoutLogsDAO, fitnessDAO);
-        this.fitnessProfileService  = new FitnessProfileService(fitnessDAO);
-        this.plannerService         = new PlannerService(fitnessDAO, exercisesDAO, workoutLogsDAO, availabilityDAO);
+        this.userService = new UserService(usersDAO);
+        this.workoutService = new WorkoutService(workoutLogsDAO);
+        this.exerciseService = new ExerciseService(exercisesDAO);
+        this.progressService = new ProgressService(workoutLogsDAO);
+        this.dashboardService = new DashboardService(workoutLogsDAO, fitnessDAO);
+        this.fitnessProfileService = new FitnessProfileService(fitnessDAO);
+        this.plannerService = new PlannerService(fitnessDAO, exercisesDAO, workoutLogsDAO, availabilityDAO);
 
         // seed coaching cues on startup — safe to call every launch, only updates by name
         exercisesDAO.seedCoachingCues();

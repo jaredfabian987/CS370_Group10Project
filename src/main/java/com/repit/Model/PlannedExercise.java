@@ -103,6 +103,7 @@ public class PlannedExercise {
     public PlannedExercise() {
         this.warmupSets = 2;        // default: 2 warmup sets
         this.workingSets = 2;       // default: 2 working set to failure
+        this.targetReps = 8;        // default: middle of the 6-10 hypertrophy range
     }
 
     public PlannedExercise (Exercise exercise) {
