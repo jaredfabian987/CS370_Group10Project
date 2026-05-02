@@ -235,6 +235,44 @@ public class ExercisesDAO extends BaseDAO {
         }
     }
 
+    /*
+     * getStartingWeight
+     * Returns the seeded week-1 starting weight (lbs) for an exercise at a given
+     * fitness level. Used by PlannerService when a user has never logged a set
+     * for this exercise before — gives them a sensible starting suggestion
+     * instead of "0 lbs".
+     *
+     * @param exerciseId the exercise's id
+     * @param level FitnessLevel ordinal: 0=BEG, 1=INT, 2=ADV
+     * @return the seeded weight in lbs, or 0.0 if no entry exists (e.g. bodyweight
+     *         exercise or unseeded custom exercise)
+     */
+    public double getStartingWeight(int exerciseId, int level) {
+        try {
+            // ensure the table exists — needed if the seeder hasn't run yet
+            // (e.g. tests) so the query doesn't throw "no such table"
+            connection.createStatement().execute(
+                "CREATE TABLE IF NOT EXISTS starting_weights (" +
+                "exerciseId INTEGER NOT NULL," +
+                "level INTEGER NOT NULL," +
+                "weight REAL NOT NULL," +
+                "PRIMARY KEY (exerciseId, level))"
+            );
+
+            PreparedStatement pstmt = connection.prepareStatement(
+                "SELECT weight FROM starting_weights WHERE exerciseId = ? AND level = ?");
+            pstmt.setInt(1, exerciseId);
+            pstmt.setInt(2, level);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getDouble("weight");
+            }
+        } catch (Exception e) {
+            System.out.println("getStartingWeight error: " + e.getMessage());
+        }
+        return 0.0;
+    }
+
     public boolean deleteExercise(Exercise exercise){
         int exerciseId = exercise.getExerciseId();
         //int userId = exercise.getUserId();
