@@ -8,6 +8,7 @@ import com.repit.Model.User;
 import com.repit.Model.WorkoutLog;
 import com.repit.Services.ServiceDispatcher;
 import com.repit.main.java.Main;
+import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -207,6 +208,9 @@ public class workoutController implements Initializable {
         logSet2Label.setText("-- lbs");
         logSet3Label.setText("-- lbs");
         logSet4Label.setText("-- lbs");
+
+        //TEMP
+        finishWorkoutButton.setVisible(false);
     }
 
     private void loadWorkout() {
@@ -552,6 +556,10 @@ public class workoutController implements Initializable {
         if (isThrottled()) return;
 
         currentExerciseIndex++;
+
+        if (currentExerciseIndex == plannedExercises.size() - 1) {
+            nextExerciseButton.setText("Finish");
+        }
 
         if (currentExerciseIndex >= plannedExercises.size()) {
             finishWorkoutClicked(event);
