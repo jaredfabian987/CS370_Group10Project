@@ -40,9 +40,9 @@
                               <Separator />
                               <VBox spacing="10.0" styleClass="card-body" VBox.vgrow="ALWAYS">
                                  <children>
-                                    <Label text="Warm-up - 5 min mobility" />
-                                    <Label text="Primary Lift - Barbell squat" />
-                                    <Label text="Accessories - Split squats, calf raises, plank holds" wrapText="true" />
+                                    <Label fx:id="workoutWarmupLabel" text="Warm-up - 5 min mobility" />
+                                    <Label fx:id="workoutFirstLabel" text="Primary Lift - Barbell squat" />
+                                    <Label fx:id="wokroutFirstAccessories" text="Accessories - Split squats, calf raises, plank holds" wrapText="true" />
                                     <Region VBox.vgrow="ALWAYS" />
                                  </children>
                               </VBox>
