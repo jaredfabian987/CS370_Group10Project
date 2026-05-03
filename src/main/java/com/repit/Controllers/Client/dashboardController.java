@@ -2,6 +2,7 @@ package com.repit.Controllers.Client;
 
 import com.repit.Model.DayWorkoutPlan;
 import com.repit.Model.FitnessProfile;
+import com.repit.Model.PlannedExercise;
 import com.repit.Model.User;
 import com.repit.Services.ServiceDispatcher;
 import com.repit.main.java.Main;
@@ -18,6 +19,8 @@ import javafx.scene.text.Text;
 import java.net.URL;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -30,6 +33,15 @@ public class dashboardController implements Initializable {
     // displays the estimated time to complete today's workout
     @FXML
     private Label estimatedTimeLabel;
+
+    @FXML
+    private Label workoutWarmupLabel;
+
+    @FXML
+    private Label workoutFirstLabel;
+
+    @FXML
+    private Label wokroutFirstAccessories;
 
     // displays "n / n workouts" weekly progress text
     @FXML
@@ -93,6 +105,9 @@ public class dashboardController implements Initializable {
     private void setStateLoading() {
         todaysWorkoutLabel.setText("Loading...");
         estimatedTimeLabel.setText("Estimated time: --");
+        workoutWarmupLabel.setText("Warm-up - Loading...");
+        workoutFirstLabel.setText("Primary Lift - Loading...");
+        wokroutFirstAccessories.setText("Accessories - Loading...");
         workoutCompletionLabel.setText("0 / 0 workouts");
         workoutCompletionProgressBar.setProgress(0);
     }
@@ -113,9 +128,13 @@ public class dashboardController implements Initializable {
             // show the scheduled time the user reserved (from Availability),
             // not exercises*10 which may underreport when the queue is sparse
             estimatedTimeLabel.setText("Estimated time: " + planMinutes(todaysPlan) + " minutes");
+            updateTodaysWorkoutDetails(todaysPlan);
         } else {
             todaysWorkoutLabel.setText("Rest Day");
             estimatedTimeLabel.setText("No workout today — enjoy your rest");
+            workoutWarmupLabel.setText("Warm-up - Recovery and mobility");
+            workoutFirstLabel.setText("Primary Lift - None scheduled");
+            wokroutFirstAccessories.setText("Accessories - None scheduled");
         }
 
         // ── Weekly progress banner ────────────────────────────────────────────
@@ -210,6 +229,46 @@ public class dashboardController implements Initializable {
     private int planMinutes(DayWorkoutPlan plan) {
         int minutes = plan.getEstimatedDurationMinutes();
         return minutes > 0 ? minutes : plan.getExercises().size() * 10;
+    }
+
+    private void updateTodaysWorkoutDetails(DayWorkoutPlan todaysPlan) {
+        List<PlannedExercise> exercises = todaysPlan.getExercises();
+        if (exercises == null || exercises.isEmpty()) {
+            workoutWarmupLabel.setText("Warm-up - Start with light prep work");
+            workoutFirstLabel.setText("Primary Lift - Not assigned");
+            wokroutFirstAccessories.setText("Accessories - None scheduled");
+            return;
+        }
+
+        PlannedExercise firstExercise = exercises.get(0);
+        String firstExerciseName = getExerciseName(firstExercise);
+
+        workoutWarmupLabel.setText("Warm-up - " + firstExercise.getWarmupSets() + " prep sets for " + firstExerciseName);
+        workoutFirstLabel.setText("Primary Lift - " + firstExerciseName);
+
+        List<String> accessoryNames = new ArrayList<>();
+        for (int i = 1; i < exercises.size(); i++) {
+            String name = getExerciseName(exercises.get(i));
+            if (!name.isBlank()) {
+                accessoryNames.add(name);
+            }
+        }
+
+        if (accessoryNames.isEmpty()) {
+            wokroutFirstAccessories.setText("Accessories - None scheduled");
+            return;
+        }
+
+        wokroutFirstAccessories.setText("Accessories - " + String.join(", ", accessoryNames));
+    }
+
+    private String getExerciseName(PlannedExercise plannedExercise) {
+        if (plannedExercise == null || plannedExercise.getExercise() == null) {
+            return "Unnamed exercise";
+        }
+
+        String name = plannedExercise.getExercise().getName();
+        return name == null || name.isBlank() ? "Unnamed exercise" : name;
     }
 
     // Button handlers
