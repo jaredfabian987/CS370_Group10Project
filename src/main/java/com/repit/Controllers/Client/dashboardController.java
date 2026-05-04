@@ -137,6 +137,7 @@ public class dashboardController implements Initializable {
             wokroutFirstAccessories.setText("Accessories - None scheduled");
 
             startWorkoutButton.setDisable(true);
+            startWorkoutButton.setText("Rest Day!");
         }
 
         // Weekly progress banner
