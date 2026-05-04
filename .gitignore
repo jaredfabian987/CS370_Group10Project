@@ -2,6 +2,12 @@
 target/
 
 ### IntelliJ IDEA ###
+# IntelliJ project files are user/machine-specific. Letting them travel
+# in git causes things like stale "JVM target 5" overrides in compiler.xml
+# that break teammates' builds when they pull. Each developer should let
+# IntelliJ regenerate these from pom.xml on first import.
+.idea/
+*.iml
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
