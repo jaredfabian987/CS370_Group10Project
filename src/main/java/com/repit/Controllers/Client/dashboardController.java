@@ -135,6 +135,9 @@ public class dashboardController implements Initializable {
             workoutWarmupLabel.setText("Warm-up - Recovery and mobility");
             workoutFirstLabel.setText("Primary Lift - None scheduled");
             wokroutFirstAccessories.setText("Accessories - None scheduled");
+
+            startWorkoutButton.setDisable(true);
+            startWorkoutButton.setText("Rest Day!");
         }
 
         // Weekly progress banner

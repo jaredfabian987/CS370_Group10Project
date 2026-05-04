@@ -1,20 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ProgressBar?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.media.MediaView?>
-<?import javafx.scene.text.Text?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.media.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="640.0" prefWidth="960.0" styleClass="screen workout-screen" stylesheets="@../../Styles/workout.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.repit.Controllers.Client.workoutController">
+<AnchorPane prefHeight="640.0" prefWidth="960.0" styleClass="screen workout-screen" stylesheets="@../../Styles/workout.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.repit.Controllers.Client.workoutController">
    <children>
       <HBox spacing="18.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <padding>
@@ -32,11 +24,6 @@
                   <Label styleClass="section-title" text="Up Next" />
                   <Label fx:id="nextExerciseLabel" text="Romanian Deadlift" />
                   <Label fx:id="nextExerciseAmtLabel" text="3 sets x 8 reps" />
-                  <StackPane fx:id="exerciseMediaPane1" prefHeight="150.0" styleClass="media-player-surface">
-                     <children>
-                        <Label prefHeight="117.0" prefWidth="159.0" styleClass="media-placeholder-text" text="Recommended Reps" />
-                     </children>
-                  </StackPane>
                   <Region VBox.vgrow="ALWAYS" />
                   <Button fx:id="finishWorkoutButton" mnemonicParsing="false" onAction="#finishWorkoutClicked" prefWidth="240.0" text="Finish Workout" />
                </children>
@@ -71,7 +58,7 @@
                               </StackPane>
                               <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                                  <children>
-                                    <Button fx:id="playPauseButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#selectMedia" prefHeight="35.0" prefWidth="114.0" styleClass="media-control-button" text="temp" />
+                                    <Button fx:id="selectMediaButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#selectMedia" prefHeight="35.0" prefWidth="114.0" styleClass="media-control-button" text="temp" />
                                     <Button fx:id="playButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#playClicked" prefHeight="35.0" prefWidth="75.0" styleClass="media-control-button" text="Play" />
                                     <Region prefHeight="35.0" prefWidth="24.0" />
                                     <Button fx:id="pauseButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#pauseClicked" prefHeight="35.0" prefWidth="75.0" styleClass="media-control-button" text="Pause" />
@@ -101,7 +88,7 @@
                                     <Region />
                                     <Label fx:id="logSet1Label" alignment="CENTER" contentDisplay="CENTER" opacity="0.8" prefHeight="44.0" prefWidth="60.0" text="92 lbs" />
                                     <Region />
-                                    <TextField alignment="CENTER" prefHeight="18.0" prefWidth="70.0" promptText="0" />
+                                    <TextField alignment="CENTER" disable="true" editable="false" prefHeight="18.0" prefWidth="70.0" promptText="0" />
                                  </children>
                               </HBox>
                               <Separator opacity="0.5" prefWidth="200.0">
@@ -115,7 +102,7 @@
                                     <Label alignment="CENTER" contentDisplay="CENTER" opacity="0.8" prefHeight="44.0" prefWidth="50.0" text="warm-up" />
                                     <Region />
                                     <Label fx:id="logSet2Label" alignment="CENTER" contentDisplay="CENTER" opacity="0.8" prefHeight="44.0" prefWidth="60.0" text="120 lbs" />
-                                    <TextField alignment="CENTER" prefWidth="70.0" promptText="0" />
+                                    <TextField alignment="CENTER" disable="true" editable="false" prefWidth="70.0" promptText="0" />
                                     <Region />
                                  </children>
                               </HBox>
