@@ -1,6 +1,7 @@
 package com.repit.main.java;
 
 import com.repit.DAOs.DatabaseSeeder;
+// import com.repit.DAOs.DemoDataSeeder; // re-enable when you want a demo account seeded
 import com.repit.Services.ServiceDispatcher;
 import com.repit.View.viewFactory;
 import javafx.application.Application;
@@ -20,6 +21,11 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         // seed the exercise library on every launch — safe to call repeatedly
         DatabaseSeeder.seed();
+        // optional: seed a "demo" user (login: demo / demo123) with a profile,
+        // availability for the week, and a full week of completed workout logs.
+        // Idempotent — skips if the demo user already exists. Re-enable the
+        // import above and uncomment this line when you want a demo account.
+        // DemoDataSeeder.seedDemoUser();
         // create DAOs AFTER seeding so the schema is already correct
         serviceDispatcher = new ServiceDispatcher();
 

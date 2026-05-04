@@ -137,7 +137,7 @@ public class dashboardController implements Initializable {
             wokroutFirstAccessories.setText("Accessories - None scheduled");
         }
 
-        // ── Weekly progress banner ────────────────────────────────────────────
+        // Weekly progress banner
         // completed = days this week where the user logged at least one set
         // planned = daysPerWeek from the user's fitness profile
         int completed = serviceDispatcher.handleGetWeeklyWorkoutsCompletedRequest(userId);
@@ -208,6 +208,13 @@ public class dashboardController implements Initializable {
             } else if (day == today) {
                 status = "Today";
                 detail = plan.getWorkoutName() + " · " + planMinutes(plan) + " min";
+            } else if (day.compareTo(today) < 0) {
+                // training day already passed without a completed log → missed.
+                // We compare DayOfWeek ordinals because the plan is rebuilt for the
+                // current Mon–Sun week, so any earlier day-of-week than `today`
+                // is in the past relative to the user's current week view.
+                status = "Missed";
+                detail = plan.getWorkoutName() + " · " + planMinutes(plan) + " min";
             } else {
                 status = "Scheduled";
                 detail = plan.getWorkoutName() + " · " + planMinutes(plan) + " min";
@@ -215,6 +222,12 @@ public class dashboardController implements Initializable {
 
             Label statusLabel = new Label(status);
             statusLabel.getStyleClass().add("planner-item");
+            // tag missed days with a separate CSS class so they can be styled
+            // distinctly (e.g. red text) — falls back gracefully if the class
+            // isn't defined in dashboard.css yet
+            if (status.equals("Missed")) {
+                statusLabel.getStyleClass().add("planner-item-missed");
+            }
 
             Label detailLabel = new Label(detail);
             detailLabel.setWrapText(true);

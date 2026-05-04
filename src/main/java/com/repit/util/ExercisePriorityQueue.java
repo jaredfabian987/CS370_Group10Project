@@ -246,13 +246,16 @@ public class ExercisePriorityQueue {
 
     private int scoreExercise(Exercise exercise) {
         // can't score without knowing the workout type
-        if (currentWorkoutType == null) return 0;
+        if (currentWorkoutType == null) {
+            return 0;
+        }
 
         // look up which muscle groups this workout type cares about
         Set<MuscleGroup> targets = WORKOUT_CATEGORY_MAP.get(currentWorkoutType);
 
         // REST, CARDIO, CORE have empty target sets — nothing scores above 0
-        if (targets == null || targets.isEmpty()) return 0;
+        if (targets == null || targets.isEmpty()) {
+            return 0;}
 
         int score = 0;
 

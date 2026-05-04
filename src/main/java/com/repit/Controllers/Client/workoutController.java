@@ -438,15 +438,29 @@ public class workoutController implements Initializable {
     //Navigation Function(s):
     @FXML
     void finishWorkoutClicked(ActionEvent event) {
+        // throttle only applies when the user clicks the Finish button directly.
+        // Internal callers (e.g. nextExerciseClicked when past the last exercise)
+        // call doFinishWorkout() instead so they don't hit the cooldown — the
+        // outer click was already throttled and stamped lastActionTime, so this
+        // call would always be inside the 800 ms window and bail silently.
         if (isThrottled()) return;
+        doFinishWorkout();
+    }
 
-        // "Finish Workout" acts as a stop-and-save button. Any exercise the user
-        // didn't get to (didn't click Log on) gets a single 0-rep placeholder log
-        // entry with isCompleted = false. This way:
-        //   - completed exercises remain marked completed (existing logs untouched)
-        //   - skipped exercises show up in WorkoutLogs as "attempted but 0 reps"
-        //   - the dashboard's "n / m exercises" counter and weekly progress banner
-        //     can correctly report partial completion vs full completion
+    /*
+     * Performs the actual finish-workout work (save placeholders, navigate).
+     * Separated from finishWorkoutClicked() so internal callers like
+     * nextExerciseClicked() can invoke it without re-tripping the click throttle.
+     *
+     * "Finish Workout" acts as a stop-and-save button. Any exercise the user
+     * didn't get to (didn't click Log on) gets a single 0-rep placeholder log
+     * entry with isCompleted = false. This way:
+     *   - completed exercises remain marked completed (existing logs untouched)
+     *   - skipped exercises show up in WorkoutLogs as "attempted but 0 reps"
+     *   - the dashboard's "n / m exercises" counter and weekly progress banner
+     *     can correctly report partial completion vs full completion
+     */
+    private void doFinishWorkout() {
         if (loggedUser != null && plannedExercises != null) {
             String today = LocalDate.now().toString();
             int userId = loggedUser.getUserId();
@@ -562,7 +576,10 @@ public class workoutController implements Initializable {
         }
 
         if (currentExerciseIndex >= plannedExercises.size()) {
-            finishWorkoutClicked(event);
+            // call the helper directly — finishWorkoutClicked() would re-trip
+            // the throttle since this same handler just stamped lastActionTime,
+            // and the navigation would silently no-op
+            doFinishWorkout();
             return;
         }
 
