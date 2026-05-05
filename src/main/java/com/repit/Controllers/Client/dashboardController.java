@@ -129,6 +129,12 @@ public class dashboardController implements Initializable {
             // not exercises*10 which may underreport when the queue is sparse
             estimatedTimeLabel.setText("Estimated time: " + planMinutes(todaysPlan) + " minutes");
             updateTodaysWorkoutDetails(todaysPlan);
+            //If the workout is already complete, disable the startWorkoutButton
+            if (todaysPlan.isCompleted()) {
+                startWorkoutButton.setDisable(true);
+                startWorkoutButton.setText("Done");
+            }
+
         } else {
             todaysWorkoutLabel.setText("Rest Day");
             estimatedTimeLabel.setText("No workout today — enjoy your rest");
