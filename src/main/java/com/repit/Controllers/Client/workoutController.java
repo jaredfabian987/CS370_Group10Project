@@ -232,8 +232,8 @@ public class workoutController implements Initializable {
 
         //Temporary Buttons for testing
         //finishWorkoutButton.setVisible(false);
-        //selectMediaButton.setVisible(false);
-        //selectMediaButton.setDisable(true);
+        selectMediaButton.setVisible(false);
+        selectMediaButton.setDisable(true);
     }
 
     private void loadWorkout() {
