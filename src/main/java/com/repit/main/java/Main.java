@@ -24,7 +24,7 @@ public class Main extends Application {
         // seed a "demo" user (login: demo / demo123) — ADV lifter with last
         // week's training history pre-populated. Used to verify progressive-overload
         // behavior. Idempotent: skips if the demo user already exists.
-        DemoDataSeeder.seedDemoUser();
+        // DemoDataSeeder.seedDemoUser();
         // create DAOs AFTER seeding so the schema is already correct
         serviceDispatcher = new ServiceDispatcher();
 
