@@ -41,16 +41,7 @@ public class ExerciseService {
         return exercisesDAO.getExercises(userId);
     }
 
-    // --- Exercise Swapping --- (feature removed)
-    /*
-    public ArrayList<Exercise> getSwapCandidates(int exerciseId) {
-        return new ArrayList<>();
-    }
 
-    public boolean swapExercise(int originalId, int replacementId, int userId) {
-        return false;
-    }
-    */
 
     // --- Exercise Ranking ---
 
