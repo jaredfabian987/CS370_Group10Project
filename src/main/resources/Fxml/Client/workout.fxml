@@ -75,7 +75,7 @@
                               <Label fx:id="reqEquip2Label" text="Weight plates" />
                               <Label fx:id="reqEquip3Label" text="Flat lifting area" />
                               <Separator />
-                              <Label styleClass="section-title" text="Log Your Sets" />
+                              <Label styleClass="section-title" text="Log Your Sets, Enter Reps" />
                               <Separator opacity="0.5" prefWidth="200.0">
                                  <padding>
                                     <Insets left="5.0" right="5.0" />
