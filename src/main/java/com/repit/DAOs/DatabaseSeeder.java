@@ -248,7 +248,8 @@ public class DatabaseSeeder {
         { 3,  "Incline Bench",          0 },
 
         // Triceps isolations
-        { 4,  "Dumbbell",               0 }, // Overhead Tricep Extension
+        { 4,  "Cable Machine",          1 }, // Overhead Tricep Extension
+        { 4,  "Rope Attachment",        1 },
         { 5,  "Cable Machine",          1 }, // Tricep Pushdown
 
         // Back compounds
@@ -331,6 +332,34 @@ public class DatabaseSeeder {
                 "primaryMusclesId, secondaryMusclesId, requiredEquipmentId, " +
                 "trackingType, isCustom, userId) " +
                 "VALUES (?,?,?,?,?,?,NULL,NULL,NULL,?,?,?)";
+
+            // one-time renames: patch any stale names that survived INSERT OR IGNORE
+            // from earlier seed runs. Safe to run every launch — no-op if already correct.
+            conn.createStatement().execute(
+                "UPDATE exercises SET name = 'Smith Machine Row' " +
+                "WHERE exerciseId = 9 AND name = 'Barbell Row'"
+            );
+
+            // one-time equipment fix: Overhead Tricep Extension uses a cable + rope,
+            // not a dumbbell. Delete the wrong row and let the equipment guard
+            // re-seed it correctly on first launch after this change.
+            conn.createStatement().execute(
+                "DELETE FROM equipment WHERE exerciseId = 4 AND name = 'Dumbbell'"
+            );
+            // if no cable row exists yet for exercise 4, insert both correct rows now
+            java.sql.ResultSet ex4Rs = conn.createStatement().executeQuery(
+                "SELECT COUNT(*) FROM equipment WHERE exerciseId = 4 AND name = 'Cable Machine'"
+            );
+            boolean ex4AlreadyFixed = ex4Rs.next() && ex4Rs.getInt(1) > 0;
+            ex4Rs.close();
+            if (!ex4AlreadyFixed) {
+                conn.createStatement().execute(
+                    "INSERT INTO equipment (exerciseId, name, EquipmentType, isCustom) VALUES (4, 'Cable Machine', 1, 0)"
+                );
+                conn.createStatement().execute(
+                    "INSERT INTO equipment (exerciseId, name, EquipmentType, isCustom) VALUES (4, 'Rope Attachment', 1, 0)"
+                );
+            }
 
             PreparedStatement pstmt = conn.prepareStatement(insertSql);
 
