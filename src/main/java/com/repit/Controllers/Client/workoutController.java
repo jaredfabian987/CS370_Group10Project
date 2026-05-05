@@ -145,6 +145,14 @@ public class workoutController implements Initializable {
         VIDEO_MAP.put("Dumbbell Shoulder Press",              "overhead-press.mp4");
         VIDEO_MAP.put("Seated Dumbbell Lateral Raises",       "dumbbell-chest-fly.mp4");
         VIDEO_MAP.put("Seated Rear Delt Flys",                "rear-delt-fly.mp4");
+        //TODO: Map out the following videos:
+            //leglifts.mp4
+            //pullups.mp4
+            //pushups.mp4
+            //russian-twists.mp4
+            //situps.mp4
+            //stairmaster.mp4
+            //treadmill.mp4
     }
 
     // Debounce: tracks the last time a user triggered an action button.
@@ -210,8 +218,8 @@ public class workoutController implements Initializable {
 
         //Temporary Buttons for testing
         //finishWorkoutButton.setVisible(false);
-        selectMediaButton.setVisible(false);
-        selectMediaButton.setDisable(true);
+        //selectMediaButton.setVisible(false);
+        //selectMediaButton.setDisable(true);
     }
 
     private void loadWorkout() {
