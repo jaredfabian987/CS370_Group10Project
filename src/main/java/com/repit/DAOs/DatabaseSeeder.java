@@ -71,51 +71,74 @@ public class DatabaseSeeder {
     // columns: exerciseId, name, category, exerciseType, compoundScore, trackingType, isCustom, userId
     // difficulty is not used — all exercises default to 0 in the DB
     // isCustom = 0 (false), userId = 0 (global library)
-    // exerciseType: COMPOUND=0, ISOLATION=1
-    // compoundScore: 1-10, higher = more important compound movement
+    // category (MuscleGroup ordinal): CHEST=0, BACK=1, SHOULDERS=2, BICEPS=3, TRICEPS=4,
+    //                                 QUADS=5, HAMSTRINGS=6, GLUTES=7, CALVES=8, CARDIO=9, FULL_BODY=10
+    // exerciseType: COMPOUND=0, ISOLATION=1, STRENGTH=2, CARDIO=3, FLEXIBILITY=4
+    // trackingType: REPS_AND_WEIGHT=0, REPS_ONLY=1, TIME=2, DISTANCE=3
+    // compoundScore: 1-10, higher = more important compound movement (0 for non-strength)
+    //
+    // Exercise NAMES intentionally align with the corresponding /Videos/ filenames
+    // (de-kebab-cased) so workoutController.VIDEO_MAP can resolve them cleanly.
     private static final Object[][] EXERCISES = {
 
         // ARM WORKOUTS
-        // Biceps (3) — all isolation (1)
-        { 1,  "Cable Bicep Curls",           3, 1, 3, 0, 0, 0 },
-        { 2,  "Cable Hammer Curls",           3, 1, 3, 0, 0, 0 },
-        { 3,  "Inclined Bicep Curls",         3, 1, 3, 0, 0, 0 },
-        // Triceps (4) — all isolation (1)
-        { 4,  "Overhead Tricep Extensions",   4, 1, 3, 0, 0, 0 },
-        { 5,  "Tricep Pushdowns",             4, 1, 3, 0, 0, 0 },
+        // Biceps (3) — isolations (1)
+        { 1,  "Cable Bicep Curl",                3, 1, 3, 0, 0, 0 }, // cable-bicep-curl.mp4
+        { 2,  "Cable Hammer Curl",               3, 1, 3, 0, 0, 0 }, // cable-hammer-curl.mp4
+        { 3,  "Bicep Curl",                      3, 1, 3, 0, 0, 0 }, // bicep-curl.mp4
+        // Triceps (4) — isolations (1)
+        { 4,  "Overhead Tricep Extension",       4, 1, 3, 0, 0, 0 }, // overhead-tricep-extension.mp4
+        { 5,  "Tricep Pushdown",                 4, 1, 3, 0, 0, 0 }, // tricep-pushdown.mp4
 
-        // BACK WORKOUTS
-        // Back (1) — all compound (0)
-        { 6,  "Cable Rows",                  1, 0, 7, 0, 0, 0 },
-        { 7,  "Lat Pulldowns (Wide Grip)",   1, 0, 7, 0, 0, 0 },
-        { 8,  "Lat Pulldowns (Close Grip)",  1, 0, 7, 0, 0, 0 },
-        { 9,  "Smith Machine Row",           1, 0, 8, 0, 0, 0 },
+        // BACK WORKOUTS — compounds (0)
+        { 6,  "Seated Cable Row",                1, 0, 7, 0, 0, 0 }, // seated-cable-row.mp4
+        { 7,  "Lat Pulldown",                    1, 0, 7, 0, 0, 0 }, // lat-pulldown.mp4
+        { 8,  "Close Grip Lat Pulldown",         1, 0, 7, 0, 0, 0 }, // close-grip-lat-pulldown.mp4
+        { 9,  "Smith Machine Row",               1, 0, 8, 0, 0, 0 }, // barbell-row.mp4 — video shows it on a Smith machine
 
         // CHEST WORKOUTS
-        // Chest (0) — isolations (1)
-        { 10, "Cable Chest Flys (Lower Chest)",       0, 1, 3, 0, 0, 0 },
-        { 11, "Cable Chest Flys (Upper Chest)",       0, 1, 3, 0, 0, 0 },
-        // Chest (0) — compounds (0)
-        { 12, "Flat Bench (Barbell Bench Press)",     0, 0, 9, 0, 0, 0 },
-        { 13, "Incline Smith Machine Bench Press",    0, 0, 8, 0, 0, 0 },
-        { 14, "Flat Bench (Dumbbell Bench Press)",    0, 0, 8, 0, 0, 0 },
-        { 15, "Incline Bench (Dumbbell Bench Press)", 0, 0, 7, 0, 0, 0 },
+        // isolations (1)
+        { 10, "Lower Cable Chest Fly",           0, 1, 3, 0, 0, 0 }, // lower-cable-chest-fly.mp4
+        { 11, "Upper Cable Chest Fly",           0, 1, 3, 0, 0, 0 }, // upper-cable-chest-fly.mp4
+        // compounds (0)
+        { 12, "Bench Press",                     0, 0, 9, 0, 0, 0 }, // bench-press.mp4
+        { 13, "Smith Machine Incline Bench Press", 0, 0, 8, 0, 0, 0 }, // smith-machine-incline-bench-press.mp4
+        { 14, "Dumbbell Bench Press",            0, 0, 8, 0, 0, 0 }, // dumbbell-bench-press.mp4
+        { 15, "Incline Bench Press",             0, 0, 7, 0, 0, 0 }, // incline-bench-press.mp4
 
         // LEG WORKOUTS
         // compounds (0)
-        { 16, "Dumbbell RDLs",              6, 0, 8,  0, 0, 0 }, // Hamstrings (6)
-        { 17, "Squat Free Weight",          5, 0, 10, 0, 0, 0 }, // Quads (5)
+        { 16, "Romanian Deadlift",               6, 0, 8,  0, 0, 0 }, // romanian-deadlift.mp4 — Hamstrings (6)
+        { 17, "Barbell Squat",                   5, 0, 10, 0, 0, 0 }, // barbell-squat.mp4     — Quads (5)
         // isolations (1)
-        { 18, "Leg Extensions",            5, 1, 3, 0, 0, 0 },  // Quads (5)
-        { 19, "Leg Curls Laying Down",     6, 1, 3, 0, 0, 0 },  // Hamstrings (6)
-        { 20, "Seated Calf Raises",        8, 1, 2, 0, 0, 0 },  // Calves (8)
+        { 18, "Leg Extension",                   5, 1, 3, 0, 0, 0 }, // leg-extension.mp4     — Quads (5)
+        { 19, "Leg Curl",                        6, 1, 3, 0, 0, 0 }, // leg-curl.mp4          — Hamstrings (6)
+        { 20, "Seated Calf Raise",               8, 1, 2, 0, 0, 0 }, // seated-calf-raise.mp4 — Calves (8)
 
-        //  SHOULDER WORKOUTS
+        // SHOULDER + CHEST FLY
         // Shoulders (2) — compound (0)
-        { 21, "Dumbbell Shoulder Press",        2, 0, 8, 0, 0, 0 },
-        // Shoulders (2) — isolations (1)
-        { 22, "Seated Dumbbell Lateral Raises", 2, 1, 3, 0, 0, 0 },
-        { 23, "Seated Rear Delt Flys",          2, 1, 3, 0, 0, 0 },
+        { 21, "Overhead Press",                  2, 0, 8, 0, 0, 0 }, // overhead-press.mp4
+        // Chest (0) — isolation (1)  (was "Lateral Raises" — replaced because no lateral-raise.mp4 exists)
+        { 22, "Dumbbell Chest Fly",              0, 1, 3, 0, 0, 0 }, // dumbbell-chest-fly.mp4
+        // Shoulders (2) — isolation (1)
+        { 23, "Rear Delt Fly",                   2, 1, 3, 0, 0, 0 }, // rear-delt-fly.mp4
+
+        // BODYWEIGHT — strength (compounds + core)
+        // suggestedWeight stays 0 so workoutController shows the bodyweight UI branch
+        // (em dash for warmups, target reps for working sets).
+        { 24, "Pull Up",                         1,  0, 8, 1, 0, 0 }, // pullups.mp4       — Back (1) compound, REPS_ONLY (1)
+        { 25, "Push Up",                         0,  0, 6, 1, 0, 0 }, // pushups.mp4       — Chest (0) compound, REPS_ONLY (1)
+        { 26, "Sit Up",                         10,  1, 2, 1, 0, 0 }, // situps.mp4        — Full Body (10) core isolation
+        { 27, "Russian Twist",                  10,  1, 2, 1, 0, 0 }, // russian-twists.mp4 — Full Body (10) core isolation
+        { 28, "Leg Lift",                       10,  1, 2, 1, 0, 0 }, // leglifts.mp4      — Full Body (10) core isolation
+
+        // CARDIO — single-activity, time-based (TrackingType.TIME = 2, ExerciseType.CARDIO = 3)
+        // PlannerService picks ONE of these for a CARDIO day.
+        // TODO (workoutController): when currentExercise.getExerciseType() == ExerciseType.CARDIO,
+        //   replace the "Log Sets" panel with a session timer that records elapsed time
+        //   instead of reps/weight. Save as a single WorkoutLog with reps = elapsedSeconds.
+        { 29, "Stairmaster",                     9,  3, 0, 2, 0, 0 }, // stairmaster.mp4
+        { 30, "Treadmill",                       9,  3, 0, 2, 0, 0 }, // treadmill.mp4
     };
 
     // Secondary muscles for each exercise — one per exercise (schema UNIQUE constraint on exerciseId).
@@ -126,23 +149,27 @@ public class DatabaseSeeder {
     // Only exercises where a secondary muscle meaningfully boosts their workout-day score are listed.
     private static final Object[][] SECONDARY_MUSCLES = {
         // Back exercises → BICEPS secondary (+1 on pull day)
-        { 6,  "BICEPS" }, // Cable Rows
-        { 7,  "BICEPS" }, // Lat Pulldowns (Wide Grip)
-        { 8,  "BICEPS" }, // Lat Pulldowns (Close Grip)
+        { 6,  "BICEPS" }, // Seated Cable Row
+        { 7,  "BICEPS" }, // Lat Pulldown
+        { 8,  "BICEPS" }, // Close Grip Lat Pulldown
         { 9,  "BICEPS" }, // Smith Machine Row
 
         // Chest compounds → TRICEPS secondary (+1 on push day)
-        { 12, "TRICEPS" }, // Flat Bench (Barbell Bench Press)
-        { 13, "TRICEPS" }, // Incline Smith Machine Bench Press
-        { 14, "TRICEPS" }, // Flat Bench (Dumbbell Bench Press)
-        { 15, "SHOULDERS" }, // Incline Bench (Dumbbell Bench Press) — hits front delt
+        { 12, "TRICEPS" },   // Bench Press
+        { 13, "TRICEPS" },   // Smith Machine Incline Bench Press
+        { 14, "TRICEPS" },   // Dumbbell Bench Press
+        { 15, "SHOULDERS" }, // Incline Bench Press — hits front delt
 
         // Leg compounds → GLUTES secondary (+1 on legs day)
-        { 16, "GLUTES" }, // Dumbbell RDLs
-        { 17, "GLUTES" }, // Squat Free Weight
+        { 16, "GLUTES" }, // Romanian Deadlift
+        { 17, "GLUTES" }, // Barbell Squat
 
         // Shoulder press → TRICEPS secondary (+1 on push day)
-        { 21, "TRICEPS" }, // Dumbbell Shoulder Press
+        { 21, "TRICEPS" }, // Overhead Press
+
+        // New bodyweight compounds → relevant secondaries
+        { 24, "BICEPS" },  // Pull Up — back compound, hits biceps (+1 on pull day)
+        { 25, "TRICEPS" }, // Push Up — chest compound, hits triceps (+1 on push day)
     };
 
     /*
@@ -161,45 +188,48 @@ public class DatabaseSeeder {
      */
     private static final Object[][] STARTING_WEIGHTS = {
         // Biceps isolations
-        { 1,  20.0, 35.0, 50.0 }, // Cable Bicep Curls
-        { 2,  20.0, 35.0, 50.0 }, // Cable Hammer Curls
-        { 3,  15.0, 25.0, 40.0 }, // Inclined Bicep Curls (per dumbbell)
+        { 1,  20.0, 35.0, 50.0 }, // Cable Bicep Curl
+        { 2,  20.0, 35.0, 50.0 }, // Cable Hammer Curl
+        { 3,  15.0, 25.0, 40.0 }, // Bicep Curl (per dumbbell)
 
         // Triceps isolations
-        { 4,  25.0, 45.0, 70.0 }, // Overhead Tricep Extensions
-        { 5,  30.0, 55.0, 85.0 }, // Tricep Pushdowns
+        { 4,  25.0, 45.0, 70.0 }, // Overhead Tricep Extension
+        { 5,  30.0, 55.0, 85.0 }, // Tricep Pushdown
 
         // Back compounds
-        { 6,  60.0, 110.0, 170.0 }, // Cable Rows
-        { 7,  60.0, 110.0, 160.0 }, // Lat Pulldowns (Wide Grip)
-        { 8,  60.0, 110.0, 160.0 }, // Lat Pulldowns (Close Grip)
+        { 6,  60.0, 110.0, 170.0 }, // Seated Cable Row
+        { 7,  60.0, 110.0, 160.0 }, // Lat Pulldown
+        { 8,  60.0, 110.0, 160.0 }, // Close Grip Lat Pulldown
         { 9,  65.0, 115.0, 175.0 }, // Smith Machine Row
 
         // Chest isolations (cables)
-        { 10, 20.0, 35.0, 55.0 }, // Cable Chest Flys (Lower Chest)
-        { 11, 20.0, 35.0, 55.0 }, // Cable Chest Flys (Upper Chest)
+        { 10, 20.0, 35.0, 55.0 }, // Lower Cable Chest Fly
+        { 11, 20.0, 35.0, 55.0 }, // Upper Cable Chest Fly
 
         // Chest compounds
-        { 12, 65.0, 135.0, 205.0 }, // Flat Bench (Barbell Bench Press)
-        { 13, 65.0, 115.0, 175.0 }, // Incline Smith Machine Bench Press
-        { 14, 30.0,  55.0,  85.0 }, // Flat Bench (Dumbbell Bench Press) — per dumbbell
-        { 15, 25.0,  50.0,  75.0 }, // Incline Bench (Dumbbell Bench Press) — per dumbbell
+        { 12, 65.0, 135.0, 205.0 }, // Bench Press
+        { 13, 65.0, 115.0, 175.0 }, // Smith Machine Incline Bench Press
+        { 14, 30.0,  55.0,  85.0 }, // Dumbbell Bench Press — per dumbbell
+        { 15, 25.0,  50.0,  75.0 }, // Incline Bench Press — per dumbbell
 
         // Leg compounds
-        { 16, 30.0,  55.0,  85.0 }, // Dumbbell RDLs (per dumbbell)
-        { 17, 65.0, 155.0, 245.0 }, // Squat Free Weight (barbell, includes the bar)
+        { 16, 30.0,  55.0,  85.0 }, // Romanian Deadlift (per dumbbell)
+        { 17, 65.0, 155.0, 245.0 }, // Barbell Squat (includes the 45-lb bar)
 
         // Leg isolations
-        { 18, 50.0,  90.0, 140.0 }, // Leg Extensions
-        { 19, 40.0,  75.0, 120.0 }, // Leg Curls Laying Down
-        { 20, 45.0,  90.0, 145.0 }, // Seated Calf Raises
+        { 18, 50.0,  90.0, 140.0 }, // Leg Extension
+        { 19, 40.0,  75.0, 120.0 }, // Leg Curl
+        { 20, 45.0,  90.0, 145.0 }, // Seated Calf Raise
 
-        // Shoulder compound
-        { 21, 25.0,  45.0,  70.0 }, // Dumbbell Shoulder Press (per dumbbell)
+        // Shoulder compound + chest fly + rear delt isolation
+        { 21, 25.0,  45.0,  70.0 }, // Overhead Press (per dumbbell)
+        { 22, 15.0,  25.0,  40.0 }, // Dumbbell Chest Fly (per dumbbell)
+        { 23, 10.0,  20.0,  30.0 }, // Rear Delt Fly (per dumbbell)
 
-        // Shoulder isolations
-        { 22, 10.0,  20.0,  30.0 }, // Seated Dumbbell Lateral Raises (per dumbbell)
-        { 23, 10.0,  20.0,  30.0 }, // Seated Rear Delt Flys (per dumbbell)
+        // NOTE: Pull Up / Push Up / Sit Up / Russian Twist / Leg Lift are bodyweight,
+        // and Stairmaster / Treadmill are time-based cardio — none get starting weight
+        // rows. ExercisesDAO.getStartingWeight() returns 0.0 for missing entries,
+        // which puts the workout screen in the bodyweight UI branch.
     };
 
     /*
@@ -212,51 +242,61 @@ public class DatabaseSeeder {
      */
     private static final Object[][] EQUIPMENT = {
         // Biceps isolations
-        { 1,  "Cable Machine",          1 }, // Cable Bicep Curls
-        { 2,  "Cable Machine",          1 }, // Cable Hammer Curls
-        { 3,  "Dumbbells",              0 }, // Inclined Bicep Curls
+        { 1,  "Cable Machine",          1 }, // Cable Bicep Curl
+        { 2,  "Cable Machine",          1 }, // Cable Hammer Curl
+        { 3,  "Dumbbells",              0 }, // Bicep Curl
         { 3,  "Incline Bench",          0 },
 
         // Triceps isolations
-        { 4,  "Dumbbell",               0 }, // Overhead Tricep Extensions
-        { 5,  "Cable Machine",          1 }, // Tricep Pushdowns
+        { 4,  "Dumbbell",               0 }, // Overhead Tricep Extension
+        { 5,  "Cable Machine",          1 }, // Tricep Pushdown
 
         // Back compounds
-        { 6,  "Cable Machine",          1 }, // Cable Rows
-        { 7,  "Lat Pulldown Machine",   1 }, // Lat Pulldowns (Wide Grip)
-        { 8,  "Lat Pulldown Machine",   1 }, // Lat Pulldowns (Close Grip)
+        { 6,  "Cable Machine",          1 }, // Seated Cable Row
+        { 7,  "Lat Pulldown Machine",   1 }, // Lat Pulldown
+        { 8,  "Lat Pulldown Machine",   1 }, // Close Grip Lat Pulldown
         { 9,  "Smith Machine",          1 }, // Smith Machine Row
 
         // Chest isolations (cables)
-        { 10, "Cable Machine",          1 }, // Cable Chest Flys (Lower Chest)
-        { 11, "Cable Machine",          1 }, // Cable Chest Flys (Upper Chest)
+        { 10, "Cable Machine",          1 }, // Lower Cable Chest Fly
+        { 11, "Cable Machine",          1 }, // Upper Cable Chest Fly
 
         // Chest compounds
-        { 12, "Barbell",                0 }, // Flat Bench (Barbell Bench Press)
+        { 12, "Barbell",                0 }, // Bench Press
         { 12, "Flat Bench",             0 },
-        { 13, "Smith Machine",          1 }, // Incline Smith Machine Bench Press
+        { 13, "Smith Machine",          1 }, // Smith Machine Incline Bench Press
         { 13, "Incline Bench",          0 },
-        { 14, "Dumbbells",              0 }, // Flat Bench (Dumbbell Bench Press)
+        { 14, "Dumbbells",              0 }, // Dumbbell Bench Press
         { 14, "Flat Bench",             0 },
-        { 15, "Dumbbells",              0 }, // Incline Bench (Dumbbell Bench Press)
+        { 15, "Dumbbells",              0 }, // Incline Bench Press
         { 15, "Incline Bench",          0 },
 
         // Leg compounds
-        { 16, "Dumbbells",              0 }, // Dumbbell RDLs
-        { 17, "Barbell",                0 }, // Squat Free Weight
+        { 16, "Dumbbells",              0 }, // Romanian Deadlift
+        { 17, "Barbell",                0 }, // Barbell Squat
         { 17, "Squat Rack",             0 },
 
         // Leg isolations
-        { 18, "Leg Extension Machine",  1 }, // Leg Extensions
-        { 19, "Leg Curl Machine",       1 }, // Leg Curls Laying Down
-        { 20, "Calf Raise Machine",     1 }, // Seated Calf Raises
+        { 18, "Leg Extension Machine",  1 }, // Leg Extension
+        { 19, "Leg Curl Machine",       1 }, // Leg Curl
+        { 20, "Calf Raise Machine",     1 }, // Seated Calf Raise
 
-        // Shoulder compound
-        { 21, "Dumbbells",              0 }, // Dumbbell Shoulder Press
+        // Shoulder compound + chest fly + rear delt
+        { 21, "Dumbbells",              0 }, // Overhead Press
+        { 22, "Dumbbells",              0 }, // Dumbbell Chest Fly
+        { 22, "Flat Bench",             0 },
+        { 23, "Dumbbells",              0 }, // Rear Delt Fly
 
-        // Shoulder isolations
-        { 22, "Dumbbells",              0 }, // Seated Dumbbell Lateral Raises
-        { 23, "Dumbbells",              0 }, // Seated Rear Delt Flys
+        // Bodyweight movements
+        { 24, "Pull-up Bar",            3 }, // Pull Up
+        { 25, "Floor Mat",              3 }, // Push Up
+        { 26, "Floor Mat",              3 }, // Sit Up
+        { 27, "Floor Mat",              3 }, // Russian Twist
+        { 28, "Floor Mat",              3 }, // Leg Lift
+
+        // Cardio machines
+        { 29, "Stair Climber",          2 }, // Stairmaster
+        { 30, "Treadmill",              2 }, // Treadmill
     };
 
     /**
@@ -391,7 +431,7 @@ public class DatabaseSeeder {
                 }
             }
 
-            System.out.println("DatabaseSeeder: 23 exercises seeded successfully.");
+            System.out.println("DatabaseSeeder: " + EXERCISES.length + " exercises seeded successfully.");
 
         } catch (Exception e) {
             System.out.println("DatabaseSeeder error: " + e.getMessage());

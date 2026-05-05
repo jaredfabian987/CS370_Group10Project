@@ -119,40 +119,54 @@ public class workoutController implements Initializable {
     //Variable(s):
     private final ServiceDispatcher serviceDispatcher = Main.getServiceDispatcher();
 
-    // Maps exercise names (as stored in DB) to their video file names in /Videos/
+    // Maps exercise names (as stored in DB) to their video file names in /Videos/.
+    // Exercise names match DatabaseSeeder.EXERCISES, which were chosen to align
+    // with the kebab-case video filenames as closely as possible.
     private static final Map<String, String> VIDEO_MAP = new HashMap<>();
     static {
-        VIDEO_MAP.put("Cable Bicep Curls",                    "cable-bicep-curl.mp4");
-        VIDEO_MAP.put("Cable Hammer Curls",                   "cable-hammer-curl.mp4");
-        VIDEO_MAP.put("Inclined Bicep Curls",                 "bicep-curl.mp4");
-        VIDEO_MAP.put("Overhead Tricep Extensions",           "overhead-tricep-extension.mp4");
-        VIDEO_MAP.put("Tricep Pushdowns",                     "tricep-pushdown.mp4");
-        VIDEO_MAP.put("Cable Rows",                           "seated-cable-row.mp4");
-        VIDEO_MAP.put("Lat Pulldowns (Wide Grip)",            "lat-pulldown.mp4");
-        VIDEO_MAP.put("Lat Pulldowns (Close Grip)",           "close-grip-lat-pulldown.mp4");
-        VIDEO_MAP.put("Smith Machine Row",                    "barbell-row.mp4");
-        VIDEO_MAP.put("Cable Chest Flys (Lower Chest)",       "lower-cable-chest-fly.mp4");
-        VIDEO_MAP.put("Cable Chest Flys (Upper Chest)",       "upper-cable-chest-fly.mp4");
-        VIDEO_MAP.put("Flat Bench (Barbell Bench Press)",     "bench-press.mp4");
-        VIDEO_MAP.put("Incline Smith Machine Bench Press",    "smith-machine-incline-bench-press.mp4");
-        VIDEO_MAP.put("Flat Bench (Dumbbell Bench Press)",    "dumbbell-bench-press.mp4");
-        VIDEO_MAP.put("Incline Bench (Dumbbell Bench Press)", "incline-bench-press.mp4");
-        VIDEO_MAP.put("Dumbbell RDLs",                        "romanian-deadlift.mp4");
-        VIDEO_MAP.put("Squat Free Weight",                    "barbell-squat.mp4");
-        VIDEO_MAP.put("Leg Extensions",                       "leg-extension.mp4");
-        VIDEO_MAP.put("Leg Curls Laying Down",                "leg-curl.mp4");
-        VIDEO_MAP.put("Seated Calf Raises",                   "seated-calf-raise.mp4");
-        VIDEO_MAP.put("Dumbbell Shoulder Press",              "overhead-press.mp4");
-        VIDEO_MAP.put("Seated Dumbbell Lateral Raises",       "dumbbell-chest-fly.mp4");
-        VIDEO_MAP.put("Seated Rear Delt Flys",                "rear-delt-fly.mp4");
-        //TODO: Map out the following videos:
-            //leglifts.mp4
-            //pullups.mp4
-            //pushups.mp4
-            //russian-twists.mp4
-            //situps.mp4
-            //stairmaster.mp4
-            //treadmill.mp4
+        // Arms
+        VIDEO_MAP.put("Cable Bicep Curl",                    "cable-bicep-curl.mp4");
+        VIDEO_MAP.put("Cable Hammer Curl",                   "cable-hammer-curl.mp4");
+        VIDEO_MAP.put("Bicep Curl",                          "bicep-curl.mp4");
+        VIDEO_MAP.put("Overhead Tricep Extension",           "overhead-tricep-extension.mp4");
+        VIDEO_MAP.put("Tricep Pushdown",                     "tricep-pushdown.mp4");
+
+        // Back
+        VIDEO_MAP.put("Seated Cable Row",                    "seated-cable-row.mp4");
+        VIDEO_MAP.put("Lat Pulldown",                        "lat-pulldown.mp4");
+        VIDEO_MAP.put("Close Grip Lat Pulldown",             "close-grip-lat-pulldown.mp4");
+        VIDEO_MAP.put("Smith Machine Row",                   "barbell-row.mp4"); // video shows the Smith-machine variant
+
+        // Chest
+        VIDEO_MAP.put("Lower Cable Chest Fly",               "lower-cable-chest-fly.mp4");
+        VIDEO_MAP.put("Upper Cable Chest Fly",               "upper-cable-chest-fly.mp4");
+        VIDEO_MAP.put("Bench Press",                         "bench-press.mp4");
+        VIDEO_MAP.put("Smith Machine Incline Bench Press",   "smith-machine-incline-bench-press.mp4");
+        VIDEO_MAP.put("Dumbbell Bench Press",                "dumbbell-bench-press.mp4");
+        VIDEO_MAP.put("Incline Bench Press",                 "incline-bench-press.mp4");
+        VIDEO_MAP.put("Dumbbell Chest Fly",                  "dumbbell-chest-fly.mp4");
+
+        // Legs
+        VIDEO_MAP.put("Romanian Deadlift",                   "romanian-deadlift.mp4");
+        VIDEO_MAP.put("Barbell Squat",                       "barbell-squat.mp4");
+        VIDEO_MAP.put("Leg Extension",                       "leg-extension.mp4");
+        VIDEO_MAP.put("Leg Curl",                            "leg-curl.mp4");
+        VIDEO_MAP.put("Seated Calf Raise",                   "seated-calf-raise.mp4");
+
+        // Shoulders
+        VIDEO_MAP.put("Overhead Press",                      "overhead-press.mp4");
+        VIDEO_MAP.put("Rear Delt Fly",                       "rear-delt-fly.mp4");
+
+        // Bodyweight strength + core
+        VIDEO_MAP.put("Pull Up",                             "pullups.mp4");
+        VIDEO_MAP.put("Push Up",                             "pushups.mp4");
+        VIDEO_MAP.put("Sit Up",                              "situps.mp4");
+        VIDEO_MAP.put("Russian Twist",                       "russian-twists.mp4");
+        VIDEO_MAP.put("Leg Lift",                            "leglifts.mp4");
+
+        // Cardio (TODO: wire timer UI when one of these is the current exercise)
+        VIDEO_MAP.put("Stairmaster",                         "stairmaster.mp4");
+        VIDEO_MAP.put("Treadmill",                           "treadmill.mp4");
     }
 
     // Debounce: tracks the last time a user triggered an action button.
@@ -315,6 +329,16 @@ public class workoutController implements Initializable {
         reqEquip3Label.setText(requiredEquipment.size() > 2 ? requiredEquipment.get(2).getName() : "--");
 
         //Third Vbox:
+        // TODO (cardio support): when currentExercise.getExerciseType() == ExerciseType.CARDIO
+        //   (currently Stairmaster + Treadmill, exerciseId 29 and 30), the "Log Sets" panel
+        //   below is meaningless — there are no warmup/working sets to fill in. Replace it
+        //   with a session timer UI:
+        //     - a big elapsed-time display (mm:ss)
+        //     - Start/Pause/Reset buttons
+        //     - on Log click, save a single WorkoutLog where reps = elapsedSeconds and
+        //       weight = 0.0 (or store distance for a treadmill once we add that)
+        //   Until then, cardio exercises will fall through into the bodyweight UI branch
+        //   ("—" for warmups, "0 reps" for working sets) since suggestedWeight == 0.
         double suggestedWeight = currentPlannedExercise.getSuggestWeight();
         int targetReps = currentPlannedExercise.getTargetReps();
 

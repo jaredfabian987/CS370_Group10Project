@@ -9,6 +9,7 @@ import com.repit.Model.DayWorkoutPlan;
 import com.repit.Model.Exercise;
 import com.repit.Model.FitnessProfile;
 import com.repit.Model.PlannedExercise;
+import com.repit.Model.ProgressionSuggestion;
 import com.repit.Model.WorkoutLog;
 import com.repit.Model.WorkoutPlan;
 import com.repit.Model.enums.ExerciseType;
@@ -59,6 +60,7 @@ public class PlannerService {
     private final ExercisesDAO exercisesDAO;
     private final WorkoutLogsDAO workoutLogsDAO;
     private final AvailabilityDAO availabilityDAO;
+    private final ProgressService progressService;
 
     // minimum available minutes if profile has a very small value —
     // we need at least 30 min for 3 exercises (2 compound + 1 isolation)
@@ -75,6 +77,10 @@ public class PlannerService {
         this.exercisesDAO = exercisesDAO;
         this.workoutLogsDAO = workoutLogsDAO;
         this.availabilityDAO = availabilityDAO;
+        // ProgressService is internal — instantiated here rather than injected so
+        // ServiceDispatcher's constructor doesn't have to change. It only needs
+        // a WorkoutLogsDAO reference, which we already have.
+        this.progressService = new ProgressService(workoutLogsDAO);
     }
 
     // PUBLIC API
@@ -311,20 +317,28 @@ public class PlannerService {
     /**
      * Builds a PlannedExercise with a sensible suggested weight populated.
      *
-     * Lookup order:
-     *   1. Last logged set for this user + exercise (carries the user's actual
-     *      working weight forward week to week)
+     * Lookup order (progressive overload aware):
+     *   1. ProgressService.suggestProgression() — looks at the user's most recent
+     *      log for this exercise. If they hit >= 10 reps last time, it returns a
+     *      progressed weight (Epley formula targeting 7 reps, rounded to 5 lbs).
+     *      Otherwise it returns the same weight they used last time.
      *   2. Seeded starting weight for the exercise at the user's fitness level
-     *      (week-1 default, comes from the starting_weights table)
-     *   3. 0 lbs (bodyweight or unseeded custom exercise)
+     *      (week-1 default, comes from the starting_weights table). Used when
+     *      the user has no logged history yet.
+     *   3. 0 lbs (bodyweight or unseeded custom exercise) — workoutController
+     *      falls back to its bodyweight UI branch.
      */
     private PlannedExercise buildPlannedExercise(Exercise exercise, int userId, FitnessProfile profile) {
         PlannedExercise planned = new PlannedExercise(exercise);
 
-        WorkoutLog lastLog = workoutLogsDAO.getLastLogForExercise(userId, exercise.getExerciseId());
-        if (lastLog != null && lastLog.getWeight() > 0) {
-            planned.setSuggestWeight(lastLog.getWeight());
+        ProgressionSuggestion progressed = progressService.suggestProgression(
+                userId, exercise.getExerciseId(), exercise);
+
+        if (progressed != null && progressed.getSuggestedWeight() > 0) {
+            // user has training history — use the (possibly progressed) weight
+            planned.setSuggestWeight(progressed.getSuggestedWeight());
         } else {
+            // no history yet — fall back to the seeded week-1 starting weight
             int levelOrdinal = profile.getLevel() == null ? 0 : profile.getLevel().ordinal();
             double startingWeight = exercisesDAO.getStartingWeight(exercise.getExerciseId(), levelOrdinal);
             planned.setSuggestWeight(startingWeight);
