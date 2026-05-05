@@ -8,7 +8,6 @@ import com.repit.Model.User;
 import com.repit.Model.WorkoutLog;
 import com.repit.Services.ServiceDispatcher;
 import com.repit.main.java.Main;
-import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -108,7 +107,7 @@ public class workoutController implements Initializable {
     private ProgressBar workoutProgressBar;
 
     @FXML
-    private Button playPauseButton;
+    private Button selectMediaButton;
 
     @FXML
     private MediaView mediaView;
@@ -146,6 +145,14 @@ public class workoutController implements Initializable {
         VIDEO_MAP.put("Dumbbell Shoulder Press",              "overhead-press.mp4");
         VIDEO_MAP.put("Seated Dumbbell Lateral Raises",       "dumbbell-chest-fly.mp4");
         VIDEO_MAP.put("Seated Rear Delt Flys",                "rear-delt-fly.mp4");
+        //TODO: Map out the following videos:
+            //leglifts.mp4
+            //pullups.mp4
+            //pushups.mp4
+            //russian-twists.mp4
+            //situps.mp4
+            //stairmaster.mp4
+            //treadmill.mp4
     }
 
     // Debounce: tracks the last time a user triggered an action button.
@@ -209,8 +216,10 @@ public class workoutController implements Initializable {
         logSet3Label.setText("-- lbs");
         logSet4Label.setText("-- lbs");
 
-        //TEMP
-        finishWorkoutButton.setVisible(false);
+        //Temporary Buttons for testing
+        //finishWorkoutButton.setVisible(false);
+        //selectMediaButton.setVisible(false);
+        //selectMediaButton.setDisable(true);
     }
 
     private void loadWorkout() {
