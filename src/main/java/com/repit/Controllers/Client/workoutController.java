@@ -11,10 +11,8 @@ import com.repit.main.java.Main;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -25,12 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,7 +31,35 @@ public class workoutController implements Initializable {
 
     public Button playButton;
 
-    public Button pauseButton;
+    @FXML
+    private Button pauseButton;
+
+    @FXML
+    private HBox set4HBox;
+
+    @FXML
+    private Separator sep4;
+
+    @FXML
+    private HBox set3HBox;
+
+    @FXML
+    private Separator sep3;
+
+    @FXML
+    private HBox set2HBox;
+
+    @FXML
+    private Separator sep2;
+
+    @FXML
+    private HBox set1Hbox;
+
+    @FXML
+    private Label logSetsLabel;
+
+    @FXML
+    private Separator sep1;
 
     @FXML
     private Label coachingCueLabel;
@@ -107,16 +128,13 @@ public class workoutController implements Initializable {
     private ProgressBar workoutProgressBar;
 
     @FXML
-    private Button selectMediaButton;
-
-    @FXML
     private MediaView mediaView;
 
+    //Variable(s):
     private Media media;
 
     private MediaPlayer mediaPlayer;
 
-    //Variable(s):
     private final ServiceDispatcher serviceDispatcher = Main.getServiceDispatcher();
 
     // Maps exercise names (as stored in DB) to their video file names in /Videos/.
@@ -229,11 +247,6 @@ public class workoutController implements Initializable {
         logSet2Label.setText("-- lbs");
         logSet3Label.setText("-- lbs");
         logSet4Label.setText("-- lbs");
-
-        //Temporary Buttons for testing
-        //finishWorkoutButton.setVisible(false);
-        selectMediaButton.setVisible(false);
-        selectMediaButton.setDisable(true);
     }
 
     private void loadWorkout() {
@@ -359,6 +372,20 @@ public class workoutController implements Initializable {
             logSet2Label.setText(warmup2 + " lbs");
             logSet3Label.setText(working + " lbs");
             logSet4Label.setText(working + " lbs");
+            nextExerciseButton.setDisable(true);
+        } else if (Objects.equals(dayWorkoutPlan.getWorkoutName(), "Cardio")) {
+            //Cardio does not use the "Log Sets" area, showing them as invisible
+            logSetsLabel.setVisible(false);
+            set1Hbox.setVisible(false);
+            set2HBox.setVisible(false);
+            set3HBox.setVisible(false);
+            set4HBox.setVisible(false);
+            sep1.setVisible(false);
+            sep2.setVisible(false);
+            sep3.setVisible(false);
+            sep4.setVisible(false);
+            nextExerciseButton.setDisable(false);
+
         } else {
             // FXML already shows "warm-up" in the type column — don't repeat it
             // in the target column. Em dash for warmup rows; rep target for working sets.
@@ -366,11 +393,15 @@ public class workoutController implements Initializable {
             logSet2Label.setText("—");
             logSet3Label.setText(targetReps + " reps");
             logSet4Label.setText(targetReps + " reps");
+            nextExerciseButton.setDisable(true);
+            nextExerciseButton.setText("Finish");
+            logExerciseButton.setVisible(false);
+
         }
 
         workingSet3TextField.clear();
         workingSet4TextField.clear();
-        nextExerciseButton.setDisable(true);
+        //nextExerciseButton.setDisable(true);
     }
 
     //MediaPlayer Functions:

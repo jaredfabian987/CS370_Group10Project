@@ -75,13 +75,13 @@
                               <Label fx:id="reqEquip2Label" text="Weight plates" />
                               <Label fx:id="reqEquip3Label" text="Flat lifting area" />
                               <Separator />
-                              <Label styleClass="section-title" text="Log Your Sets, Enter Reps" />
-                              <Separator opacity="0.5" prefWidth="200.0">
+                              <Label fx:id="logSetsLabel" styleClass="section-title" text="Log Your Sets, Enter Reps" />
+                              <Separator fx:id="sep1" opacity="0.5" prefWidth="200.0">
                                  <padding>
                                     <Insets left="5.0" right="5.0" />
                                  </padding>
                               </Separator>
-                              <HBox prefHeight="0.0" prefWidth="203.0">
+                              <HBox id="set1HBox" fx:id="set1Hbox" prefHeight="0.0" prefWidth="203.0">
                                  <children>
                                     <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="44.0" prefWidth="20.0" text="1" />
                                     <Label alignment="CENTER" contentDisplay="CENTER" opacity="0.8" prefHeight="44.0" prefWidth="50.0" text="warm-up" />
@@ -91,12 +91,12 @@
                                     <TextField alignment="CENTER" disable="true" editable="false" prefHeight="18.0" prefWidth="70.0" promptText="0" />
                                  </children>
                               </HBox>
-                              <Separator opacity="0.5" prefWidth="200.0">
+                              <Separator fx:id="sep2" opacity="0.5" prefWidth="200.0">
                                  <padding>
                                     <Insets left="5.0" right="5.0" />
                                  </padding>
                               </Separator>
-                              <HBox prefHeight="0.0" prefWidth="203.0">
+                              <HBox fx:id="set2HBox" prefHeight="0.0" prefWidth="203.0">
                                  <children>
                                     <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="44.0" prefWidth="20.0" text="2" />
                                     <Label alignment="CENTER" contentDisplay="CENTER" opacity="0.8" prefHeight="44.0" prefWidth="50.0" text="warm-up" />
@@ -106,12 +106,12 @@
                                     <Region />
                                  </children>
                               </HBox>
-                              <Separator opacity="0.5" prefWidth="200.0">
+                              <Separator fx:id="sep3" opacity="0.5" prefWidth="200.0">
                                  <padding>
                                     <Insets left="5.0" right="5.0" />
                                  </padding>
                               </Separator>
-                              <HBox prefHeight="0.0" prefWidth="203.0">
+                              <HBox fx:id="set3HBox" prefHeight="0.0" prefWidth="203.0">
                                  <children>
                                     <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="44.0" prefWidth="20.0" text="3" />
                                     <Label alignment="CENTER" contentDisplay="CENTER" opacity="0.8" prefHeight="44.0" prefWidth="50.0" text="working" />
@@ -121,8 +121,8 @@
                                     <TextField fx:id="workingSet3TextField" alignment="CENTER" prefWidth="70.0" promptText="0" />
                                  </children>
                               </HBox>
-                              <Separator opacity="0.5" prefWidth="200.0" />
-                              <HBox prefHeight="0.0" prefWidth="203.0">
+                              <Separator fx:id="sep4" opacity="0.5" prefWidth="200.0" />
+                              <HBox fx:id="set4HBox" prefHeight="0.0" prefWidth="203.0">
                                  <children>
                                     <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="44.0" prefWidth="20.0" text="4" />
                                     <Label alignment="CENTER" contentDisplay="CENTER" opacity="0.8" prefHeight="44.0" prefWidth="50.0" text="working" />
