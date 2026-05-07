@@ -214,7 +214,11 @@ public class PlannerService {
                     Exercise cardioExercise = selectCardioExercise(allExercises);
 
                     if (cardioExercise != null) {
-                        dayPlan.addExercise(buildPlannedExercise(cardioExercise, userId, profile));
+                        PlannedExercise cardioPlanned = buildPlannedExercise(cardioExercise, userId, profile);
+                        // store the session length in targetReps so the UI can display
+                        // "X minutes" instead of sets/reps — no progressive overload for cardio
+                        cardioPlanned.setTargetReps(availableMinutes);
+                        dayPlan.addExercise(cardioPlanned);
                     }
 
                     // workout name is just the type — the UI appends the duration
@@ -330,6 +334,15 @@ public class PlannerService {
      */
     private PlannedExercise buildPlannedExercise(Exercise exercise, int userId, FitnessProfile profile) {
         PlannedExercise planned = new PlannedExercise(exercise);
+
+        // Cardio exercises have no sets, reps, or progressive overload —
+        // duration is driven by the user's availability (set by the caller via setTargetReps).
+        if (exercise.getExerciseType() == ExerciseType.CARDIO) {
+            planned.setSuggestWeight(0);
+            planned.setWarmupSets(0);
+            planned.setWorkingSets(0);
+            return planned;
+        }
 
         ProgressionSuggestion progressed = progressService.suggestProgression(
                 userId, exercise.getExerciseId(), exercise);

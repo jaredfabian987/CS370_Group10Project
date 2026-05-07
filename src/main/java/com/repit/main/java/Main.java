@@ -1,7 +1,6 @@
 package com.repit.main.java;
 
 import com.repit.DAOs.DatabaseSeeder;
-import com.repit.DAOs.DemoDataSeeder;
 import com.repit.Services.ServiceDispatcher;
 import com.repit.View.viewFactory;
 import javafx.application.Application;

@@ -139,16 +139,6 @@ public class ServiceDispatcher {
         return exerciseService.getExercises(userId);
     }
 
-    // --- Exercise Swapping --- (feature removed)
-    /*
-    public ArrayList<Exercise> handleGetSwapCandidatesRequest(int exerciseId) {
-        return exerciseService.getSwapCandidates(exerciseId);
-    }
-
-    public boolean handleSwapExercisesRequest(int originalId, int replacementId, int userId) {
-        return exerciseService.swapExercise(originalId, replacementId, userId);
-    }
-    */
 
     /*
      * handleBuildExerciseQueueRequest

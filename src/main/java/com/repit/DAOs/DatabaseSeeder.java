@@ -94,7 +94,7 @@ public class DatabaseSeeder {
         { 6,  "Seated Cable Row",                1, 0, 7, 0, 0, 0 }, // seated-cable-row.mp4
         { 7,  "Lat Pulldown",                    1, 0, 7, 0, 0, 0 }, // lat-pulldown.mp4
         { 8,  "Close Grip Lat Pulldown",         1, 0, 7, 0, 0, 0 }, // close-grip-lat-pulldown.mp4
-        { 9,  "Smith Machine Row",               1, 0, 8, 0, 0, 0 }, // barbell-row.mp4 — video shows it on a Smith machine
+        { 9,  "Smith Machine Row",               1, 0, 8, 0, 0, 0 }, // smith-machine-row.mp4
 
         // CHEST WORKOUTS
         // isolations (1)

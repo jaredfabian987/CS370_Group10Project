@@ -6,6 +6,7 @@ import com.repit.Model.Exercise;
 import com.repit.Model.PlannedExercise;
 import com.repit.Model.User;
 import com.repit.Model.WorkoutLog;
+import com.repit.Model.enums.ExerciseType;
 import com.repit.Services.ServiceDispatcher;
 import com.repit.main.java.Main;
 import javafx.event.ActionEvent;
@@ -135,7 +136,7 @@ public class workoutController implements Initializable {
         VIDEO_MAP.put("Seated Cable Row",                    "seated-cable-row.mp4");
         VIDEO_MAP.put("Lat Pulldown",                        "lat-pulldown.mp4");
         VIDEO_MAP.put("Close Grip Lat Pulldown",             "close-grip-lat-pulldown.mp4");
-        VIDEO_MAP.put("Smith Machine Row",                   "barbell-row.mp4"); // video shows the Smith-machine variant
+        VIDEO_MAP.put("Smith Machine Row",                   "smith-machine-row.mp4");
 
         // Chest
         VIDEO_MAP.put("Lower Cable Chest Fly",               "lower-cable-chest-fly.mp4");
@@ -329,27 +330,17 @@ public class workoutController implements Initializable {
         reqEquip3Label.setText(requiredEquipment.size() > 2 ? requiredEquipment.get(2).getName() : "--");
 
         //Third Vbox:
-        // TODO (cardio support): when currentExercise.getExerciseType() == ExerciseType.CARDIO
-        //   (currently Stairmaster + Treadmill, exerciseId 29 and 30), the "Log Sets" panel
-        //   below is meaningless — there are no warmup/working sets to fill in. Replace it
-        //   with a session timer UI:
-        //     - a big elapsed-time display (mm:ss)
-        //     - Start/Pause/Reset buttons
-        //     - on Log click, save a single WorkoutLog where reps = elapsedSeconds and
-        //       weight = 0.0 (or store distance for a treadmill once we add that)
-        //   Until then, cardio exercises will fall through into the bodyweight UI branch
-        //   ("—" for warmups, "0 reps" for working sets) since suggestedWeight == 0.
         double suggestedWeight = currentPlannedExercise.getSuggestWeight();
         int targetReps = currentPlannedExercise.getTargetReps();
 
-        // Show weight if PlannerService populated one — either the user's last
-        // logged weight or the seeded week-1 starting weight from starting_weights.
-        // Fall back to "— / target reps" only for true bodyweight movements
-        // (suggestedWeight == 0, e.g. pull-ups or unseeded custom exercises).
-        // We can't rely on Exercise.isBodyweight() because it checks an empty
-        // requiredEquipment list and the seeder doesn't populate equipment yet,
-        // so every exercise would falsely look like a bodyweight movement.
-        if (suggestedWeight > 0) {
+        // Cardio exercises show session duration only — no sets, reps, or weight.
+        // targetReps holds the session length in minutes (set by PlannerService).
+        if (currentExercise.getExerciseType() == ExerciseType.CARDIO) {
+            logSet1Label.setText("—");
+            logSet2Label.setText("—");
+            logSet3Label.setText(targetReps + " min session");
+            logSet4Label.setText("—");
+        } else if (suggestedWeight > 0) {
             // Standard warmup ramp: 50% → 75% → 100% → 100% of working weight,
             // rounded to the nearest 5 lbs (gym plates increment in 2.5s/5s).
             int warmup1 = roundTo5(suggestedWeight * 0.5);
@@ -360,8 +351,7 @@ public class workoutController implements Initializable {
             logSet3Label.setText(working + " lbs");
             logSet4Label.setText(working + " lbs");
         } else {
-            // FXML already shows "warm-up" in the type column — don't repeat it
-            // in the target column. Em dash for warmup rows; rep target for working sets.
+            // Bodyweight movements — em dash for warmup rows, rep target for working sets.
             logSet1Label.setText("—");
             logSet2Label.setText("—");
             logSet3Label.setText(targetReps + " reps");
