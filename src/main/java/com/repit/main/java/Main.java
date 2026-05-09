@@ -29,7 +29,7 @@ public class Main extends Application {
 
         viewFactory = new viewFactory(primaryStage);
         viewFactory.switchScene("Fxml/login.fxml");
-        primaryStage.setTitle("Rep-It: Login");
+        primaryStage.setTitle("Rep-It");
     }
 
     //Allows this instance of viewFactory to be used across all controllers
