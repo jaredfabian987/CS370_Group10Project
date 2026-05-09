@@ -29,7 +29,8 @@
             <version>0.4</version>
         </dependency>
 
-        <!-- JavaFX -->
+        <!-- JavaFX — win classifier for Windows (professor + teammates) -->
+        <!-- Mac users: change win to mac-aarch64 (Apple Silicon) or mac (Intel) -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
@@ -67,6 +68,36 @@
                 <configuration>
                     <mainClass>com.repit.main.java.Main</mainClass>
                 </configuration>
+            </plugin>
+
+            <!-- Shade plugin: bundles all deps into one fat JAR for jpackage -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.5.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals><goal>shade</goal></goals>
+                        <configuration>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>com.repit.main.java.Main</mainClass>
+                                </transformer>
+                            </transformers>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

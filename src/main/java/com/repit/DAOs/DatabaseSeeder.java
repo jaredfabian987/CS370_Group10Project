@@ -307,6 +307,18 @@ public class DatabaseSeeder {
     public static void seed() {
         try (Connection conn = DriverManager.getConnection(DB_URL)) {
 
+            // seed required equipment for each exercise.
+            // ensure the table exists with the schema EquipmentDAO uses
+            conn.createStatement().execute(
+                    "CREATE TABLE IF NOT EXISTS equipment (" +
+                            "equipmentId INTEGER PRIMARY KEY," +
+                            "exerciseId INTEGER NOT NULL," +
+                            "name TEXT NOT NULL," +
+                            "EquipmentType INTEGER NOT NULL," +
+                            "isCustom INTEGER NOT NULL" +
+                            ")"
+            );
+
             // ensure the exercises table exists
             conn.createStatement().execute(
                 "CREATE TABLE IF NOT EXISTS exercises (" +
@@ -324,6 +336,30 @@ public class DatabaseSeeder {
                 "userId INTEGER," +
                 "coachingCue TEXT NOT NULL DEFAULT 'Target reps: 6-10'" +
                 ")"
+            );
+
+            // seed secondary muscles into the muscles table
+            // exerciseId is NOT unique — each exercise can have multiple secondary
+            // muscles (and we may add more rows in the future)
+            conn.createStatement().execute(
+                    "CREATE TABLE IF NOT EXISTS muscles (" +
+                            "targetedMuscleId INTEGER PRIMARY KEY," +
+                            "exerciseId INTEGER NOT NULL," +
+                            "muscle TEXT NOT NULL," +
+                            "role INTEGER NOT NULL" +
+                            ")"
+            );
+
+            // seed week-1 starting weights — keyed by (exerciseId, level).
+            // ProgressService falls back to this table when the user has never
+            // logged a set for the exercise yet.
+            conn.createStatement().execute(
+                    "CREATE TABLE IF NOT EXISTS starting_weights (" +
+                            "exerciseId INTEGER NOT NULL," +
+                            "level INTEGER NOT NULL," +
+                            "weight REAL NOT NULL," +
+                            "PRIMARY KEY (exerciseId, level)" +
+                            ")"
             );
 
             String insertSql =
@@ -376,18 +412,6 @@ public class DatabaseSeeder {
                 pstmt.executeUpdate();
             }
 
-            // seed secondary muscles into the muscles table
-            // exerciseId is NOT unique — each exercise can have multiple secondary
-            // muscles (and we may add more rows in the future)
-            conn.createStatement().execute(
-                "CREATE TABLE IF NOT EXISTS muscles (" +
-                "targetedMuscleId INTEGER PRIMARY KEY," +
-                "exerciseId INTEGER NOT NULL," +
-                "muscle TEXT NOT NULL," +
-                "role INTEGER NOT NULL" +
-                ")"
-            );
-
             String muscleInsertSql =
                 "INSERT OR IGNORE INTO muscles (exerciseId, muscle, role) VALUES (?, ?, 1)";
             PreparedStatement musclePstmt = conn.prepareStatement(muscleInsertSql);
@@ -398,17 +422,7 @@ public class DatabaseSeeder {
                 musclePstmt.executeUpdate();
             }
 
-            // seed required equipment for each exercise.
-            // ensure the table exists with the schema EquipmentDAO uses
-            conn.createStatement().execute(
-                "CREATE TABLE IF NOT EXISTS equipment (" +
-                "equipmentId INTEGER PRIMARY KEY," +
-                "exerciseId INTEGER NOT NULL," +
-                "name TEXT NOT NULL," +
-                "EquipmentType INTEGER NOT NULL," +
-                "isCustom INTEGER NOT NULL" +
-                ")"
-            );
+
 
             // guard against duplicates on every app launch — equipmentId is
             // auto-increment so a plain INSERT would re-insert the whole list each run.
@@ -432,18 +446,6 @@ public class DatabaseSeeder {
                     eqPstmt.executeUpdate();
                 }
             }
-
-            // seed week-1 starting weights — keyed by (exerciseId, level).
-            // ProgressService falls back to this table when the user has never
-            // logged a set for the exercise yet.
-            conn.createStatement().execute(
-                "CREATE TABLE IF NOT EXISTS starting_weights (" +
-                "exerciseId INTEGER NOT NULL," +
-                "level INTEGER NOT NULL," +
-                "weight REAL NOT NULL," +
-                "PRIMARY KEY (exerciseId, level)" +
-                ")"
-            );
 
             String startingWeightInsertSql =
                 "INSERT OR IGNORE INTO starting_weights (exerciseId, level, weight) VALUES (?, ?, ?)";
