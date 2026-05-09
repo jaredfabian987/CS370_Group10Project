@@ -11,7 +11,7 @@ import org.mindrot.jbcrypt.BCrypt;
  * Responsibilities:
  * - Registering new users (hashing is handled by UsersDAO)
  * - Authenticating login attempts
- * - General user lookups and deletion
+ * - General user lookups
  *
  * Controllers never call UsersDAO directly.
  */
@@ -74,18 +74,4 @@ public class UserService {
         return usersDAO.getUser(username);
     }
 
-    /**
-     * Deletes a user account.
-     */
-    public void deleteUser(int userId) {
-        usersDAO.deleteUser(userId);
-    }
-
-    /**
-     * Changes the user's password.
-     * TODO: implement once password-change screen is built
-     */
-    public void changePassword() {
-
-    }
 }

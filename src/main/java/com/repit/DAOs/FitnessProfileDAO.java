@@ -2,7 +2,6 @@ package com.repit.DAOs;
 import com.repit.Model.Exercise;
 import com.repit.Model.FitnessProfile;
 
-import javax.xml.transform.Result;
 import java.sql.*;
 import java.util.ArrayList;
 /*this.weight = weight;

@@ -1,7 +1,6 @@
 package com.repit.Model;
 
 import com.repit.Model.enums.EquipmentType;
-import com.repit.Model.enums.ExerciseType;
 
 public class Equipment {
 
@@ -55,7 +54,6 @@ public class Equipment {
 
     // some getters and setters
     public int getEquipmentID () { return equipmentId; }
-    public void setEquipmentID (int equipmentID) { this.equipmentId = equipmentId; }
     public String getName () { return name; }
     public void setName (String name) { this.name = name; }
     public EquipmentType getType () { return type; }

@@ -37,9 +37,11 @@ import java.util.regex.Pattern;
 
 public class workoutController implements Initializable {
 
-    public Button playButton;
+    @FXML
+    private Button playButton;
 
-    public Button pauseButton;
+    @FXML
+    private Button pauseButton;
 
     @FXML
     private Label coachingCueLabel;

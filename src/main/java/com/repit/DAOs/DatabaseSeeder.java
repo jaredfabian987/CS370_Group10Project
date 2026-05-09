@@ -25,10 +25,10 @@ import java.sql.PreparedStatement;
  * To add a new exercise: add a row to the EXERCISES array with a unique exerciseId.
  * The name must exactly match the video file name used in the workout screen.
  *
- * @author claude sonnet 4.6
+ * @author co written with claude sonnet 4.6
+ * revised by Jared Fabian
  * given prompt could you please make a file to seed my database with the following exercises for which exercises
  * I have videos for given this list of videos:
- * [Exercises On Rep-It] (23 exercises)
  *
  * Arm workouts:
  * cable bicep curls

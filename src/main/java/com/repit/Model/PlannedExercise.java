@@ -134,7 +134,6 @@ public class PlannedExercise {
     public void setRestMinutes (int restMinutes) {this.restMinutes = restMinutes;}
 
     public String getNotes(){return notes;}
-    public void SetNotes(String notes){this.notes = notes;}
 
     public int getWarmupSets() {return warmupSets;}
     public void setWarmupSets(int warmupSets) {this.warmupSets = warmupSets;}

@@ -7,7 +7,6 @@ public class User {
     private String firstName;
     private String lastName;
     private String date_of_birth;
-    private boolean isVerified = false;
 
     //Usage: setting and saving
     public User(String username, String password, String firstName, String lastName, String date_of_birth) {
@@ -34,5 +33,4 @@ public class User {
     public String getFirstName() { return firstName; }
     public String getLastName() { return lastName; }
     public String getDate_of_birth() {return date_of_birth; }
-    public void verifyUser(boolean isVerified){ this.isVerified = isVerified; }
 }

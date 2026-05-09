@@ -93,7 +93,6 @@ public class setupController implements Initializable {
     //Service dispatcher
     private final ServiceDispatcher serviceDispatcher = Main.getServiceDispatcher();
     private User loggedUser;
-    private FitnessProfile fitnessProfile;
 
 
     //Set logged user
@@ -221,10 +220,6 @@ public class setupController implements Initializable {
         return true;
     }
     */
-
-    private void saveSetupInformation(){
-
-    }
 
     @FXML
     private void saveSetupButtonAction(ActionEvent event) {

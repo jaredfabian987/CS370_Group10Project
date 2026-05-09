@@ -76,7 +76,6 @@ public class DayWorkoutPlan {
 
     // getters and setters
     public String getDayPlanId() {return dayPlanId;}
-    public void setDayPLanId(String id){this.dayPlanId = id;}
 
     public String getPlanId() {return planId;}
     public void setPlanId(String id){this.planId = id;}

@@ -1,10 +1,7 @@
 package com.repit.DAOs;
 import com.repit.Model.User;
-import com.repit.Model.WorkoutLog;
 import java.sql.*;
 import org.mindrot.jbcrypt.BCrypt;
-
-import javax.xml.transform.Result;
 
 public class UsersDAO extends BaseDAO {
     private static final String SELECT_USERNAME_SQL =
@@ -26,9 +23,6 @@ public class UsersDAO extends BaseDAO {
     private static final String INSERT_SQL =
             "INSERT INTO users (username, password, firstName, lastName, date_of_birth) "+
                     "VALUES (?,?,?,?,?)";
-
-    private static final String DELETE_SQL =
-            "DELETE FROM users WHERE userId = ?";
 
     private static final String UPDATE_SQL =
             "UPDATE users SET password = ? WHERE username = ?";
@@ -93,34 +87,6 @@ public class UsersDAO extends BaseDAO {
         }
     }
 
-    public boolean verifyUser(User user){
-        try{
-            PreparedStatement pstmt;
-            if(user.getUserId() == -1){
-                //UserID exists look for userId
-                pstmt = connection.prepareStatement(SELECT_USERID_SQL);
-                pstmt.setInt(1, user.getUserId());
-            }else{
-                //Search for Username instead
-                pstmt = connection.prepareStatement(SELECT_USERNAME_SQL);
-                pstmt.setString(1, user.getUsername());
-            }
-            //pstmt.executeUpdate();
-
-            ResultSet rs = pstmt.executeQuery();
-            if (!rs.next()){ // only 1 user data should be found
-                return false;
-            }
-
-            boolean matches = BCrypt.checkpw(user.getPassword(), rs.getString("password"));
-            if (matches){
-                return true;
-            }
-        } catch(Exception e){
-            System.out.println("Verification Error: "+e.getMessage());
-        }
-        return false;
-    }
 
     public boolean saveUser(User pUser){
         try{
@@ -142,18 +108,4 @@ public class UsersDAO extends BaseDAO {
         }
     }
 
-    public boolean deleteUser(int userId){
-        try{
-            Statement stmt = connection.createStatement();
-            stmt.execute(TABLE_SQL);
-
-            PreparedStatement pstmt = connection.prepareStatement(DELETE_SQL);
-            pstmt.setInt(1, userId);
-            pstmt.executeUpdate();
-            return true;
-        } catch(Exception e) {
-            System.out.println("Users Database Error: "+ e.getMessage());
-            return false;
-        }
-    }
 }

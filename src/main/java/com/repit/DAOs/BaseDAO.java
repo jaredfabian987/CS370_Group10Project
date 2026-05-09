@@ -1,6 +1,4 @@
 package com.repit.DAOs;
-import com.repit.Model.Exercise;
-import javax.xml.transform.Result;
 import java.sql.*;
 import java.util.ArrayList;
 
